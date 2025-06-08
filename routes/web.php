@@ -6,7 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
-use App\Http\Controllers\BeritaController;    
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\JurusanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,8 +18,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard', function () {
-    return view('layouts.index');
-})->middleware('auth');
+    return view('layouts.dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Tabel User
 Route::get('/user', [UserController::class, 'index'])->name('user.index');
@@ -63,3 +64,11 @@ Route::get('/berita/{berita}', [BeritaController::class, 'show'])->name('berita.
 Route::get('/berita/{berita}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
 Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('berita.update');
 Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('berita.destroy');
+
+Route::get('/jurusan', [JurusanController::class, 'index'])->name('jurusan.index');
+Route::get('/jurusan/create', [JurusanController::class, 'create'])->name('jurusan.create');
+Route::post('/jurusan', [JurusanController::class, 'store'])->name('jurusan.store');
+Route::get('/jurusan/{jurusan}', [JurusanController::class, 'show'])->name('jurusan.show');
+Route::get('/jurusan/{jurusan}/edit', [JurusanController::class, 'edit'])->name('jurusan.edit');
+Route::put('/jurusan/{jurusan}', [JurusanController::class, 'update'])->name('jurusan.update');
+Route::delete('/jurusan/{jurusan}', [JurusanController::class, 'destroy'])->name('jurusan.destroy');
