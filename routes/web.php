@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KodeController;
+use App\Http\Controllers\LokasiController;    
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,3 +45,11 @@ Route::post('/kode', [KodeController::class, 'store'])->name('kode.store');
 Route::get('/kode/{kode}/edit', [KodeController::class, 'edit'])->name('kode.edit');
 Route::put('/kode/{kode}', [KodeController::class, 'update'])->name('kode.update');
 Route::delete('/kode/{kode}', [KodeController::class, 'destroy'])->name('kode.destroy');
+
+// Tabel Lokasi
+Route::get('/lokasi', [LokasiController::class, 'index'])->name('lokasi.index');
+Route::get('/lokasi/create', [LokasiController::class, 'create'])->name('lokasi.create');
+Route::post('/lokasi', [LokasiController::class, 'store'])->name('lokasi.store');
+Route::get('/lokasi/{lokasi}/edit', [LokasiController::class, 'edit'])->name('lokasi.edit');
+Route::put('/lokasi/{lokasi}', [LokasiController::class, 'update'])->name('lokasi.update');
+Route::delete('/lokasi/{lokasi}', [LokasiController::class, 'destroy'])->name('lokasi.destroy');
