@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KodeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,3 +36,11 @@ Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.s
 Route::get('/kategori/{kategori}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
 Route::put('/kategori/{kategori}', [KategoriController::class, 'update'])->name('kategori.update');
 Route::delete('/kategori/{kategori}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+
+// Tabel Kode
+Route::get('/kode', [KodeController::class, 'index'])->name('kode.index');
+Route::get('/kode/create', [KodeController::class, 'create'])->name('kode.create');
+Route::post('/kode', [KodeController::class, 'store'])->name('kode.store');
+Route::get('/kode/{kode}/edit', [KodeController::class, 'edit'])->name('kode.edit');
+Route::put('/kode/{kode}', [KodeController::class, 'update'])->name('kode.update');
+Route::delete('/kode/{kode}', [KodeController::class, 'destroy'])->name('kode.destroy');
