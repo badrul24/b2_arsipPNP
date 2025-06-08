@@ -15,4 +15,9 @@ class Kategori extends Model
         'keterangan'
     ];
 
+    public function kode()
+    {
+        return $this->hasMany(Kode::class);
+    }
+
 }
