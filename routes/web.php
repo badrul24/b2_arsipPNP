@@ -8,6 +8,7 @@ use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\HakAksesController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -72,3 +73,11 @@ Route::get('/jurusan/{jurusan}', [JurusanController::class, 'show'])->name('juru
 Route::get('/jurusan/{jurusan}/edit', [JurusanController::class, 'edit'])->name('jurusan.edit');
 Route::put('/jurusan/{jurusan}', [JurusanController::class, 'update'])->name('jurusan.update');
 Route::delete('/jurusan/{jurusan}', [JurusanController::class, 'destroy'])->name('jurusan.destroy');
+
+// Tabel Hak Akses
+Route::get('/hak-akses', [HakAksesController::class, 'index'])->name('hak-akses.index');
+Route::get('/hak-akses/create', [HakAksesController::class, 'create'])->name('hak-akses.create');
+Route::post('/hak-akses', [HakAksesController::class, 'store'])->name('hak-akses.store');
+Route::get('/hak-akses/{hakAkses}/edit', [HakAksesController::class, 'edit'])->name('hak-akses.edit');
+Route::put('/hak-akses/{hakAkses}', [HakAksesController::class, 'update'])->name('hak-akses.update');
+Route::delete('/hak-akses/{hakAkses}', [HakAksesController::class, 'destroy'])->name('hak-akses.destroy');
