@@ -1,114 +1,205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login - Manajemen Arsip</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-image: url('https://images.unsplash.com/photo-1586281380349-632531db7ed4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Login dan Sign Up</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: {
+                                50:  '#d1d9e0', // sangat terang
+                                100: '#b4c3d1',
+                                200: '#96acc1',
+                                300: '#7895b1',
+                                400: '#5a7fa1',
+                                500: '#3d6992', // warna tengah
+                                600: '#2f5171',
+                                700: '#223b55',
+                                800: '#172a3d',
+                                900: '#0e1b28',
+                                950: '#080f15', // paling gelap
+                            },
+                            secondary: {
+                                50: '#f5f3ff',
+                                100: '#ede9fe',
+                                200: '#ddd6fe',
+                                300: '#c4b5fd',
+                                400: '#a78bfa',
+                                500: '#8b5cf6',
+                                600: '#7c3aed',
+                                700: '#6d28d9',
+                                800: '#5b21b6',
+                                900: '#4c1d95',
+                                950: '#2e1065',
+                            }
+                        }
+                    }
+                }
+            }
+</script>
 </head>
-<body class="min-h-screen flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8 bg-gray-150">
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-gray-900/70 backdrop-blur-sm"></div>
+<body class="w-full h-screen flex items-center justify-center bg-gray-200">
 
-    <div class="w-full max-w-md relative z-10">
-        <div class="bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl px-6 pt-6 pb-6 mb-4 border border-gray-200/50 transform transition duration-500 hover:scale-[1.01]">
-            <div class="flex items-center mb-5">
-                <div class="p-3 bg-blue-50 rounded-full mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                    </svg>
+  <div class="relative w-full h-full bg-white shadow-xl overflow-hidden flex rounded-none">
+
+    <!-- Form Container -->
+    <div class="relative flex-1 h-full">
+        <div id="loginForm"
+            class="absolute top-0 left-0 w-1/2 h-full p-10 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20 bg-cover bg-center bg-no-repeat">
+        <!--log in form kiri-->
+        <div class="max-w-md mx-auto space-y-6 bg-white/80 p-8 rounded-xl backdrop-blur-md">
+            <h2 class="text-4xl font-bold text-center">Login</h2>
+            <form action="#" method="post" class="space-y-5">
+            @csrf
+                <div>
+                    <label for="login-email" class="block text-lg">Email:</label>
+                    <input type="email" id="login-email" name="email" required class="w-full p-3 rounded bg-gray-200 focus:outline-none" />
                 </div>
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Manajemen Arsip</h2>
-                    <p class="text-gray-600 text-sm">Politeknik Negeri Padang</p>
+                    <label for="login-password" class="block text-lg">Password:</label>
+                    <input type="password" id="login-password" name="password" required class="w-full p-3 rounded bg-gray-200 focus:outline-none" />
                 </div>
-            </div>
-
-            @if (session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-2 rounded-md mb-3 text-xs">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="ml-2">
-                            <p>{{ session('error') }}</p>
-                        </div>
-                    </div>
+                <div class="flex items-center justify-between w-full">
+                    <label class="flex items-center text-sm gap-2 text-gray-700 cursor-pointer">
+                        <input type="checkbox" class="form-checkbox accent-primary-600" />
+                        Remember Me
+                    </label>
+                    <div class="text-sm text-primary-600 cursor-pointer">Forget Your Password?</div>
                 </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
-                @csrf
-                <div>
-                    <label for="email" class="block text-gray-700 text-xs font-semibold mb-1">Email</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                            <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                            </svg>
-                        </div>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="your@email.com"
-                            required
-                            class="pl-8 shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                        >
-                    </div>
-                </div>
-
-                <div>
-                    <label for="password" class="block text-gray-700 text-xs font-semibold mb-1">Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                            <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="••••••••"
-                            required
-                            class="pl-8 shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                        >
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between text-xs">
-                    <div class="flex items-center">
-                        <input id="remember_me" name="remember" type="checkbox" class="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                        <label for="remember_me" class="ml-1 block text-gray-700">Remember me</label>
-                    </div>
-                    <a href="" class="text-blue-600 hover:text-blue-800 font-medium transition duration-200">Forgot password?</a>
-                </div>
-
-                <button
-                    type="submit"
-                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 shadow-lg hover:shadow-xl">
-                    Login
-                </button>
+                <button type="submit" class="w-full py-3 rounded-xl bg-primary-600 text-white hover:bg-primary-700 text-lg">Login</button>
             </form>
+                <div class="flex items-center my-4">
+                    <div class="flex-grow h-px bg-gray-400"></div>
+                    <span class="px-4 text-sm text-gray-600 font-semibold">atau login dengan</span>
+                    <div class="flex-grow h-px bg-gray-400"></div>
+                </div>
 
-            <div class="mt-4 text-center">
-                <p class="text-gray-600 text-xs">Don't have an account? <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800 font-medium transition duration-200">Sign up</a></p>
+                <div class="flex justify-center gap-5 items-center">
+                    <a href="#" class="w-7 h-7 flex items-center justify-center rounded-full bg-white shadow-md">
+                        <img src="{{ asset('icons/twitter.png') }}" alt="twitter" class="w-4 h-4" />
+                    </a>
+                    <a href="#" class="w-7 h-7 flex items-center justify-center rounded-full bg-white shadow-md">
+                        <img src="{{ asset('icons/youtube.png') }}" alt="youtube" class="w-5 h-5" />
+                    </a>
+                    <a href="#" class="w-7 h-7 flex items-cente r justify-center rounded-full bg-white shadow-md">
+                        <img src="{{ asset('icons/google.png') }}" alt="google" class="w-4 h-4" />
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="text-center text-white text-xs">
-            Copyright &copy; {{ date("Y") }} PNP | Politeknik Negeri Padang
+
+            <!-- Signup Form - KANAN -->
+        <div id="signupForm" class="absolute top-0 right-0 w-1/2 h-full p-10 transition-all duration-700 ease-in-out opacity-0 scale-95 pointer-events-none bg-cover bg-center bg-no-repeat" style="background-image: url('aset/bg-signup.jpg');">
+            <div class="max-w-md mx-auto space-y-6 bg-white/80 p-8 rounded-xl backdrop-blur-md">
+                <h2 class="text-4xl font-bold text-center">Create Account</h2>
+                <form action="#" method="post" class="space-y-5">
+                <div>
+                    <label for="signup-username" class="block text-lg">Username:</label>
+                    <input type="text" id="signup-username" required class="w-full p-3 rounded bg-gray-200 focus:outline-none"/>
+                </div>
+                <div>
+                    <label for="signup-email" class="block text-lg">Email:</label>
+                    <input type="email" id="signup-email" required class="w-full p-3 rounded bg-gray-200 focus:outline-none"/>
+                </div>
+                <div>
+                    <label for="signup-password" class="block text-lg">Password:</label>
+                    <input type="password" id="signup-password" required class="w-full p-3 rounded bg-gray-200 focus:outline-none"/>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-primary-600 text-white hover:bg-primary-700 text-lg">Sign Up</button>
+                </form>
+                <div class="flex items-center my-4">
+                    <div class="flex-grow h-px bg-gray-400"></div>
+                    <span class="px-4 text-sm text-gray-600 font-semibold">atau login dengan</span>
+                    <div class="flex-grow h-px bg-gray-400"></div>
+                </div>
+
+                <div class="flex justify-center gap-5 items-center">
+                    <a href="#" class="w-7 h-7 flex items-center justify-center rounded-full bg-white shadow-md">
+                        <img src="{{ asset('icons/twitter.png') }}" alt="twitter" class="w-4 h-4" />
+                    </a>
+                    <a href="#" class="w-7 h-7 flex items-center justify-center rounded-full bg-white shadow-md">
+                        <img src="{{ asset('icons/youtube.png') }}" alt="youtube" class="w-5 h-5" />
+                    </a>
+                    <a href="#" class="w-7 h-7 flex items-center justify-center rounded-full bg-white shadow-md">
+                        <img src="{{ asset('icons/google.png') }}" alt="google" class="w-4 h-4" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interaktif Panel -->
+        <div class="absolute top-0 left-0 h-full w-1/2 bg-primary-600 text-white flex items-center justify-center transition-transform duration-700 ease-in-out z-30 relative" id="interactivePanel" style="background-image: url('{{ asset('images/gudangarsip.png') }}'); background-size: cover; background-position: center;">
+            <div class="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
+            <div class="absolute top-4 left-4 z-10 text-white font-bold text-2xl">
+                SIARSIP
+            </div>
+            <div class="text-center space-y-6 px-8 z-10">
+                <h1 class="text-4xl font-bold" id="panelTitle">Welcome Back!</h1>
+                <p class="max-w-[400px]" id="panelMessage"><'-'></p>
+                <button id="toggleBtn" class="px-8 py-3 rounded-xl border border-white hover:bg-white hover:text-blue-600 transition text-lg">Login</button>
+            </div>
         </div>
     </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("toggleBtn");
+    const interactivePanel = document.getElementById("interactivePanel");
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const panelTitle = document.getElementById("panelTitle");
+    const panelMessage = document.getElementById("panelMessage");
+
+    let isLogin = true; // Langsung ke mode Login saat awal dibuka
+
+    // Atur tampilan awal saat halaman dimuat
+    toggleBtn.innerText = "Sign Up";
+    panelTitle.innerText = "Get Started!";
+    panelMessage.innerText = "Belum punya akun? Daftar sekarang untuk mulai menyimpan, mengelola, dan mengakses arsip digital Anda dengan lebih mudah dan terjamin keamanannya.";
+    interactivePanel.classList.add("translate-x-full");
+
+    loginForm.classList.remove("opacity-0", "scale-95", "pointer-events-none");
+    loginForm.classList.add("opacity-100", "scale-100");
+
+    signupForm.classList.add("opacity-0", "scale-95", "pointer-events-none");
+    signupForm.classList.remove("opacity-100", "scale-100");
+
+    // Toggle antara Login dan Signup saat tombol diklik
+    toggleBtn.addEventListener("click", () => {
+      isLogin = !isLogin;
+
+      if (isLogin) {
+        toggleBtn.innerText = "Sign Up";
+        panelTitle.innerText = "Get Started!";
+        panelMessage.innerText = "Belum punya akun? Daftar sekarang untuk mulai menyimpan, mengelola, dan mengakses arsip digital Anda dengan lebih mudah dan terjamin keamanannya.";
+        interactivePanel.classList.add("translate-x-full");
+
+        loginForm.classList.remove("opacity-0", "scale-95", "pointer-events-none");
+        loginForm.classList.add("opacity-100", "scale-100");
+
+        signupForm.classList.add("opacity-0", "scale-95", "pointer-events-none");
+        signupForm.classList.remove("opacity-100", "scale-100");
+
+      } else {
+        toggleBtn.innerText = "Login";
+        panelTitle.innerText = "Welcome Back!";
+        panelMessage.innerText = "Selamat datang kembali. Masuk ke akun Anda untuk melanjutkan pengelolaan arsip secara aman, cepat, dan terpercaya.";
+        interactivePanel.classList.remove("translate-x-full");
+
+        signupForm.classList.remove("opacity-0", "scale-95", "pointer-events-none");
+        signupForm.classList.add("opacity-100", "scale-100");
+
+        loginForm.classList.add("opacity-0", "scale-95", "pointer-events-none");
+        loginForm.classList.remove("opacity-100", "scale-100");
+      }
+    });
+  });
+</script>
+
+
 </body>
 </html>

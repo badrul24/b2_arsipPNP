@@ -4,11 +4,29 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CodeController;
+use App\Http\Controllers\PublicController;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('user');
 });
+
+Route::get('/seben', function () {
+    return view('fitur');
+});
+
+Route::get('/profil', function () {
+    return view('users.profil');
+});
+
+Route::get('/home', function () {
+    return view('users.home');
+});
+
+Route::get('/arsipstatic', function () {
+    return view('users.arsipstatic');
+});
+
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
@@ -39,5 +57,6 @@ Route::put('/codes/{code}', [CodeController::class, 'update'])->name('code.updat
 Route::delete('/codes/{code}', [CodeController::class, 'destroy'])->name('code.destroy');
 
 
-
+//Tampilan Public
+Route::get('/home',[PublicController::class, 'home'])->name('home');
 
