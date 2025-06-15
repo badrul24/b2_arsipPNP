@@ -14,9 +14,9 @@ class HakAksesController extends Controller
         $query = HakAkses::query();
 
         if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('role', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%");
+                    ->orWhere('keterangan', 'like', "%{$search}%");
             });
         }
 
@@ -32,16 +32,31 @@ class HakAksesController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'role' => 'required|string|in:admin,operator,pimpinan',
-            'can_view' => 'required|boolean',
-            'can_create' => 'required|boolean',
-            'can_edit' => 'required|boolean',
-            'can_delete' => 'required|boolean',
-            'can_approve' => 'required|boolean',
-            'keterangan' => 'nullable|max:255'
+            'role' => [
+                'required',
+                'string',
+                Rule::in(['admin', 'operator', 'pimpinan']),
+                Rule::unique('hak_akses', 'role')->withoutTrashed()
+            ],
+            'can_view' => 'nullable|boolean',
+            'can_create' => 'nullable|boolean',
+            'can_edit' => 'nullable|boolean',
+            'can_delete' => 'nullable|boolean',
+            'can_approve' => 'nullable|boolean',
+            'keterangan' => 'nullable|string|max:255',
         ]);
 
+        // Pastikan semua field boolean memiliki nilai eksplisit
+        $validated = array_merge([
+            'can_view' => $request->boolean('can_view'),
+            'can_create' => $request->boolean('can_create'),
+            'can_edit' => $request->boolean('can_edit'),
+            'can_delete' => $request->boolean('can_delete'),
+            'can_approve' => $request->boolean('can_approve'),
+        ], $validated);
+
         HakAkses::create($validated);
+
         return redirect()->route('hak-akses.index')->with('success', 'Hak akses berhasil ditambahkan.');
     }
 
@@ -70,17 +85,31 @@ class HakAksesController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
+        $hakAkses = HakAkses::findOrFail($id);
+
         $validated = $request->validate([
-            'role' => 'required|string|in:admin,operator,pimpinan',
-            'can_view' => 'required|boolean',
-            'can_create' => 'required|boolean',
-            'can_edit' => 'required|boolean',
-            'can_delete' => 'required|boolean',
-            'can_approve' => 'required|boolean',
-            'keterangan' => 'nullable|max:255'
+            'role' => [
+                'required',
+                'string',
+                Rule::in(['admin', 'operator', 'pimpinan']),
+                Rule::unique('hak_akses', 'role')->ignore($hakAkses->id)->withoutTrashed()
+            ],
+            'can_view' => 'nullable|boolean',
+            'can_create' => 'nullable|boolean',
+            'can_edit' => 'nullable|boolean',
+            'can_delete' => 'nullable|boolean',
+            'can_approve' => 'nullable|boolean',
+            'keterangan' => 'nullable|string|max:255',
         ]);
 
-        $hakAkses = HakAkses::findOrFail($id);
+        $validated = array_merge([
+            'can_view' => $request->boolean('can_view'),
+            'can_create' => $request->boolean('can_create'),
+            'can_edit' => $request->boolean('can_edit'),
+            'can_delete' => $request->boolean('can_delete'),
+            'can_approve' => $request->boolean('can_approve'),
+        ], $validated);
+
         $hakAkses->update($validated);
 
         return redirect()->route('hak-akses.index')->with('success', 'Hak akses berhasil diperbarui.');
