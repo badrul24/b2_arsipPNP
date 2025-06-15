@@ -6,7 +6,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
-use App\Http\Controllers\BeritaController;    
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\HakAksesController;
+use App\Http\Controllers\RetensiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,8 +20,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard', function () {
-    return view('layouts.index');
-})->middleware('auth');
+    return view('layouts.dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Tabel User
 Route::get('/user', [UserController::class, 'index'])->name('user.index');
@@ -63,3 +66,28 @@ Route::get('/berita/{berita}', [BeritaController::class, 'show'])->name('berita.
 Route::get('/berita/{berita}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
 Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('berita.update');
 Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('berita.destroy');
+
+Route::get('/jurusan', [JurusanController::class, 'index'])->name('jurusan.index');
+Route::get('/jurusan/create', [JurusanController::class, 'create'])->name('jurusan.create');
+Route::post('/jurusan', [JurusanController::class, 'store'])->name('jurusan.store');
+Route::get('/jurusan/{jurusan}', [JurusanController::class, 'show'])->name('jurusan.show');
+Route::get('/jurusan/{jurusan}/edit', [JurusanController::class, 'edit'])->name('jurusan.edit');
+Route::put('/jurusan/{jurusan}', [JurusanController::class, 'update'])->name('jurusan.update');
+Route::delete('/jurusan/{jurusan}', [JurusanController::class, 'destroy'])->name('jurusan.destroy');
+
+// Tabel Hak Akses
+Route::get('/hak-akses', [HakAksesController::class, 'index'])->name('hak-akses.index');
+Route::get('/hak-akses/create', [HakAksesController::class, 'create'])->name('hak-akses.create');
+Route::post('/hak-akses', [HakAksesController::class, 'store'])->name('hak-akses.store');
+Route::get('/hak-akses/{hakAkses}/edit', [HakAksesController::class, 'edit'])->name('hak-akses.edit');
+Route::put('/hak-akses/{hakAkses}', [HakAksesController::class, 'update'])->name('hak-akses.update');
+Route::delete('/hak-akses/{hakAkses}', [HakAksesController::class, 'destroy'])->name('hak-akses.destroy');
+
+// Tabel Retensi
+Route::get('/retensi', [RetensiController::class, 'index'])->name('retensi.index');
+Route::get('/retensi/create', [RetensiController::class, 'create'])->name('retensi.create');
+Route::post('/retensi', [RetensiController::class, 'store'])->name('retensi.store');
+Route::get('/retensi/{retensi}/edit', [RetensiController::class, 'edit'])->name('retensi.edit');
+Route::put('/retensi/{retensi}', [RetensiController::class, 'update'])->name('retensi.update');
+Route::delete('/retensi/{retensi}', [RetensiController::class, 'destroy'])->name('retensi.destroy');
+
