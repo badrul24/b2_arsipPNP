@@ -11,7 +11,7 @@ use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\RetensiController;
 use App\Http\Controllers\StatusDokumenController;
-use App\Models\StatusDokumen;   
+use App\Http\Controllers\SifatDokumenController;  
 
 Route::get('/', function () {
     return view('welcome');
@@ -100,3 +100,11 @@ Route::post('/status-dokumen', [StatusDokumenController::class, 'store'])->name(
 Route::get('/status-dokumen/{statusDokumen}/edit', [StatusDokumenController::class, 'edit'])->name('statusDokumen.edit');
 Route::put('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'update'])->name('statusDokumen.update');
 Route::delete('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'destroy'])->name('statusDokumen.destroy');
+
+// Tabel Sifat Dokumen
+Route::get('/sifat-dokumen', [SifatDokumenController::class, 'index'])->name('sifat-dokumen.index');
+Route::get('/sifat-dokumen/create', [SifatDokumenController::class, 'create'])->name('sifat-dokumen.create');
+Route::post('/sifat-dokumen', [SifatDokumenController::class, 'store'])->name('sifat-dokumen.store');
+Route::get('/sifat-dokumen/{sifatDokumen}/edit', [SifatDokumenController::class, 'edit'])->name('sifat-dokumen.edit');
+Route::put('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'update'])->name('sifat-dokumen.update');
+Route::delete('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'destroy'])->name('sifat-dokumen.destroy');
