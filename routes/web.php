@@ -11,7 +11,8 @@ use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\RetensiController;
 use App\Http\Controllers\StatusDokumenController;
-use App\Http\Controllers\SifatDokumenController;  
+use App\Http\Controllers\SifatDokumenController;
+use App\Http\Controllers\JenisDokumenController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -108,3 +109,11 @@ Route::post('/sifat-dokumen', [SifatDokumenController::class, 'store'])->name('s
 Route::get('/sifat-dokumen/{sifatDokumen}/edit', [SifatDokumenController::class, 'edit'])->name('sifat-dokumen.edit');
 Route::put('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'update'])->name('sifat-dokumen.update');
 Route::delete('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'destroy'])->name('sifat-dokumen.destroy');
+
+// Tabel Jenis Dokumen
+Route::get('/jenis-dokumen', [JenisDokumenController::class, 'index'])->name('jenis-dokumen.index');
+Route::get('/jenis-dokumen/create', [JenisDokumenController::class, 'create'])->name('jenis-dokumen.create');
+Route::post('/jenis-dokumen', [JenisDokumenController::class, 'store'])->name('jenis-dokumen.store');
+Route::get('/jenis-dokumen/{jenisDokumen}/edit', [JenisDokumenController::class, 'edit'])->name('jenis-dokumen.edit');
+Route::put('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'update'])->name('jenis-dokumen.update');
+Route::delete('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'destroy'])->name('jenis-dokumen.destroy');
