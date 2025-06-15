@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') - SI ARSIP | Politeknik Negeri Padang</title>
     <meta name="description" content="Sistem Informasi Arsip Politeknik Negeri Padang">
+    <link rel="icon" type="image/x-icon" href="https://laravel.com/img/favicon/favicon.ico">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
