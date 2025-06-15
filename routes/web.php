@@ -9,6 +9,7 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\HakAksesController;
+use App\Http\Controllers\RetensiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -81,3 +82,12 @@ Route::post('/hak-akses', [HakAksesController::class, 'store'])->name('hak-akses
 Route::get('/hak-akses/{hakAkses}/edit', [HakAksesController::class, 'edit'])->name('hak-akses.edit');
 Route::put('/hak-akses/{hakAkses}', [HakAksesController::class, 'update'])->name('hak-akses.update');
 Route::delete('/hak-akses/{hakAkses}', [HakAksesController::class, 'destroy'])->name('hak-akses.destroy');
+
+// Tabel Retensi
+Route::get('/retensi', [RetensiController::class, 'index'])->name('retensi.index');
+Route::get('/retensi/create', [RetensiController::class, 'create'])->name('retensi.create');
+Route::post('/retensi', [RetensiController::class, 'store'])->name('retensi.store');
+Route::get('/retensi/{retensi}/edit', [RetensiController::class, 'edit'])->name('retensi.edit');
+Route::put('/retensi/{retensi}', [RetensiController::class, 'update'])->name('retensi.update');
+Route::delete('/retensi/{retensi}', [RetensiController::class, 'destroy'])->name('retensi.destroy');
+
