@@ -17,7 +17,7 @@ class StatusDokumenController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('kode_status', 'like', "%{$search}%")
                     ->orWhere('nama_status', 'like', "%{$search}%")
-                    ->orWhere('deskripsi', 'like', "%{$search}%");
+                    ->orWhere('keterangan', 'like', "%{$search}%");
             });
         }
 
@@ -36,7 +36,7 @@ class StatusDokumenController extends Controller
         $validated = $request->validate([
             'kode_status' => 'required|string|max:255|unique:status_dokumens',
             'nama_status' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string'
+            'keterangan' => 'nullable|string'
         ]);
 
         StatusDokumen::create($validated);
@@ -60,7 +60,7 @@ class StatusDokumenController extends Controller
         $validated = $request->validate([
             'kode_status' => 'required|string|max:255|unique:status_dokumens,kode_status,' . $statusDokumen->id,
             'nama_status' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string'
+            'keterangan' => 'nullable|string'
         ]);
 
         $statusDokumen->update($validated);

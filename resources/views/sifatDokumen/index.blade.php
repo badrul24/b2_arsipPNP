@@ -65,7 +65,7 @@
                             Sifat</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama
                             Sifat</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -83,7 +83,7 @@
                                 {{ $sifatDokumen->nama_sifat }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 max-w-xs">
-                                <div class="whitespace-normal break-words">{{ $sifatDokumen->deskripsi }}</div>
+                                <div class="whitespace-normal break-words">{{ $sifatDokumen->keterangan }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                 <a href="{{ route('sifat-dokumen.edit', $sifatDokumen->id) }}"

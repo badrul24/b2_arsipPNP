@@ -16,7 +16,7 @@ class SifatDokumenController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('kode_sifat', 'like', "%{$search}%")
                     ->orWhere('nama_sifat', 'like', "%{$search}%")
-                    ->orWhere('deskripsi', 'like', "%{$search}%");
+                    ->orWhere('keterangan', 'like', "%{$search}%");
             });
         }
 
@@ -35,7 +35,7 @@ class SifatDokumenController extends Controller
         $request->validate([
             'kode_sifat' => 'required|string|max:10|unique:sifat_dokumens',
             'nama_sifat' => 'required|string|max:100',
-            'deskripsi' => 'nullable|string'
+            'keterangan' => 'nullable|string'
         ]);
 
         SifatDokumen::create($request->all());
@@ -54,7 +54,7 @@ class SifatDokumenController extends Controller
         $request->validate([
             'kode_sifat' => 'required|string|max:10|unique:sifat_dokumens,kode_sifat,' . $sifatDokumen->id,
             'nama_sifat' => 'required|string|max:100',
-            'deskripsi' => 'nullable|string'
+            'keterangan' => 'nullable|string'
         ]);
 
         $sifatDokumen->update($request->all());

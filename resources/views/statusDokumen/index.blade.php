@@ -63,7 +63,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -80,7 +80,7 @@
                                 {{ $statusDokumen->nama_status }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 max-w-xs">
-                                <div class="whitespace-normal break-words">{{ $statusDokumen->deskripsi }}</div>
+                                <div class="whitespace-normal break-words">{{ $statusDokumen->keterangan }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                 <a href="{{ route('statusDokumen.edit', $statusDokumen->id) }}"

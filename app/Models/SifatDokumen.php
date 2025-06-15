@@ -14,7 +14,7 @@ class SifatDokumen extends Model
     protected $fillable = [
         'kode_sifat',
         'nama_sifat',
-        'deskripsi'
+        'keterangan'
     ];
 
     // Relationships

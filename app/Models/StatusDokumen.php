@@ -14,7 +14,7 @@ class StatusDokumen extends Model
     protected $fillable = [
         'kode_status',
         'nama_status',
-        'deskripsi'
+        'keterangan'
     ];
 
     // public function suratMasuk()

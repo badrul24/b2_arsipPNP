@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('kode_status')->unique();
             $table->string('nama_status');
-            $table->text('deskripsi')->nullable();
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

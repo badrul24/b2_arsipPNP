@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('kode_sifat')->unique();
             $table->string('nama_sifat');
-            $table->text('deskripsi')->nullable();
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

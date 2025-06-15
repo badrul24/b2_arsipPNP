@@ -49,11 +49,11 @@
                 </div>
 
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Deskripsi</label>
-                    <textarea name="deskripsi" rows="3"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 whitespace-normal break-words resize-none @error('deskripsi') border-red-500 @enderror"
-                        placeholder="Masukkan deskripsi sifat dokumen">{{ old('deskripsi', $sifatDokumen->deskripsi) }}</textarea>
-                    @error('deskripsi')
+                    <label class="block font-medium text-gray-700 mb-1">Keterangan</label>
+                    <textarea name="keterangan" rows="3"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 whitespace-normal break-words resize-none @error('keterangan') border-red-500 @enderror"
+                        placeholder="Masukkan keterangan sifat dokumen">{{ old('keterangan', $sifatDokumen->keterangan) }}</textarea>
+                    @error('keterangan')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
