@@ -120,6 +120,13 @@
             <span x-show="sidebarOpen">Lokasi</span>
         </a>
 
+        <a href="/status-dokumen" class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('status-dokumen*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span x-show="sidebarOpen">Status Dokumen</span>
+        </a>
+
         <a href="/berita" class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('berita*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

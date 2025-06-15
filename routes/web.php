@@ -10,6 +10,8 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\RetensiController;
+use App\Http\Controllers\StatusDokumenController;
+use App\Models\StatusDokumen;   
 
 Route::get('/', function () {
     return view('welcome');
@@ -91,3 +93,10 @@ Route::get('/retensi/{retensi}/edit', [RetensiController::class, 'edit'])->name(
 Route::put('/retensi/{retensi}', [RetensiController::class, 'update'])->name('retensi.update');
 Route::delete('/retensi/{retensi}', [RetensiController::class, 'destroy'])->name('retensi.destroy');
 
+// Tabel Status Dokumen
+Route::get('/status-dokumen', [StatusDokumenController::class, 'index'])->name('statusDokumen.index');
+Route::get('/status-dokumen/create', [StatusDokumenController::class, 'create'])->name('statusDokumen.create');
+Route::post('/status-dokumen', [StatusDokumenController::class, 'store'])->name('statusDokumen.store');
+Route::get('/status-dokumen/{statusDokumen}/edit', [StatusDokumenController::class, 'edit'])->name('statusDokumen.edit');
+Route::put('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'update'])->name('statusDokumen.update');
+Route::delete('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'destroy'])->name('statusDokumen.destroy');

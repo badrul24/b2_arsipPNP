@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class StatusDokumen extends Model
+{
+    use HasFactory;
+
+    protected $table = 'status_dokumens';
+
+    protected $fillable = [
+        'nama_status',
+        'kode_status',
+        'deskripsi',
+        'warna',
+        'is_active'
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean'
+    ];
+}
