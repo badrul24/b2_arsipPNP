@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('status_dokumens', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_status');
             $table->string('kode_status')->unique();
+            $table->string('nama_status');
             $table->text('deskripsi')->nullable();
-            $table->string('warna')->nullable();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
