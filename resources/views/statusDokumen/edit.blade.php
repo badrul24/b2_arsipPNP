@@ -27,21 +27,23 @@
                 @csrf
                 @method('PUT')
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Nama Status</label>
-                    <input type="text" name="nama_status"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('nama_status') border-red-500 @enderror"
-                        value="{{ old('nama_status', $statusDokumen->nama_status) }}">
-                    @error('nama_status')
+                    <label class="block font-medium text-gray-700 mb-1">Kode Status</label>
+                    <input type="text" name="kode_status"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('kode_status') border-red-500 @enderror"
+                        value="{{ old('kode_status', $statusDokumen->kode_status) }}"
+                        placeholder="Masukkan kode status (contoh: ACT, ARC, DEL)">
+                    @error('kode_status')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Kode Status</label>
-                    <input type="text" name="kode_status"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('kode_status') border-red-500 @enderror"
-                        value="{{ old('kode_status', $statusDokumen->kode_status) }}">
-                    @error('kode_status')
+                    <label class="block font-medium text-gray-700 mb-1">Nama Status</label>
+                    <input type="text" name="nama_status"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('nama_status') border-red-500 @enderror"
+                        value="{{ old('nama_status', $statusDokumen->nama_status) }}"
+                        placeholder="Masukkan nama status (contoh: Aktif, Arsip, Dihapus)">
+                    @error('nama_status')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -49,30 +51,9 @@
                 <div>
                     <label class="block font-medium text-gray-700 mb-1">Deskripsi</label>
                     <textarea name="deskripsi" rows="3"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 whitespace-normal break-words resize-none @error('deskripsi') border-red-500 @enderror">{{ old('deskripsi', $statusDokumen->deskripsi) }}</textarea>
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 whitespace-normal break-words resize-none @error('deskripsi') border-red-500 @enderror"
+                        placeholder="Masukkan deskripsi status dokumen">{{ old('deskripsi', $statusDokumen->deskripsi) }}</textarea>
                     @error('deskripsi')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block font-medium text-gray-700 mb-1">Warna</label>
-                    <input type="color" name="warna"
-                        class="w-full h-10 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('warna') border-red-500 @enderror"
-                        value="{{ old('warna', $statusDokumen->warna ?? '#000000') }}">
-                    @error('warna')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" name="is_active" value="1"
-                            class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                            {{ old('is_active', $statusDokumen->is_active) ? 'checked' : '' }}>
-                        <span class="text-sm text-gray-700">Status Aktif</span>
-                    </label>
-                    @error('is_active')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>

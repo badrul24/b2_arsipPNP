@@ -12,14 +12,18 @@ class StatusDokumen extends Model
     protected $table = 'status_dokumens';
 
     protected $fillable = [
-        'nama_status',
         'kode_status',
-        'deskripsi',
-        'warna',
-        'is_active'
+        'nama_status',
+        'deskripsi'
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean'
-    ];
+    // public function suratMasuk()
+    // {
+    //     return $this->hasMany(SuratMasuk::class);
+    // }
+
+    // public function suratKeluar()
+    // {
+    //     return $this->hasMany(SuratKeluar::class);
+    // }
 }
