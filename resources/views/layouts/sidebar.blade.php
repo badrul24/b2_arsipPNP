@@ -37,7 +37,7 @@
         </div>
 
         <!-- 2. Manajemen Arsip -->
-        <div x-data="{ open: {{ request()->is('surat-masuk*') || request()->is('surat-keluar*') || request()->is('dokumen-internal*') || request()->is('disposisi*') ? 'true' : 'false' }} }">
+        <div x-data="{ open: {{ request()->is('surat-masuk*') || request()->is('surat-keluar*') || request()->is('dokumen*') || request()->is('disposisi*') ? 'true' : 'false' }} }">
             <button
                 @click="open = !open"
                 class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100 hover:text-gray-900"
@@ -73,11 +73,11 @@
                     </svg>
                     Surat Keluar
                 </a>
-                <a href="/dokumen-internal" class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('dokumen-internal*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
+                <a href="/dokumen" class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('dokumen*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Dokumen Internal
+                    Dokumen
                 </a>
                 <a href="/disposisi" class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('disposisi*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

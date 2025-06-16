@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'jurusan',
         'email_verified_at'
     ];
 
@@ -45,5 +47,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOperator()
+    {
+        return $this->role === 'operator';
+    }
+
+    public function isPimpinan()
+    {
+        return $this->role === 'pimpinan';
+    }
+
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class);
+    }
+
+    // Tambahkan helper untuk mendapatkan jurusan user
+    public function getJurusanId()
+    {
+        return $this->jurusan_id;
     }
 }
