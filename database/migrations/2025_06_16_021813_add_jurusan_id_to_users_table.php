@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('jurusan_id')->nullable()->constrained('jurusan')->onDelete('set null');
+            $table->foreignId('jurusan_id')
+                ->nullable()
+                ->after('role')
+                ->constrained('jurusans')
+                ->onDelete('set null');
+
             // Gunakan ->nullable() jika ada user yang tidak terikat jurusan (misal: Admin Global)
             // Gunakan ->onDelete('set null') agar jika jurusan dihapus, user tidak ikut terhapus
         });

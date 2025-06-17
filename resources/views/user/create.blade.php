@@ -28,10 +28,10 @@
                 
                 <!-- Name Field -->
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Nama</label>
-                    <input type="text" name="name" value="{{ old('name') }}"
+                    <label for="name" class="block font-medium text-gray-700 mb-1">Nama</label>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('name') border-red-500 @enderror"
-                        placeholder="Masukkan nama pengguna">
+                        placeholder="Masukkan nama pengguna" required>
                     @error('name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -39,10 +39,10 @@
 
                 <!-- Email Field -->
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" name="email" value="{{ old('email') }}"
+                    <label for="email" class="block font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('email') border-red-500 @enderror"
-                        placeholder="Masukkan email pengguna">
+                        placeholder="Masukkan email pengguna" required>
                     @error('email')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -50,11 +50,11 @@
 
                 <!-- Password Field -->
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Password</label>
+                    <label for="password" class="block font-medium text-gray-700 mb-1">Password</label>
                     <div class="relative">
                         <input type="password" name="password" id="password"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('password') border-red-500 @enderror"
-                            placeholder="Masukkan password">
+                            placeholder="Masukkan password" required>
                         <button type="button" onclick="togglePassword('password')"
                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,11 +70,11 @@
 
                 <!-- Password Confirmation Field -->
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Konfirmasi Password</label>
+                    <label for="password_confirmation" class="block font-medium text-gray-700 mb-1">Konfirmasi Password</label>
                     <div class="relative">
                         <input type="password" name="password_confirmation" id="password_confirmation"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Konfirmasi password">
+                            placeholder="Konfirmasi password" required>
                         <button type="button" onclick="togglePassword('password_confirmation')"
                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -83,6 +83,40 @@
                             </svg>
                         </button>
                     </div>
+                </div>
+
+                <!-- Input untuk Role -->
+                <div>
+                    <label for="role" class="block font-medium text-gray-700 mb-1">Peran (Role)</label>
+                    <select name="role" id="role"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('role') border-red-500 @enderror"
+                        required>
+                        <option value="">Pilih Peran</option>
+                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                        <option value="operator" {{ old('role') == 'operator' ? 'selected' : '' }}>Operator</option>
+                        <option value="pimpinan" {{ old('role') == 'pimpinan' ? 'selected' : '' }}>Pimpinan</option>
+                    </select>
+                    @error('role')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Input untuk Jurusan -->
+                {{-- ID 'jurusan-group' digunakan oleh JavaScript untuk mengontrol visibilitas --}}
+                <div id="jurusan-group" class="form-group" style="{{ old('role') == 'operator' ? '' : 'display:none;' }}">
+                    <label for="jurusan_id" class="block font-medium text-gray-700 mb-1">Jurusan</label>
+                    <select name="jurusan_id" id="jurusan_id"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('jurusan_id') border-red-500 @enderror">
+                        <option value="">Pilih Jurusan (khusus Operator)</option>
+                        @foreach($jurusans as $jurusan)
+                            <option value="{{ $jurusan->id }}" {{ old('jurusan_id') == $jurusan->id ? 'selected' : '' }}>
+                                {{ $jurusan->nama_jurusan }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('jurusan_id')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="flex space-x-2">
@@ -109,10 +143,37 @@
 
 @push('scripts')
 <script>
+    // Fungsi untuk menampilkan/menyembunyikan password
     function togglePassword(inputId) {
         const input = document.getElementById(inputId);
         const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
         input.setAttribute('type', type);
     }
+
+    // JavaScript untuk menampilkan/menyembunyikan input jurusan berdasarkan pilihan role
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleSelect = document.getElementById('role');
+        const jurusanGroup = document.getElementById('jurusan-group');
+        const jurusanSelect = document.getElementById('jurusan_id');
+
+        function toggleJurusanField() {
+            if (roleSelect.value === 'operator') {
+                jurusanGroup.style.display = 'block';
+                // Menambahkan atribut 'required' jika peran adalah operator
+                jurusanSelect.setAttribute('required', 'required'); 
+            } else {
+                jurusanGroup.style.display = 'none';
+                // Menghapus atribut 'required' jika bukan operator
+                jurusanSelect.removeAttribute('required'); 
+                jurusanSelect.value = ''; // Reset nilai jurusan saat disembunyikan
+            }
+        }
+
+        // Panggil fungsi saat halaman dimuat (untuk old input)
+        toggleJurusanField();
+
+        // Panggil fungsi setiap kali pilihan role berubah
+        roleSelect.addEventListener('change', toggleJurusanField);
+    });
 </script>
-@endpush 
+@endpush

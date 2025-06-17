@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File; // Diperlukan untuk File::exists() dan File::download()
+
+// Import semua Controllers yang Anda miliki
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
@@ -8,105 +12,151 @@ use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\JurusanController;
-use App\Http\Controllers\HakAksesController;
+use App\Http\Controllers\HakAksesController; // Jika Anda punya controller ini, sertakan
 use App\Http\Controllers\RetensiController;
 use App\Http\Controllers\StatusDokumenController;
 use App\Http\Controllers\SifatDokumenController;
 use App\Http\Controllers\JenisDokumenController;
 use App\Http\Controllers\DokumenController;
+use App\Models\Dokumen; // Diperlukan untuk route dokumen.download
+
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Rute Autentikasi Kustom Anda
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/register', [UserController::class, 'showRegister'])->name('register'); // Register di UserController
+Route::post('/register', [UserController::class, 'register']); // Register di UserController
 
-Route::get('/dashboard', function () {
-    return view('layouts.dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Tabel User
-Route::get('/user', [UserController::class, 'index'])->name('user.index');
-Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
-Route::post('/user', [UserController::class, 'store'])->name('user.store');
-Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
-Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update');
-Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+// --- Grup Rute yang Membutuhkan Autentikasi (`auth` middleware) ---
+Route::middleware(['auth'])->group(function () {
 
-Route::get('/register', [UserController::class, 'showRegister'])->name('register');
-Route::post('/register', [UserController::class, 'register']);
+    Route::get('/dashboard', function () {
+        return view('layouts.dashboard');
+    })->name('dashboard');
 
-// Tabel Kategori
-Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
-Route::get('/kategori/create', [KategoriController::class, 'create'])->name('kategori.create');
-Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
-Route::get('/kategori/{kategori}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
-Route::put('/kategori/{kategori}', [KategoriController::class, 'update'])->name('kategori.update');
-Route::delete('/kategori/{kategori}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+    // Tabel User
+    Route::get('/user', [UserController::class, 'index'])->name('user.index');
+    Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
+    Route::post('/user', [UserController::class, 'store'])->name('user.store');
+    // Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
+    Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
 
-// Tabel Kode
-Route::get('/kode', [KodeController::class, 'index'])->name('kode.index');
-Route::get('/kode/create', [KodeController::class, 'create'])->name('kode.create');
-Route::post('/kode', [KodeController::class, 'store'])->name('kode.store');
-Route::get('/kode/{kode}/edit', [KodeController::class, 'edit'])->name('kode.edit');
-Route::put('/kode/{kode}', [KodeController::class, 'update'])->name('kode.update');
-Route::delete('/kode/{kode}', [KodeController::class, 'destroy'])->name('kode.destroy');
+    // Tabel Kategori
+    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::get('/kategori/create', [KategoriController::class, 'create'])->name('kategori.create');
+    Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
+    // Route::get('/kategori/{kategori}', [KategoriController::class, 'show'])->name('kategori.show');
+    Route::get('/kategori/{kategori}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
+    Route::put('/kategori/{kategori}', [KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('/kategori/{kategori}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 
-// Tabel Lokasi
-Route::get('/lokasi', [LokasiController::class, 'index'])->name('lokasi.index');
-Route::get('/lokasi/create', [LokasiController::class, 'create'])->name('lokasi.create');
-Route::post('/lokasi', [LokasiController::class, 'store'])->name('lokasi.store');
-Route::get('/lokasi/{lokasi}/edit', [LokasiController::class, 'edit'])->name('lokasi.edit');
-Route::put('/lokasi/{lokasi}', [LokasiController::class, 'update'])->name('lokasi.update');
-Route::delete('/lokasi/{lokasi}', [LokasiController::class, 'destroy'])->name('lokasi.destroy');
+    // Tabel Kode
+    Route::get('/kode', [KodeController::class, 'index'])->name('kode.index');
+    Route::get('/kode/create', [KodeController::class, 'create'])->name('kode.create');
+    Route::post('/kode', [KodeController::class, 'store'])->name('kode.store');
+    // Route::get('/kode/{kode}', [KodeController::class, 'show'])->name('kode.show');
+    Route::get('/kode/{kode}/edit', [KodeController::class, 'edit'])->name('kode.edit');
+    Route::put('/kode/{kode}', [KodeController::class, 'update'])->name('kode.update');
+    Route::delete('/kode/{kode}', [KodeController::class, 'destroy'])->name('kode.destroy');
 
-// Tabel Berita
-Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
-Route::get('/berita/create', [BeritaController::class, 'create'])->name('berita.create');
-Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
-Route::get('/berita/{berita}', [BeritaController::class, 'show'])->name('berita.show');
-Route::get('/berita/{berita}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
-Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('berita.update');
-Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('berita.destroy');
+    // Tabel Lokasi
+    Route::get('/lokasi', [LokasiController::class, 'index'])->name('lokasi.index');
+    Route::get('/lokasi/create', [LokasiController::class, 'create'])->name('lokasi.create');
+    Route::post('/lokasi', [LokasiController::class, 'store'])->name('lokasi.store');
+    // Route::get('/lokasi/{lokasi}', [LokasiController::class, 'show'])->name('lokasi.show');
+    Route::get('/lokasi/{lokasi}/edit', [LokasiController::class, 'edit'])->name('lokasi.edit');
+    Route::put('/lokasi/{lokasi}', [LokasiController::class, 'update'])->name('lokasi.update');
+    Route::delete('/lokasi/{lokasi}', [LokasiController::class, 'destroy'])->name('lokasi.destroy');
 
-Route::get('/jurusan', [JurusanController::class, 'index'])->name('jurusan.index');
-Route::get('/jurusan/create', [JurusanController::class, 'create'])->name('jurusan.create');
-Route::post('/jurusan', [JurusanController::class, 'store'])->name('jurusan.store');
-Route::get('/jurusan/{jurusan}', [JurusanController::class, 'show'])->name('jurusan.show');
-Route::get('/jurusan/{jurusan}/edit', [JurusanController::class, 'edit'])->name('jurusan.edit');
-Route::put('/jurusan/{jurusan}', [JurusanController::class, 'update'])->name('jurusan.update');
-Route::delete('/jurusan/{jurusan}', [JurusanController::class, 'destroy'])->name('jurusan.destroy');
+    // Tabel Berita
+    Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
+    Route::get('/berita/create', [BeritaController::class, 'create'])->name('berita.create');
+    Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
+    Route::get('/berita/{berita}', [BeritaController::class, 'show'])->name('berita.show'); // Berita memiliki metode show
+    Route::get('/berita/{berita}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
+    Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('berita.update');
+    Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 
-// Tabel Retensi
-Route::get('/retensi', [RetensiController::class, 'index'])->name('retensi.index');
-Route::get('/retensi/create', [RetensiController::class, 'create'])->name('retensi.create');
-Route::post('/retensi', [RetensiController::class, 'store'])->name('retensi.store');
-Route::get('/retensi/{retensi}/edit', [RetensiController::class, 'edit'])->name('retensi.edit');
-Route::put('/retensi/{retensi}', [RetensiController::class, 'update'])->name('retensi.update');
-Route::delete('/retensi/{retensi}', [RetensiController::class, 'destroy'])->name('retensi.destroy');
+    // Tabel Jurusan
+    Route::get('/jurusan', [JurusanController::class, 'index'])->name('jurusan.index');
+    Route::get('/jurusan/create', [JurusanController::class, 'create'])->name('jurusan.create');
+    Route::post('/jurusan', [JurusanController::class, 'store'])->name('jurusan.store');
+    Route::get('/jurusan/{jurusan}', [JurusanController::class, 'show'])->name('jurusan.show'); // Jurusan memiliki metode show
+    Route::get('/jurusan/{jurusan}/edit', [JurusanController::class, 'edit'])->name('jurusan.edit');
+    Route::put('/jurusan/{jurusan}', [JurusanController::class, 'update'])->name('jurusan.update');
+    Route::delete('/jurusan/{jurusan}', [JurusanController::class, 'destroy'])->name('jurusan.destroy');
 
-// Tabel Status Dokumen
-Route::get('/status-dokumen', [StatusDokumenController::class, 'index'])->name('statusDokumen.index');
-Route::get('/status-dokumen/create', [StatusDokumenController::class, 'create'])->name('statusDokumen.create');
-Route::post('/status-dokumen', [StatusDokumenController::class, 'store'])->name('statusDokumen.store');
-Route::get('/status-dokumen/{statusDokumen}/edit', [StatusDokumenController::class, 'edit'])->name('statusDokumen.edit');
-Route::put('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'update'])->name('statusDokumen.update');
-Route::delete('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'destroy'])->name('statusDokumen.destroy');
+    // Tabel Retensi
+    Route::get('/retensi', [RetensiController::class, 'index'])->name('retensi.index');
+    Route::get('/retensi/create', [RetensiController::class, 'create'])->name('retensi.create');
+    Route::post('/retensi', [RetensiController::class, 'store'])->name('retensi.store');
+    // Route::get('/retensi/{retensi}', [RetensiController::class, 'show'])->name('retensi.show');
+    Route::get('/retensi/{retensi}/edit', [RetensiController::class, 'edit'])->name('retensi.edit');
+    Route::put('/retensi/{retensi}', [RetensiController::class, 'update'])->name('retensi.update');
+    Route::delete('/retensi/{retensi}', [RetensiController::class, 'destroy'])->name('retensi.destroy');
 
-// Tabel Sifat Dokumen
-Route::get('/sifat-dokumen', [SifatDokumenController::class, 'index'])->name('sifat-dokumen.index');
-Route::get('/sifat-dokumen/create', [SifatDokumenController::class, 'create'])->name('sifat-dokumen.create');
-Route::post('/sifat-dokumen', [SifatDokumenController::class, 'store'])->name('sifat-dokumen.store');
-Route::get('/sifat-dokumen/{sifatDokumen}/edit', [SifatDokumenController::class, 'edit'])->name('sifat-dokumen.edit');
-Route::put('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'update'])->name('sifat-dokumen.update');
-Route::delete('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'destroy'])->name('sifat-dokumen.destroy');
+    // Tabel Status Dokumen
+    Route::get('/status-dokumen', [StatusDokumenController::class, 'index'])->name('statusDokumen.index');
+    Route::get('/status-dokumen/create', [StatusDokumenController::class, 'create'])->name('statusDokumen.create');
+    Route::post('/status-dokumen', [StatusDokumenController::class, 'store'])->name('statusDokumen.store');
+    // Route::get('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'show'])->name('statusDokumen.show');
+    Route::get('/status-dokumen/{statusDokumen}/edit', [StatusDokumenController::class, 'edit'])->name('statusDokumen.edit');
+    Route::put('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'update'])->name('statusDokumen.update');
+    Route::delete('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'destroy'])->name('statusDokumen.destroy');
 
-// Tabel Jenis Dokumen
-Route::get('/jenis-dokumen', [JenisDokumenController::class, 'index'])->name('jenis-dokumen.index');
-Route::get('/jenis-dokumen/create', [JenisDokumenController::class, 'create'])->name('jenis-dokumen.create');
-Route::post('/jenis-dokumen', [JenisDokumenController::class, 'store'])->name('jenis-dokumen.store');
-Route::get('/jenis-dokumen/{jenisDokumen}/edit', [JenisDokumenController::class, 'edit'])->name('jenis-dokumen.edit');
-Route::put('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'update'])->name('jenis-dokumen.update');
-Route::delete('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'destroy'])->name('jenis-dokumen.destroy');
+    // Tabel Sifat Dokumen
+    Route::get('/sifat-dokumen', [SifatDokumenController::class, 'index'])->name('sifat-dokumen.index');
+    Route::get('/sifat-dokumen/create', [SifatDokumenController::class, 'create'])->name('sifat-dokumen.create');
+    Route::post('/sifat-dokumen', [SifatDokumenController::class, 'store'])->name('sifat-dokumen.store');
+    // Route::get('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'show'])->name('sifat-dokumen.show');
+    Route::get('/sifat-dokumen/{sifatDokumen}/edit', [SifatDokumenController::class, 'edit'])->name('sifat-dokumen.edit');
+    Route::put('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'update'])->name('sifat-dokumen.update');
+    Route::delete('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'destroy'])->name('sifat-dokumen.destroy');
+
+    // Tabel Jenis Dokumen
+    Route::get('/jenis-dokumen', [JenisDokumenController::class, 'index'])->name('jenis-dokumen.index');
+    Route::get('/jenis-dokumen/create', [JenisDokumenController::class, 'create'])->name('jenis-dokumen.create');
+    Route::post('/jenis-dokumen', [JenisDokumenController::class, 'store'])->name('jenis-dokumen.store');
+    // Route::get('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'show'])->name('jenis-dokumen.show');
+    Route::get('/jenis-dokumen/{jenisDokumen}/edit', [JenisDokumenController::class, 'edit'])->name('jenis-dokumen.edit');
+    Route::put('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'update'])->name('jenis-dokumen.update');
+    Route::delete('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'destroy'])->name('jenis-dokumen.destroy');
+
+    // Tabel Dokumen (CRUD utama)
+    Route::get('/dokumen', [DokumenController::class, 'index'])->name('dokumen.index');
+    Route::get('/dokumen/create', [DokumenController::class, 'create'])->name('dokumen.create');
+    Route::post('/dokumen', [DokumenController::class, 'store'])->name('dokumen.store');
+    Route::get('/dokumen/{dokumen}', [DokumenController::class, 'show'])->name('dokumen.show');
+    Route::get('/dokumen/{dokumen}/edit', [DokumenController::class, 'edit'])->name('dokumen.edit');
+    Route::put('/dokumen/{dokumen}', [DokumenController::class, 'update'])->name('dokumen.update');
+    Route::delete('/dokumen/{dokumen}', [DokumenController::class, 'destroy'])->name('dokumen.destroy');
+
+    // Rute khusus untuk mendownload file dokumen dari public_path
+    Route::get('/dokumen/{dokumen}/download', function(Dokumen $dokumen) {
+        $user = Auth::user();
+
+        // Hak Akses: Admin bisa download semua dokumen.
+        // Operator atau Pimpinan hanya bisa download dokumen dari jurusannya.
+        if (($user->isOperator() || $user->isPimpinan()) && $user->jurusan_id !== $dokumen->jurusan_id) {
+            abort(403, 'Anda tidak memiliki akses untuk mengunduh dokumen ini.');
+        }
+
+        $filePath = public_path($dokumen->file_path);
+
+        if (File::exists($filePath)) {
+            return response()->download($filePath, $dokumen->nama_file_asli);
+        } else {
+            abort(404, 'File dokumen tidak ditemukan.');
+        }
+    })->name('dokumen.download');
+    // Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+});
