@@ -2,9 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File; // Diperlukan untuk File::exists() dan File::download()
+use Illuminate\Support\Facades\File;
 
-// Import semua Controllers yang Anda miliki
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
@@ -12,11 +11,7 @@ use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\JurusanController;
-use App\Http\Controllers\HakAksesController; // Jika Anda punya controller ini, sertakan
 use App\Http\Controllers\RetensiController;
-use App\Http\Controllers\StatusDokumenController;
-use App\Http\Controllers\SifatDokumenController;
-use App\Http\Controllers\JenisDokumenController;
 use App\Http\Controllers\DokumenController;
 use App\Models\Dokumen; // Diperlukan untuk route dokumen.download
 
@@ -103,33 +98,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/retensi/{retensi}/edit', [RetensiController::class, 'edit'])->name('retensi.edit');
     Route::put('/retensi/{retensi}', [RetensiController::class, 'update'])->name('retensi.update');
     Route::delete('/retensi/{retensi}', [RetensiController::class, 'destroy'])->name('retensi.destroy');
-
-    // Tabel Status Dokumen
-    Route::get('/status-dokumen', [StatusDokumenController::class, 'index'])->name('statusDokumen.index');
-    Route::get('/status-dokumen/create', [StatusDokumenController::class, 'create'])->name('statusDokumen.create');
-    Route::post('/status-dokumen', [StatusDokumenController::class, 'store'])->name('statusDokumen.store');
-    // Route::get('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'show'])->name('statusDokumen.show');
-    Route::get('/status-dokumen/{statusDokumen}/edit', [StatusDokumenController::class, 'edit'])->name('statusDokumen.edit');
-    Route::put('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'update'])->name('statusDokumen.update');
-    Route::delete('/status-dokumen/{statusDokumen}', [StatusDokumenController::class, 'destroy'])->name('statusDokumen.destroy');
-
-    // Tabel Sifat Dokumen
-    Route::get('/sifat-dokumen', [SifatDokumenController::class, 'index'])->name('sifat-dokumen.index');
-    Route::get('/sifat-dokumen/create', [SifatDokumenController::class, 'create'])->name('sifat-dokumen.create');
-    Route::post('/sifat-dokumen', [SifatDokumenController::class, 'store'])->name('sifat-dokumen.store');
-    // Route::get('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'show'])->name('sifat-dokumen.show');
-    Route::get('/sifat-dokumen/{sifatDokumen}/edit', [SifatDokumenController::class, 'edit'])->name('sifat-dokumen.edit');
-    Route::put('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'update'])->name('sifat-dokumen.update');
-    Route::delete('/sifat-dokumen/{sifatDokumen}', [SifatDokumenController::class, 'destroy'])->name('sifat-dokumen.destroy');
-
-    // Tabel Jenis Dokumen
-    Route::get('/jenis-dokumen', [JenisDokumenController::class, 'index'])->name('jenis-dokumen.index');
-    Route::get('/jenis-dokumen/create', [JenisDokumenController::class, 'create'])->name('jenis-dokumen.create');
-    Route::post('/jenis-dokumen', [JenisDokumenController::class, 'store'])->name('jenis-dokumen.store');
-    // Route::get('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'show'])->name('jenis-dokumen.show');
-    Route::get('/jenis-dokumen/{jenisDokumen}/edit', [JenisDokumenController::class, 'edit'])->name('jenis-dokumen.edit');
-    Route::put('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'update'])->name('jenis-dokumen.update');
-    Route::delete('/jenis-dokumen/{jenisDokumen}', [JenisDokumenController::class, 'destroy'])->name('jenis-dokumen.destroy');
 
     // Tabel Dokumen (CRUD utama)
     Route::get('/dokumen', [DokumenController::class, 'index'])->name('dokumen.index');
