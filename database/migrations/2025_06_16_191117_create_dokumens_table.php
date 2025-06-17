@@ -12,31 +12,30 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dokumens', function (Blueprint $table) {
-            $table->id(); // Kolom ID otomatis sebagai Primary Key
+            $table->id();
 
-            // Kolom untuk informasi dokumen
-            $table->string('nomor_surat')->nullable(); // Jika ini juga mencakup surat
+            // Kolom informasi dokumen
+            $table->string('nomor_surat')->nullable();
             $table->string('judul');
-            $table->date('tanggal_dokumen'); // Tanggal dokumen dibuat/diterima
-            $table->text('keterangan')->nullable(); // Bisa kosong
-            $table->string('file_path')->nullable(); // Path lokasi file dokumen di storage
-            $table->string('nama_file_asli')->nullable(); // Nama file asli saat diupload
+            $table->date('tanggal_dokumen');
+            $table->text('keterangan')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('nama_file_asli')->nullable();
 
-            // Foreign Keys untuk relasi dengan tabel master Anda
+            // Foreign Keys untuk relasi dengan tabel master
             $table->foreignId('kategori_id')->constrained('kategoris')->onDelete('restrict');
             $table->foreignId('kode_id')->constrained('kodes')->onDelete('restrict');
             $table->foreignId('lokasi_id')->constrained('lokasis')->onDelete('restrict');
             $table->foreignId('retensi_id')->constrained('retensis')->onDelete('restrict');
-            $table->foreignId('status_id')->constrained('status_dokumens')->onDelete('restrict');
-            $table->foreignId('sifat_id')->constrained('sifat_dokumens')->onDelete('restrict');
-            $table->foreignId('jenis_id')->constrained('jenis_dokumens')->onDelete('restrict');
 
-            // Kolom untuk Jurusan dan User (penting untuk manajemen per jurusan)
-            // Pastikan tabel 'jurusan' dan 'users' sudah ada sebelum menjalankan migrasi ini!
+            $table->enum('sifat', ['Sangat Penting', 'Penting', 'Biasa'])->default('Biasa');
+            $table->enum('status', ['Aktif', 'Inaktif', 'Musnah'])->default('Aktif');
+            $table->enum('jenis', ['Surat', 'Laporan', 'Memorandum', 'Perjanjian', 'SK'])->default('Surat');
+
+            // Kolom untuk manajemen per jurusan dan melacak pengunggah
             $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('restrict');
-            $table->foreignId('user_id')->constrained('users')->onDelete('restrict'); // Siapa yang mengupload/membuat dokumen
-
-            $table->timestamps(); // Kolom created_at dan updated_at
+            $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
+            $table->timestamps();
         });
     }
 
@@ -48,4 +47,3 @@ return new class extends Migration
         Schema::dropIfExists('dokumens');
     }
 };
-

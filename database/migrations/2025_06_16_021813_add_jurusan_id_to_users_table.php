@@ -17,9 +17,6 @@ return new class extends Migration
                 ->after('role')
                 ->constrained('jurusans')
                 ->onDelete('set null');
-
-            // Gunakan ->nullable() jika ada user yang tidak terikat jurusan (misal: Admin Global)
-            // Gunakan ->onDelete('set null') agar jika jurusan dihapus, user tidak ikut terhapus
         });
     }
 

@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('retensis', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_retensi', 10);
-            $table->string('nama_retensi', 100);
-            $table->integer('tahun_aktif')->default(2);
+            $table->string('kode_retensi', 10)->unique();
+            $table->string('nama_retensi', 100)->unique();
+            $table->integer('tahun_aktif')->default(2); 
             $table->integer('tahun_inaktif')->default(3);
-            $table->integer('masa_retensi')->storedAs('tahun_aktif + tahun_inaktif');
+            $table->enum('nasib_akhir', ['Musnah', 'Permanen', 'Dinilai Kembali'])->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
-
         });
     }
 

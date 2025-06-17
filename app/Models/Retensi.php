@@ -16,6 +16,7 @@ class Retensi extends Model
         'tahun_aktif',
         'tahun_inaktif',
         'masa-retensi',
+        'nasib_akhir',
         'keterangan'
     ];
 }

@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Menambahkan kolom 'role' dengan nilai default 'operator'
-            $table->enum('role', ['admin', 'operator', 'pimpinan'])->default('operator')->after('email');
+            $table->enum('role', ['admin', 'operator', 'pimpinan'])
+            ->default('operator')
+            ->after('email');
         });
     }
 
