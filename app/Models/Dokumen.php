@@ -23,9 +23,9 @@ class Dokumen extends Model
         'kode_id',
         'lokasi_id',
         'retensi_id',
-        'status_id',
-        'sifat_id',
-        'jenis_id',
+        'sifat',
+        'status',
+        'jenis',
         'jurusan_id',
         'user_id'
     ];
@@ -58,24 +58,6 @@ class Dokumen extends Model
     public function retensi(): BelongsTo
     {
         return $this->belongsTo(Retensi::class);
-    }
-
-    // Relasi dengan Status Dokumen
-    public function status(): BelongsTo
-    {
-        return $this->belongsTo(StatusDokumen::class);
-    }
-
-    // Relasi dengan Sifat Dokumen
-    public function sifat(): BelongsTo
-    {
-        return $this->belongsTo(SifatDokumen::class);
-    }
-
-    // Relasi dengan Jenis Dokumen
-    public function jenis(): BelongsTo
-    {
-        return $this->belongsTo(JenisDokumen::class);
     }
 
     // Relasi dengan Jurusan
