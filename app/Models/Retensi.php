@@ -15,7 +15,6 @@ class Retensi extends Model
         'nama_retensi',
         'tahun_aktif',
         'tahun_inaktif',
-        'masa-retensi',
         'nasib_akhir',
         'keterangan'
     ];
