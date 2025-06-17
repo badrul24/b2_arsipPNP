@@ -89,17 +89,19 @@
                                 {{ $dokumen->kode->kode }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{-- PERBAIKAN: Akses langsung kolom 'status' (ENUM) --}}
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $dokumen->status->nama_status === 'Aktif' ? 'bg-green-100 text-green-800' : 
-                                       ($dokumen->status->nama_status === 'Arsip' ? 'bg-yellow-100 text-yellow-800' : 
-                                        'bg-red-100 text-red-800') }}">
-                                    {{ $dokumen->status->nama_status }}
+                                    {{ $dokumen->status === 'Aktif' ? 'bg-green-100 text-green-800' : 
+                                       ($dokumen->status === 'Inaktif' ? 'bg-yellow-100 text-yellow-800' : 
+                                       'bg-red-100 text-red-800') }}">
+                                    {{ $dokumen->status }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 @if($dokumen->file_path)
-                                    <a href="{{ asset($dokumen->file_path) }}" target="_blank" 
-                                        class="text-primary-600 hover:text-primary-900">
+                                    {{-- PERBAIKAN: Gunakan route dokumen.download --}}
+                                    <a href="{{ route('dokumen.download', $dokumen->id) }}"
+                                       class="text-primary-600 hover:text-primary-900">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -152,6 +154,7 @@
 @endsection
 
 @push('scripts')
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- Pastikan SweetAlert2 ter-load jika belum --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Handle delete button click
@@ -203,7 +206,7 @@
             });
         @endif
 
-        // Show error message if exists
+        // Show error message if exists (jika ada error dari controller)
         @if(session('error'))
             Swal.fire({
                 icon: 'error',

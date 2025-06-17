@@ -30,8 +30,8 @@
                     <!-- Kolom Kiri -->
                     <div class="space-y-6">
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Nomor Surat</label>
-                            <input type="text" name="nomor_surat"
+                            <label for="nomor_surat" class="block font-medium text-gray-700 mb-1">Nomor Surat</label>
+                            <input type="text" name="nomor_surat" id="nomor_surat"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('nomor_surat') border-red-500 @enderror"
                                 value="{{ old('nomor_surat', $dokumen->nomor_surat) }}"
                                 placeholder="Masukkan nomor surat">
@@ -41,8 +41,8 @@
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Judul</label>
-                            <input type="text" name="judul"
+                            <label for="judul" class="block font-medium text-gray-700 mb-1">Judul</label>
+                            <input type="text" name="judul" id="judul"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('judul') border-red-500 @enderror"
                                 value="{{ old('judul', $dokumen->judul) }}"
                                 placeholder="Masukkan judul dokumen">
@@ -52,8 +52,8 @@
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Tanggal Dokumen</label>
-                            <input type="date" name="tanggal_dokumen"
+                            <label for="tanggal_dokumen" class="block font-medium text-gray-700 mb-1">Tanggal Dokumen</label>
+                            <input type="date" name="tanggal_dokumen" id="tanggal_dokumen"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('tanggal_dokumen') border-red-500 @enderror"
                                 value="{{ old('tanggal_dokumen', $dokumen->tanggal_dokumen->format('Y-m-d')) }}">
                             @error('tanggal_dokumen')
@@ -62,8 +62,8 @@
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Kategori</label>
-                            <select name="kategori_id"
+                            <label for="kategori_id" class="block font-medium text-gray-700 mb-1">Kategori</label>
+                            <select name="kategori_id" id="kategori_id"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('kategori_id') border-red-500 @enderror">
                                 <option value="" disabled selected>Pilih Kategori</option>
                                 @foreach($kategoris as $kategori)
@@ -78,8 +78,8 @@
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Kode Klasifikasi</label>
-                            <select name="kode_id"
+                            <label for="kode_id" class="block font-medium text-gray-700 mb-1">Kode Klasifikasi</label>
+                            <select name="kode_id" id="kode_id"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('kode_id') border-red-500 @enderror">
                                 <option value="" disabled selected>Pilih Kode</option>
                                 @foreach($kodes as $kode)
@@ -94,8 +94,8 @@
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Lokasi Penyimpanan</label>
-                            <select name="lokasi_id"
+                            <label for="lokasi_id" class="block font-medium text-gray-700 mb-1">Lokasi Penyimpanan</label>
+                            <select name="lokasi_id" id="lokasi_id"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('lokasi_id') border-red-500 @enderror">
                                 <option value="" disabled selected>Pilih Lokasi</option>
                                 @foreach($lokasis as $lokasi)
@@ -113,8 +113,8 @@
                     <!-- Kolom Kanan -->
                     <div class="space-y-6">
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Retensi Arsip</label>
-                            <select name="retensi_id"
+                            <label for="retensi_id" class="block font-medium text-gray-700 mb-1">Retensi Arsip</label>
+                            <select name="retensi_id" id="retensi_id"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('retensi_id') border-red-500 @enderror">
                                 <option value="" disabled selected>Pilih Retensi</option>
                                 @foreach($retensis as $retensi)
@@ -129,92 +129,89 @@
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Status Dokumen</label>
-                            <select name="status_id"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('status_id') border-red-500 @enderror">
-                                <option value="" disabled selected>Pilih Status</option>
-                                @foreach($statusDokumens as $status)
-                                    <option value="{{ $status->id }}" {{ (old('status_id', $dokumen->status_id) == $status->id) ? 'selected' : '' }}>
-                                        {{ $status->nama_status }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('status_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label class="block font-medium text-gray-700 mb-1">Sifat Dokumen</label>
-                            <select name="sifat_id"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('sifat_id') border-red-500 @enderror">
+                            <label for="sifat" class="block font-medium text-gray-700 mb-1">Sifat Dokumen</label>
+                            <select name="sifat" id="sifat"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('sifat') border-red-500 @enderror"
+                                required>
                                 <option value="" disabled selected>Pilih Sifat</option>
-                                @foreach($sifatDokumens as $sifat)
-                                    <option value="{{ $sifat->id }}" {{ (old('sifat_id', $dokumen->sifat_id) == $sifat->id) ? 'selected' : '' }}>
-                                        {{ $sifat->nama_sifat }}
-                                    </option>
-                                @endforeach
+                                <option value="Sangat Penting" {{ old('sifat', $dokumen->sifat) == 'Sangat Penting' ? 'selected' : '' }}>Sangat Penting</option>
+                                <option value="Penting" {{ old('sifat', $dokumen->sifat) == 'Penting' ? 'selected' : '' }}>Penting</option>
+                                <option value="Biasa" {{ old('sifat', $dokumen->sifat) == 'Biasa' ? 'selected' : '' }}>Biasa</option>
                             </select>
-                            @error('sifat_id')
+                            @error('sifat')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Jenis Dokumen</label>
-                            <select name="jenis_id"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('jenis_id') border-red-500 @enderror">
+                            <label for="status" class="block font-medium text-gray-700 mb-1">Status Dokumen</label>
+                            <select name="status" id="status"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('status') border-red-500 @enderror"
+                                required>
+                                <option value="" disabled selected>Pilih Status</option>
+                                <option value="Aktif" {{ old('status', $dokumen->status) == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="Inaktif" {{ old('status', $dokumen->status) == 'Inaktif' ? 'selected' : '' }}>Inaktif</option>
+                                <option value="Musnah" {{ old('status', $dokumen->status) == 'Musnah' ? 'selected' : '' }}>Musnah</option>
+                            </select>
+                            @error('status')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="jenis" class="block font-medium text-gray-700 mb-1">Jenis Dokumen</label>
+                            <select name="jenis" id="jenis"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('jenis') border-red-500 @enderror"
+                                required>
                                 <option value="" disabled selected>Pilih Jenis</option>
-                                @foreach($jenisDokumens as $jenis)
-                                    <option value="{{ $jenis->id }}" {{ (old('jenis_id', $dokumen->jenis_id) == $jenis->id) ? 'selected' : '' }}>
-                                        {{ $jenis->nama_jenis }}
-                                    </option>
-                                @endforeach
+                                <option value="Surat" {{ old('jenis', $dokumen->jenis) == 'Surat' ? 'selected' : '' }}>Surat</option>
+                                <option value="Laporan" {{ old('jenis', $dokumen->jenis) == 'Laporan' ? 'selected' : '' }}>Laporan</option>
+                                <option value="Memorandum" {{ old('jenis', $dokumen->jenis) == 'Memorandum' ? 'selected' : '' }}>Memorandum</option>
+                                <option value="Perjanjian" {{ old('jenis', $dokumen->jenis) == 'Perjanjian' ? 'selected' : '' }}>Perjanjian</option>
+                                <option value="SK" {{ old('jenis', $dokumen->jenis) == 'SK' ? 'selected' : '' }}>SK</option>
                             </select>
-                            @error('jenis_id')
+                            @error('jenis')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">Jurusan</label>
-                            <select name="jurusan_id"
+                            <label for="jurusan_id" class="block font-medium text-gray-700 mb-1">Jurusan</label>
+                            @php
+                                $currentUser = Auth::user();
+                                $isDisabled = $currentUser && $currentUser->isOperator() ? 'disabled' : '';
+                            @endphp
+                            <select name="jurusan_id" id="jurusan_id" {{ $isDisabled }}
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('jurusan_id') border-red-500 @enderror">
                                 <option value="" disabled selected>Pilih Jurusan</option>
                                 @foreach($jurusans as $jurusan)
-                                    <option value="{{ $jurusan->id }}" {{ (old('jurusan_id', $dokumen->jurusan_id) == $jurusan->id) ? 'selected' : '' }}>
+                                    <option value="{{ $jurusan->id }}" {{ old('jurusan_id', $dokumen->jurusan_id) == $jurusan->id ? 'selected' : '' }}>
                                         {{ $jurusan->nama_jurusan }}
                                     </option>
                                 @endforeach
                             </select>
+                            @if($isDisabled)
+                                <input type="hidden" name="jurusan_id" value="{{ old('jurusan_id', $currentUser->jurusan_id) }}">
+                            @endif
                             @error('jurusan_id')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block font-medium text-gray-700 mb-1">File Dokumen</label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div class="space-y-1 text-center">
-                                    @if($dokumen->file_path)
-                                        <div class="mb-2">
-                                            <p class="text-sm text-gray-600">File saat ini: {{ $dokumen->nama_file_asli }}</p>
-                                            <a href="{{ asset($dokumen->file_path) }}" target="_blank" class="text-primary-600 hover:text-primary-500">
-                                                Lihat File
-                                            </a>
-                                        </div>
-                                    @endif
-                                    <div class="flex text-sm text-gray-600">
-                                        <label for="file"
-                                            class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
-                                            <span>Ganti file</span>
-                                            <input id="file" name="file" type="file" class="sr-only" accept=".pdf,.doc,.docx,.xls,.xlsx">
-                                        </label>
-                                        <p class="pl-1">atau drag and drop</p>
-                                    </div>
-                                    <p class="text-xs text-gray-500">PDF, DOC, DOCX, XLS, XLSX up to 10MB</p>
+                            <label for="file" class="block font-medium text-gray-700 mb-1">File Dokumen</label>
+                            @if($dokumen->file_path)
+                                <div class="mb-2">
+                                    <p class="text-sm text-gray-600">File saat ini: {{ $dokumen->nama_file_asli }}</p>
+                                    <a href="{{ asset($dokumen->file_path) }}" target="_blank" class="text-primary-600 hover:text-primary-500">
+                                        Lihat File
+                                    </a>
                                 </div>
-                            </div>
+                            @endif
+                            <input type="file" name="file" id="file"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('file') border-red-500 @enderror"
+                                accept=".pdf,.doc,.docx,.xls,.xlsx">
+                            <p class="text-xs text-gray-500 mt-1">PDF, DOC, DOCX, XLS, XLSX maksimal 10MB</p>
                             @error('file')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -223,8 +220,8 @@
                 </div>
 
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Keterangan</label>
-                    <textarea name="keterangan" rows="3"
+                    <label for="keterangan" class="block font-medium text-gray-700 mb-1">Keterangan</label>
+                    <textarea name="keterangan" id="keterangan" rows="3"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 whitespace-normal break-words resize-none @error('keterangan') border-red-500 @enderror"
                         placeholder="Masukkan keterangan dokumen">{{ old('keterangan', $dokumen->keterangan) }}</textarea>
                     @error('keterangan')
