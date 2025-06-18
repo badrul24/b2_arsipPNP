@@ -1,5 +1,6 @@
 <!-- Features Section -->
 @extends('user')
+@section('title','Home')
 @section('content')
 <script>
     tailwind.config = {

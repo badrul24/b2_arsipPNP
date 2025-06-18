@@ -1,4 +1,5 @@
 @extends('user')
+@section('title','Profil')
 @section('content')
 <script>
     tailwind.config = {
@@ -115,7 +116,7 @@
                 </div>
             </section>
 
-            <main class="p-8 space-y-12 overflow-y-auto shadow">
+            <main class="p-8 space-y-12 overflow-y-auto shadow rounded-bl-lg rounded-br-lg mb-2">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                         <h3 class="text-2xl font-semibold text-primary-700 mb-4">Visi</h3>
@@ -148,15 +149,15 @@
     </section>
 
 <section id="struktur-organisasi" class="pt-[90px] flex min-h-screen bg-white font-sans text-gray-800 px-16" data-aos="fade-left">
-        <div class="w-3/4 flex flex-col">
-            <section class="bg-primary-700 text-white py-4 px-6 shadow">
+        <div class="w-3/4 flex flex-col mb-2">
+            <section class="bg-primary-700 text-white py-4 px-6 shadow rounded-tl-lg rounded-tr-lg">
                 <div class="text-left">
                     <h2 class="text-2xl font-extrabold">Struktur Organisasi</h2>
                     <p class="text-sm">Struktur kelembagaan Politeknik Negeri Padang</p>
                 </div>
             </section>
 
-            <main class="p-8 space-y-12 overflow-y-auto shadow">
+            <main class="p-8 space-y-12 overflow-y-auto shadow rounded-bl-lg rounded-br-lg">
                 <div class="space-y-6">
                     <h3 class="text-xl font-semibold text-primary-700">Struktur Utama</h3>
                     <ul class="list-disc pl-5 space-y-2 text-md leading-relaxed">

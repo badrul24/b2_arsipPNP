@@ -38,36 +38,40 @@
   <!-- Topbar -->
   <div class="bg-primary-800 text-white text-sm py-1 lg:px-4">
     <div class="max-w-7xl ml-[25px] mx-auto flex justify-between items-center">
-      <div class="flex items-center space-x-2 text-xs">
-        <a href="#" class="hover:opacity-80 transition-opacity">
-          <img src="{{ asset('icons/indonesia.png') }}" alt="Bahasa Indonesia" class="w-5 h-auto" />
-        </a>
-        <span>|</span>
-        <a href="#" class="hover:opacity-80 transition-opacity">
-          <img src="{{ asset('icons/united-kingdom.png') }}" alt="English" class="w-5 h-auto" />
-        </a>
-      </div>
+        <div class="flex items-center space-x-2 text-xs">
+            <a href="#" class="lang-switch hover:opacity-80 transition-opacity">
+                <img src="{{ asset('icons/indonesia.png') }}" alt="Bahasa Indonesia" class="w-5 h-auto" />
+            </a>
+            <span>|</span>
+            <a href="#" class="lang-switch hover:opacity-80 transition-opacity">
+                <img src="{{ asset('icons/united-kingdom.png') }}" alt="English" class="w-5 h-auto" />
+            </a>
+        </div>
 
       <div class="flex items-center space-x-4 pr-1 sm:pr-5 lg:pr-1">
         <div class="flex space-x-3 items-center">
-          <a href="https://youtube.com" target="_blank" class="hover:opacity-80 transition-opacity">
-            <img src="{{ asset('icons/youtube.png') }}" alt="youtube" class="w-5 h-auto" />
-          </a>
-          <span>|</span>
-          <a href="https://instagram.com" target="_blank" class="hover:opacity-80 transition-opacity">
-            <img src="{{ asset('icons/instagram.png') }}" alt="instagram" class="w-4 h-4 " />
-          </a>
-          <span>|</span>
-          <a href="https://x.com" target="_blank" class="hover:opacity-80 transition-opacity">
-            <img src="{{ asset('icons/twitter.png') }}" alt="twitter" class="w-4 h-4 " />
-          </a>
-          <span>|</span>
-          <button class="hover:text-gray-300 ">
-            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-              <path
-                d="M10 2a8 8 0 105.3 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z" />
-            </svg>
-          </button>
+            <a href="https://youtube.com" target="_blank" class="hover:opacity-80 transition-opacity">
+                <img src="{{ asset('icons/youtube.png') }}" alt="youtube" class="w-5 h-auto" />
+            </a>
+            <span>|</span>
+            <a href="https://instagram.com" target="_blank" class="hover:opacity-80 transition-opacity">
+                <img src="{{ asset('icons/instagram.png') }}" alt="instagram" class="w-4 h-4 " />
+            </a>
+            <span>|</span>
+            <a href="https://x.com" target="_blank" class="hover:opacity-80 transition-opacity">
+                <img src="{{ asset('icons/twitter.png') }}" alt="twitter" class="w-4 h-4 " />
+            </a>
+            <span>|</span>
+            <button id="toggleSearch" class="hover:text-gray-300 transition">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M10 2a8 8 0 105.3 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z" />
+                </svg>
+            </button>
+
+            <div id="searchContainer" class="transition-all duration-300 overflow-hidden w-0 flex items-center">
+                <input type="text" placeholder="Cari..."
+                    class="border border-gray-300 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 w-40 text-xs" />
+            </div>
         </div>
       </div>
     </div>
@@ -88,7 +92,7 @@
       <div class="hidden sm:flex space-x-8 ml-10 h-full items-center">
         <!-- Home -->
         <div class="relative group inline-block h-16">
-            <a href="\home"
+            <a href="/"
                 class="nav-link relative inline-flex items-center px-1 h-full text-sm font-medium text-gray-500 hover:text-primary-500 cursor-pointer
                     after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary-500 after:transition-all after:duration-200
                     group-hover:after:w-full">
@@ -140,7 +144,7 @@
 
         <!-- Arsip -->
         <div class="relative group inline-block h-16">
-          <a href="/arsip"
+          <a href="#"
             class="nav-link relative inline-flex items-center px-1 h-full text-sm font-medium text-gray-500 hover:text-primary-500 cursor-pointer
                    after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary-500 after:transition-all after:duration-200
                    group-hover:after:w-full">
@@ -151,14 +155,16 @@
                 clip-rule="evenodd" />
             </svg>
           </a>
-          <div
-            class="absolute left-0 top-full mt-0 w-40 bg-white border border-gray-200 rounded shadow-md opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-auto">
+          <div class="absolute left-0 top-full mt-0 w-40 bg-white border border-gray-200 rounded shadow-md opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-auto">
             <a href="/arsipstatic"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Arsip
               Static</a>
             <a href="/arsipdinamis"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Arsip
               Dinamis</a>
+            <a href="/laporanarsip"
+              class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Laporan
+              Arsip</a>
           </div>
         </div>
       </div>
@@ -275,4 +281,23 @@
       });
     });
   });
+    const button = document.getElementById("toggleSearch");
+    const searchContainer = document.getElementById("searchContainer");
+
+    let isOpen = false;
+
+    button.addEventListener("click", () => {
+        isOpen = !isOpen;
+        if (isOpen) {
+            searchContainer.classList.remove("w-0");
+            searchContainer.classList.add("w-40");
+            // Fokus otomatis ke input setelah terbuka
+            setTimeout(() => {
+                searchContainer.querySelector("input").focus();
+            }, 300);
+        } else {
+            searchContainer.classList.remove("w-40");
+            searchContainer.classList.add("w-0");
+        }
+    });
 </script>

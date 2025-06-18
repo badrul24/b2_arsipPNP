@@ -19,7 +19,7 @@ Route::get('/profil', function () {
     return view('users.profil');
 });
 
-Route::get('/home', function () {
+Route::get('/', function () {
     return view('users.home');
 });
 
@@ -27,6 +27,13 @@ Route::get('/arsipstatic', function () {
     return view('users.arsipstatic');
 });
 
+Route::get('/arsipdinamis', function () {
+    return view('users.arsipdinamis');
+});
+
+Route::get('/laporanarsip', function () {
+    return view('users.laporanarsip');
+});
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
