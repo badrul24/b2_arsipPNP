@@ -11,6 +11,7 @@ use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\RetensiController;
 use App\Http\Controllers\DokumenController;
 use App\Models\Dokumen; // Diperlukan untuk route dokumen.download
@@ -27,6 +28,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/register', [UserController::class, 'showRegister'])->name('register'); // Register di UserController
 Route::post('/register', [UserController::class, 'register']); // Register di UserController
+
+Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');  
+Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
 
 
 // --- Grup Rute yang Membutuhkan Autentikasi (`auth` middleware) ---
@@ -90,6 +94,15 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/jurusan/{jurusan}', [JurusanController::class, 'update'])->name('jurusan.update');
     Route::delete('/jurusan/{jurusan}', [JurusanController::class, 'destroy'])->name('jurusan.destroy');
 
+    // Tabel Divisi
+    Route::get('/divisi', [DivisiController::class, 'index'])->name('divisi.index');
+    Route::get('/divisi/create', [DivisiController::class, 'create'])->name('divisi.create');
+    Route::post('/divisi', [DivisiController::class, 'store'])->name('divisi.store');
+    Route::get('/divisi/{divisi}', [DivisiController::class, 'show'])->name('divisi.show');
+    Route::get('/divisi/{divisi}/edit', [DivisiController::class, 'edit'])->name('divisi.edit');
+    Route::put('/divisi/{divisi}', [DivisiController::class, 'update'])->name('divisi.update');
+    Route::delete('/divisi/{divisi}', [DivisiController::class, 'destroy'])->name('divisi.destroy');
+
     // Tabel Retensi
     Route::get('/retensi', [RetensiController::class, 'index'])->name('retensi.index');
     Route::get('/retensi/create', [RetensiController::class, 'create'])->name('retensi.create');
@@ -127,4 +140,6 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('dokumen.download');
     // Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+    
 });

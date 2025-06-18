@@ -12,15 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', [
-                'admin', 
-                'operator', 
-                'pimpinan',
-                'kepala_lembaga',
-                'kepala_bidang',
-                'sekretaris'
-                ])->default('operator')
-            ->after('email');
+            $table->foreignId('divisi_id')
+                ->nullable()
+                ->after('jurusan_id')
+                ->constrained('divisis')
+                ->onDelete('set null');
         });
     }
 
@@ -30,7 +26,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
+            $table->dropForeign(['divisi_id']);
+            $table->dropColumn('divisi_id');
         });
     }
 };

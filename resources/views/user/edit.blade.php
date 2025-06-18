@@ -96,6 +96,9 @@
                         <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
                         <option value="operator" {{ old('role', $user->role) == 'operator' ? 'selected' : '' }}>Operator</option>
                         <option value="pimpinan" {{ old('role', $user->role) == 'pimpinan' ? 'selected' : '' }}>Pimpinan</option>
+                        <option value="kepala_lembaga" {{ old('role', $user->role) == 'kepala_lembaga' ? 'selected' : '' }}>Kepala Lembaga</option>
+                        <option value="kepala_bidang" {{ old('role', $user->role) == 'kepala_bidang' ? 'selected' : '' }}>Kepala Bidang</option>
+                        <option value="sekretaris" {{ old('role', $user->role) == 'sekretaris' ? 'selected' : '' }}>Sekretaris</option>
                     </select>
                     @error('role')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -115,6 +118,23 @@
                         @endforeach
                     </select>
                     @error('jurusan_id')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Input untuk Divisi -->
+                <div id="divisi-group" class="form-group" style="{{ in_array(old('role', $user->role), ['kepala_lembaga', 'kepala_bidang', 'sekretaris']) ? '' : 'display:none;' }}">
+                    <label for="divisi_id" class="block font-medium text-gray-700 mb-1">Divisi</label>
+                    <select name="divisi_id" id="divisi_id"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('divisi_id') border-red-500 @enderror">
+                        <option value="">Pilih Divisi (khusus Kepala/Sekretaris)</option>
+                        @foreach($divisis as $divisi)
+                            <option value="{{ $divisi->id }}" {{ old('divisi_id', $user->divisi_id) == $divisi->id ? 'selected' : '' }}>
+                                {{ $divisi->nama_divisi }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('divisi_id')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -150,30 +170,44 @@
         input.setAttribute('type', type);
     }
 
-    // JavaScript untuk menampilkan/menyembunyikan input jurusan berdasarkan pilihan role
+    // JavaScript untuk menampilkan/menyembunyikan input jurusan dan divisi berdasarkan pilihan role
     document.addEventListener('DOMContentLoaded', function() {
         const roleSelect = document.getElementById('role');
         const jurusanGroup = document.getElementById('jurusan-group');
         const jurusanSelect = document.getElementById('jurusan_id');
+        const divisiGroup = document.getElementById('divisi-group');
+        const divisiSelect = document.getElementById('divisi_id');
 
-        function toggleJurusanField() {
-            if (roleSelect.value === 'operator') {
+        const operatorRoles = ['operator'];
+        const divisiRoles = ['kepala_lembaga', 'kepala_bidang', 'sekretaris'];
+
+        function toggleJurusanDivisiFields() {
+            const selectedRole = roleSelect.value;
+
+            if (operatorRoles.includes(selectedRole)) {
                 jurusanGroup.style.display = 'block';
-                // Menambahkan atribut 'required' jika peran adalah operator
-                jurusanSelect.setAttribute('required', 'required'); 
+                jurusanSelect.setAttribute('required', 'required');
             } else {
                 jurusanGroup.style.display = 'none';
-                // Menghapus atribut 'required' jika bukan operator
-                jurusanSelect.removeAttribute('required'); 
-                jurusanSelect.value = ''; // Reset nilai jurusan saat disembunyikan
+                jurusanSelect.removeAttribute('required');
+                jurusanSelect.value = '';
+            }
+
+            if (divisiRoles.includes(selectedRole)) {
+                divisiGroup.style.display = 'block';
+                divisiSelect.setAttribute('required', 'required');
+            } else {
+                divisiGroup.style.display = 'none';
+                divisiSelect.removeAttribute('required');
+                divisiSelect.value = '';
             }
         }
 
         // Panggil fungsi saat halaman dimuat (untuk old input)
-        toggleJurusanField();
+        toggleJurusanDivisiFields();
 
         // Panggil fungsi setiap kali pilihan role berubah
-        roleSelect.addEventListener('change', toggleJurusanField);
+        roleSelect.addEventListener('change', toggleJurusanDivisiFields);
     });
 </script>
 @endpush 

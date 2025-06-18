@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Retensi;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule; // Diperlukan untuk Rule::unique dan Rule::in
+use Illuminate\Validation\Rule;
 
 class RetensiController extends Controller
 {
