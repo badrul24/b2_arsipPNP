@@ -18,8 +18,32 @@ use App\Models\Dokumen; // Diperlukan untuk route dokumen.download
 
 use App\Http\Controllers\ReportController;
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/home', function () {
+    return view('landing_page.home');
+});
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing_page.home');
+});
+
+Route::get('/profil', function () {
+    return view('landing_page.profil');
+});
+
+Route::get('/arsipstatic', function () {
+    return view('landing_page.arsip_statis');
+});
+
+Route::get('/arsipdinamis', function () {
+    return view('landing_page.arsip_dinamis');
+});
+
+Route::get('/laporanarsip', function () {
+    return view('landing_page.laporan_arsip');
 });
 
 // Rute Autentikasi Kustom Anda
