@@ -37,7 +37,7 @@
         </div>
 
         <!-- 2. Manajemen Arsip -->
-        <div x-data="{ open: {{ request()->is('surat-masuk*') || request()->is('surat-keluar*') || request()->is('dokumen*') || request()->is('disposisi*') ? 'true' : 'false' }} }">
+        <div x-data="{ open: {{ request()->is('surat_masuk*') || request()->is('surat-keluar*') || request()->is('dokumen*') || request()->is('disposisi*') ? 'true' : 'false' }} }">
             <button
                 @click="open = !open"
                 class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100 hover:text-gray-900"
@@ -61,7 +61,7 @@
                 </svg>
             </button>
             <div x-show="open && sidebarOpen" class="pl-6 mt-1 space-y-1">
-                <a href="/surat-masuk" class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('surat-masuk*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
+                <a href="/surat_masuk" class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('surat_masuk*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                     </svg>

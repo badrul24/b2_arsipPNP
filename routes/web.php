@@ -17,6 +17,8 @@ use App\Http\Controllers\DokumenController;
 use App\Models\Dokumen; // Diperlukan untuk route dokumen.download
 
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SuratMasukController;
+use App\Models\SuratMasuk;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -163,7 +165,30 @@ Route::middleware(['auth'])->group(function () {
             abort(404, 'File dokumen tidak ditemukan.');
         }
     })->name('dokumen.download');
+
     // Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
-    
+
+    // Tabel Surat Masuk (CRUD utama)
+    Route::get('/surat_masuk', [SuratMasukController::class, 'index'])->name('surat_masuk.index');
+    Route::get('/surat_masuk/create', [SuratMasukController::class, 'create'])->name('surat_masuk.create');
+    Route::post('/surat_masuk', [SuratMasukController::class, 'store'])->name('surat_masuk.store');
+    // Route::get('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'show'])->name('surat_masuk.show');
+    Route::get('/surat_masuk/{surat_masuk}/edit', [SuratMasukController::class, 'edit'])->name('surat_masuk.edit');
+    Route::put('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'update'])->name('surat_masuk.update');
+    Route::delete('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'destroy'])->name('surat_masuk.destroy');
+
+    // Rute khusus untuk mendownload file surat masuk dari public_path
+    Route::get('/surat_masuk/{surat_masuk}/download', function(SuratMasuk $surat_masuk) {
+        $user = Auth::user();
+        if (($user->isOperator() || $user->isPimpinan()) && $user->jurusan_id !== $surat_masuk->jurusan_id) {
+            abort(403, 'Anda tidak memiliki akses untuk mengunduh surat masuk ini.');
+        }
+        $filePath = public_path($surat_masuk->file_surat_path);
+        if (File::exists($filePath)) {
+            return response()->download($filePath, $surat_masuk->nama_file_surat_asli);
+        } else {
+            abort(404, 'File surat masuk tidak ditemukan.');
+        }
+    })->name('surat_masuk.download'); 
 });
