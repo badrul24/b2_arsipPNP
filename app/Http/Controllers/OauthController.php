@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
-use Exception;
-use App\Models\User;
 
 class OauthController extends Controller
 {
@@ -13,6 +13,7 @@ class OauthController extends Controller
     {
         return Socialite::driver('google')->redirect();
     }
+
     public function handleProviderCallback()
     {
         try {
@@ -21,19 +22,19 @@ class OauthController extends Controller
 
             $finduser = User::where('gauth_id', $user->id)->first();
 
-            if($finduser){
+            if ($finduser) {
 
                 Auth::login($finduser);
 
                 return redirect('/dashboard');
 
-            }else{
+            } else {
                 $newUser = User::create([
                     'name' => $user->name,
                     'email' => $user->email,
-                    'gauth_id'=> $user->id,
-                    'gauth_type'=> 'google',
-                    'password' => encrypt('admin@123')
+                    'gauth_id' => $user->id,
+                    'gauth_type' => 'google',
+                    'password' => encrypt('admin@123'),
                 ]);
 
                 Auth::login($newUser);

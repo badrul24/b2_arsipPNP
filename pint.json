@@ -1,0 +1,19 @@
+{
+    "preset": "laravel",
+    "exclude": [
+      "storage",
+      "bootstrap",
+      "node_modules"
+    ],
+    "notPath": [
+      "app/Helpers/LegacyHelper.php"
+    ],
+    "rules": {
+      "binary_operator_spaces" : {
+        "operators": {
+          "=": "align"
+        }
+      }
+    }
+  }
+  

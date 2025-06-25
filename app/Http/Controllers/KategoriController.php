@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kategori;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class KategoriController extends Controller
@@ -12,9 +12,8 @@ class KategoriController extends Controller
     public function index(Request $request)
     {
         $kategoris = Kategori::query()
-            ->when($request->search, fn($q, $search) =>
-                $q->where('nama_kategori', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%")
+            ->when($request->search, fn ($q, $search) => $q->where('nama_kategori', 'like', "%{$search}%")
+                ->orWhere('keterangan', 'like', "%{$search}%")
             )
             ->oldest()
             ->paginate(5)

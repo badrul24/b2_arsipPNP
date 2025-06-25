@@ -11,10 +11,9 @@ class LokasiController extends Controller
     public function index(Request $request)
     {
         $lokasis = Lokasi::query()
-            ->when($request->search, fn($q, $search) =>
-                $q->where('kode_lokasi', 'like', "%{$search}%")
-                  ->orWhere('nama_lokasi', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%")
+            ->when($request->search, fn ($q, $search) => $q->where('kode_lokasi', 'like', "%{$search}%")
+                ->orWhere('nama_lokasi', 'like', "%{$search}%")
+                ->orWhere('keterangan', 'like', "%{$search}%")
             )
             ->oldest()
             ->paginate(5)
@@ -31,6 +30,7 @@ class LokasiController extends Controller
     public function store(Request $request)
     {
         Lokasi::create($this->validateLokasi($request));
+
         return redirect()->route('lokasi.index')->with('success', 'Lokasi berhasil ditambahkan.');
     }
 
@@ -42,12 +42,14 @@ class LokasiController extends Controller
     public function update(Request $request, Lokasi $lokasi)
     {
         $lokasi->update($this->validateLokasi($request, $lokasi->id));
+
         return redirect()->route('lokasi.index')->with('success', 'Lokasi berhasil diperbarui.');
     }
 
     public function destroy(Lokasi $lokasi)
     {
         $lokasi->delete();
+
         return redirect()->route('lokasi.index')->with('success', 'Lokasi berhasil dihapus.');
     }
 
@@ -56,7 +58,7 @@ class LokasiController extends Controller
         return $request->validate([
             'kode_lokasi' => ['required', Rule::unique('lokasis', 'kode_lokasi')->ignore($ignoreId)],
             'nama_lokasi' => 'required|min:3',
-            'keterangan'  => 'nullable',
+            'keterangan' => 'nullable',
         ]);
     }
 }

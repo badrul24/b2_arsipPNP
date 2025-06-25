@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Disposisi, SuratMasuk, User, Divisi, Jurusan};
+use App\Models\Disposisi;
+use App\Models\Divisi;
+use App\Models\Jurusan;
+use App\Models\SuratMasuk;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -14,13 +18,13 @@ class DisposisiController extends Controller
         $user = Auth::user();
 
         $query = Disposisi::with([
-            'suratMasuk', 'userPemberi', 'userPenerima', 'divisiPenerima', 'jurusanPenerima', 'parentDisposisi'
+            'suratMasuk', 'userPemberi', 'userPenerima', 'divisiPenerima', 'jurusanPenerima', 'parentDisposisi',
         ]);
 
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             $query->where(function ($q) use ($user) {
                 $q->where('user_pemberi_id', $user->id)
-                  ->orWhere('user_penerima_id', $user->id);
+                    ->orWhere('user_penerima_id', $user->id);
 
                 if ($user->divisi_id) {
                     $q->orWhere('divisi_penerima_id', $user->divisi_id);
@@ -34,17 +38,18 @@ class DisposisiController extends Controller
         $query->when($request->search, function ($query, $search) {
             $query->where(function ($q) use ($search) {
                 $q->where('isi_disposisi', 'like', "%{$search}%")
-                  ->orWhere('catatan', 'like', "%{$search}%")
-                  ->orWhere('instruksi_kepada', 'like', "%{$search}%")
-                  ->orWhere('petunjuk_disposisi', 'like', "%{$search}%")
-                  ->orWhereHas('suratMasuk', function ($q_sm) use ($search) {
-                      $q_sm->where('nomor_surat_pengirim', 'like', "%{$search}%")
-                           ->orWhere('perihal', 'like', "%{$search}%");
-                  });
+                    ->orWhere('catatan', 'like', "%{$search}%")
+                    ->orWhere('instruksi_kepada', 'like', "%{$search}%")
+                    ->orWhere('petunjuk_disposisi', 'like', "%{$search}%")
+                    ->orWhereHas('suratMasuk', function ($q_sm) use ($search) {
+                        $q_sm->where('nomor_surat_pengirim', 'like', "%{$search}%")
+                            ->orWhere('perihal', 'like', "%{$search}%");
+                    });
             });
         });
 
         $disposisis = $query->latest()->paginate(10)->withQueryString();
+
         return view('disposisi.index', compact('disposisis'));
     }
 
@@ -146,6 +151,7 @@ class DisposisiController extends Controller
         abort_unless($user->isAdmin() || $disposisi->user_pemberi_id === $user->id, 403, 'Anda tidak memiliki izin untuk menghapus disposisi ini.');
 
         $disposisi->delete();
+
         return redirect()->route('disposisi.index')->with('success', 'Disposisi berhasil dihapus.');
     }
 
@@ -157,7 +163,7 @@ class DisposisiController extends Controller
                    ($disposisi->divisi_penerima_id && $user->divisi_id === $disposisi->divisi_penerima_id) ||
                    ($disposisi->jurusan_penerima_id && $user->jurusan_id === $disposisi->jurusan_penerima_id);
 
-        if (!$allowed) {
+        if (! $allowed) {
             return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk memperbarui status disposisi ini.'], 403);
         }
 
@@ -172,8 +178,8 @@ class DisposisiController extends Controller
         if ($suratMasuk) {
             $statusMap = [
                 'Diterima' => 'Baru',
-                'Dibaca'   => 'Dibaca',
-                'Selesai'  => 'Selesai'
+                'Dibaca' => 'Dibaca',
+                'Selesai' => 'Selesai',
             ];
             if (isset($statusMap[$validated['status']])) {
                 $suratMasuk->update(['status_surat' => $statusMap[$validated['status']]]);
@@ -182,23 +188,23 @@ class DisposisiController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Status disposisi berhasil diperbarui menjadi ' . $validated['status'] . '.'
+            'message' => 'Status disposisi berhasil diperbarui menjadi '.$validated['status'].'.',
         ], 200);
     }
 
     private function validateRequest(Request $request): array
     {
         return $request->validate([
-            'surat_masuk_id'      => 'required|exists:surat_masuks,id',
-            'user_penerima_id'    => 'nullable|exists:users,id',
-            'divisi_penerima_id'  => 'nullable|exists:divisis,id',
+            'surat_masuk_id' => 'required|exists:surat_masuks,id',
+            'user_penerima_id' => 'nullable|exists:users,id',
+            'divisi_penerima_id' => 'nullable|exists:divisis,id',
             'jurusan_penerima_id' => 'nullable|exists:jurusans,id',
-            'instruksi_kepada'    => 'nullable|array',
-            'petunjuk_disposisi'  => 'nullable|array',
-            'isi_disposisi'       => 'required|string',
-            'catatan'             => 'nullable|string',
-            'tanggal_disposisi'   => 'required|date',
-            'status_disposisi'    => ['required', Rule::in(['Baru', 'Diterima', 'Dikerjakan', 'Selesai', 'Ditolak', 'Diteruskan'])],
+            'instruksi_kepada' => 'nullable|array',
+            'petunjuk_disposisi' => 'nullable|array',
+            'isi_disposisi' => 'required|string',
+            'catatan' => 'nullable|string',
+            'tanggal_disposisi' => 'required|date',
+            'status_disposisi' => ['required', Rule::in(['Baru', 'Diterima', 'Dikerjakan', 'Selesai', 'Ditolak', 'Diteruskan'])],
             'parent_disposisi_id' => 'nullable|exists:disposisis,id',
         ], [
             'user_penerima_id.exists' => 'Penerima user tidak valid.',

@@ -14,30 +14,30 @@ return new class extends Migration
         Schema::create('disposisis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('surat_masuk_id')
-                  ->constrained('surat_masuks')
-                  ->onDelete('cascade');
+                ->constrained('surat_masuks')
+                ->onDelete('cascade');
 
             $table->foreignId('user_pemberi_id')
-                  ->constrained('users')
-                  ->onDelete('restrict');
+                ->constrained('users')
+                ->onDelete('restrict');
 
             $table->foreignId('user_penerima_id')
-                  ->nullable()
-                  ->constrained('users')
-                  ->onDelete('set null');
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('set null');
 
             $table->foreignId('divisi_penerima_id')
-                  ->nullable()
-                  ->constrained('divisis')
-                  ->onDelete('set null');
+                ->nullable()
+                ->constrained('divisis')
+                ->onDelete('set null');
 
             $table->foreignId('jurusan_penerima_id')
-                  ->nullable()
-                  ->constrained('jurusans')
-                  ->onDelete('set null');
+                ->nullable()
+                ->constrained('jurusans')
+                ->onDelete('set null');
 
-            $table->text('instruksi_kepada')->nullable(); 
-            $table->text('petunjuk_disposisi')->nullable(); 
+            $table->text('instruksi_kepada')->nullable();
+            $table->text('petunjuk_disposisi')->nullable();
 
             $table->text('isi_disposisi');
             $table->text('catatan')->nullable();
@@ -49,13 +49,13 @@ return new class extends Migration
                 'Dikerjakan',
                 'Selesai',
                 'Ditolak',
-                'Diteruskan'
+                'Diteruskan',
             ])->default('Baru');
 
             $table->foreignId('parent_disposisi_id')
-                  ->nullable()
-                  ->constrained('disposisis')
-                  ->onDelete('set null');
+                ->nullable()
+                ->constrained('disposisis')
+                ->onDelete('set null');
 
             $table->timestamps();
         });

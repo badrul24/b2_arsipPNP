@@ -25,13 +25,13 @@ return new class extends Migration
             $table->string('nama_file_surat_asli')->nullable();
 
             $table->foreignId('jurusan_id')
-                  ->nullable()
-                  ->constrained('jurusans')
-                  ->onDelete('set null');
+                ->nullable()
+                ->constrained('jurusans')
+                ->onDelete('set null');
 
             $table->foreignId('user_id')
-                  ->constrained('users')
-                  ->onDelete('restrict');
+                ->constrained('users')
+                ->onDelete('restrict');
 
             $table->enum('status_surat', [
                 'Diajukan',
@@ -42,7 +42,7 @@ return new class extends Migration
                 'Baru',
                 'Dibaca',
                 'Selesai',
-                'Diarsipkan'
+                'Diarsipkan',
             ])->default('Diajukan');
 
             $table->enum('sifat_surat', ['Sangat Penting', 'Penting', 'Biasa'])->default('Biasa');

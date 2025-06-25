@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('kode_retensi', 10)->unique();
             $table->string('nama_retensi', 100)->unique();
-            $table->integer('tahun_aktif')->default(2); 
+            $table->integer('tahun_aktif')->default(2);
             $table->integer('tahun_inaktif')->default(3);
             $table->enum('nasib_akhir', ['Musnah', 'Permanen', 'Dinilai Kembali'])->nullable();
             $table->text('keterangan')->nullable();

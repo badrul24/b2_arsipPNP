@@ -15,9 +15,9 @@ class BeritaController extends Controller
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('judul_berita', 'like', "%{$search}%")
-                      ->orWhere('isi_berita', 'like', "%{$search}%")
-                      ->orWhereHas('kategori', fn($q) => $q->where('nama_kategori', 'like', "%{$search}%"))
-                      ->orWhereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%"));
+                        ->orWhere('isi_berita', 'like', "%{$search}%")
+                        ->orWhereHas('kategori', fn ($q) => $q->where('nama_kategori', 'like', "%{$search}%"))
+                        ->orWhereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%"));
                 });
             })
             ->oldest()
@@ -30,6 +30,7 @@ class BeritaController extends Controller
     public function create()
     {
         $kategoris = Kategori::all();
+
         return view('berita.create', compact('kategoris'));
     }
 
@@ -39,6 +40,7 @@ class BeritaController extends Controller
         $validated['user_id'] = Auth::id();
 
         Berita::create($validated);
+
         return redirect()->route('berita.index')->with('success', 'Berita berhasil ditambahkan.');
     }
 
@@ -50,6 +52,7 @@ class BeritaController extends Controller
     public function edit(Berita $berita)
     {
         $kategoris = Kategori::all();
+
         return view('berita.edit', compact('berita', 'kategoris'));
     }
 
@@ -73,27 +76,27 @@ class BeritaController extends Controller
     // 🔧 PRIVATE METHODS
     // ----------------------------------
 
-    private function validateBerita(Request $request, bool $isStore = true, Berita $berita = null): array
+    private function validateBerita(Request $request, bool $isStore = true, ?Berita $berita = null): array
     {
         $rules = [
             'judul_berita' => 'required|min:3',
             'kategori_id' => 'required|exists:kategoris,id',
-            'isi_berita'   => 'required',
-            'gambar'       => ($isStore ? 'required' : 'nullable') . '|image|mimes:jpeg,png,jpg|max:2048',
+            'isi_berita' => 'required',
+            'gambar' => ($isStore ? 'required' : 'nullable').'|image|mimes:jpeg,png,jpg|max:2048',
         ];
 
         $validated = $request->validate($rules);
 
         if ($request->hasFile('gambar')) {
-            if (!$isStore) {
+            if (! $isStore) {
                 $this->deleteGambar($berita->gambar ?? null);
             }
 
             $gambar = $request->file('gambar');
-            $namaFile = time() . '_' . $gambar->getClientOriginalName();
+            $namaFile = time().'_'.$gambar->getClientOriginalName();
             $gambar->move(public_path('images'), $namaFile);
-            $validated['gambar'] = 'images/' . $namaFile;
-        } elseif (!$isStore && $berita) {
+            $validated['gambar'] = 'images/'.$namaFile;
+        } elseif (! $isStore && $berita) {
             $validated['gambar'] = $berita->gambar;
         }
 

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dokumen;
+use App\Models\Jurusan;
 use App\Models\Kategori;
 use App\Models\Kode;
 use App\Models\Lokasi;
 use App\Models\Retensi;
-use App\Models\Jurusan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
 
 class DokumenController extends Controller
@@ -26,8 +26,8 @@ class DokumenController extends Controller
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nomor_surat', 'like', "%{$search}%")
-                      ->orWhere('judul', 'like', "%{$search}%")
-                      ->orWhere('keterangan', 'like', "%{$search}%");
+                        ->orWhere('judul', 'like', "%{$search}%")
+                        ->orWhere('keterangan', 'like', "%{$search}%");
                 });
             })
             ->latest()
@@ -132,12 +132,12 @@ class DokumenController extends Controller
 
     private function authorizeAction($user, $action, $dokumen = null)
     {
-        if (!$user->isAdmin() && !$user->isOperator()) {
+        if (! $user->isAdmin() && ! $user->isOperator()) {
             abort(403, "Anda tidak memiliki izin untuk $action dokumen.");
         }
 
         if ($user->isOperator()) {
-            if (!$user->jurusan_id) {
+            if (! $user->jurusan_id) {
                 abort(403, "Operator harus terdaftar di jurusan untuk $action dokumen.");
             }
 
@@ -162,25 +162,25 @@ class DokumenController extends Controller
             'lokasi_id' => 'required|exists:lokasis,id',
             'retensi_id' => 'required|exists:retensis,id',
             'jurusan_id' => 'required|exists:jurusans,id',
-            'sifat'  => ['required', Rule::in(['Sangat Penting', 'Penting', 'Biasa'])],
+            'sifat' => ['required', Rule::in(['Sangat Penting', 'Penting', 'Biasa'])],
             'status' => ['required', Rule::in(['Aktif', 'Inaktif', 'Musnah'])],
-            'jenis'  => ['required', Rule::in(['Surat', 'Laporan', 'Memorandum', 'Perjanjian', 'SK'])],
+            'jenis' => ['required', Rule::in(['Surat', 'Laporan', 'Memorandum', 'Perjanjian', 'SK'])],
         ]);
     }
 
     private function handleFileUpload(Request $request, array &$validated)
     {
         $file = $request->file('file');
-        $namaFile = time() . '_' . $file->getClientOriginalName();
+        $namaFile = time().'_'.$file->getClientOriginalName();
         $pathTarget = public_path('dokumen_uploads');
 
-        if (!File::isDirectory($pathTarget)) {
+        if (! File::isDirectory($pathTarget)) {
             File::makeDirectory($pathTarget, 0777, true, true);
         }
 
         $file->move($pathTarget, $namaFile);
 
-        $validated['file_path'] = 'dokumen_uploads/' . $namaFile;
+        $validated['file_path'] = 'dokumen_uploads/'.$namaFile;
         $validated['nama_file_asli'] = $file->getClientOriginalName();
     }
 }

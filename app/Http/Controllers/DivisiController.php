@@ -11,10 +11,9 @@ class DivisiController extends Controller
     public function index(Request $request)
     {
         $divisis = Divisi::query()
-            ->when($request->search, fn($query, $search) =>
-                $query->where('kode_divisi', 'like', "%{$search}%")
-                      ->orWhere('nama_divisi', 'like', "%{$search}%")
-                      ->orWhere('keterangan', 'like', "%{$search}%")
+            ->when($request->search, fn ($query, $search) => $query->where('kode_divisi', 'like', "%{$search}%")
+                ->orWhere('nama_divisi', 'like', "%{$search}%")
+                ->orWhere('keterangan', 'like', "%{$search}%")
             )
             ->oldest()
             ->paginate(5)

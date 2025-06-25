@@ -3,19 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jurusan;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Http\RedirectResponse;
 
 class JurusanController extends Controller
 {
     public function index(Request $request)
     {
         $jurusans = Jurusan::query()
-            ->when($request->search, fn($query, $search) =>
-                $query->where('nama_jurusan', 'like', "%{$search}%")
-                      ->orWhere('kode_jurusan', 'like', "%{$search}%")
-                      ->orWhere('keterangan', 'like', "%{$search}%")
+            ->when($request->search, fn ($query, $search) => $query->where('nama_jurusan', 'like', "%{$search}%")
+                ->orWhere('kode_jurusan', 'like', "%{$search}%")
+                ->orWhere('keterangan', 'like', "%{$search}%")
             )
             ->oldest()
             ->paginate(5)

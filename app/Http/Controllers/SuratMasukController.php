@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SuratMasuk;
-use App\Models\Jurusan;
-use App\Models\Divisi;
-use App\Models\User;
 use App\Models\Disposisi;
+use App\Models\Divisi;
+use App\Models\Jurusan;
+use App\Models\SuratMasuk;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
 
 class SuratMasukController extends Controller
@@ -19,17 +19,17 @@ class SuratMasukController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $user = Auth::user();
 
         $query = SuratMasuk::with(['jurusan', 'user']);
 
-        if (!($user->isAdmin())) {
+        if (! ($user->isAdmin())) {
             $query->where(function ($q) use ($user) {
                 if ($user->isOperator() && $user->jurusan_id) {
                     $q->where('user_id', $user->id)
-                      ->where('jurusan_id', $user->jurusan_id)
-                      ->whereIn('status_surat', ['Diajukan', 'Ditolak']);
+                        ->where('jurusan_id', $user->jurusan_id)
+                        ->whereIn('status_surat', ['Diajukan', 'Ditolak']);
                 }
                 // Sekretaris: Melihat semua surat yang relevan dengan alurnya
                 if ($user->isSekretaris()) {
@@ -63,14 +63,14 @@ class SuratMasukController extends Controller
      */
     public function create()
     {
-        
+
         $user = Auth::user();
         $this->authorizeAction($user, 'create');
 
         $jurusans = $user->isOperator() && $user->jurusan_id
             ? Jurusan::where('id', $user->jurusan_id)->get()
             : Jurusan::all();
-        
+
         $divisis = Divisi::all();
 
         return view('surat_masuk.create', compact('jurusans', 'divisis'));
@@ -81,11 +81,11 @@ class SuratMasukController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $user = Auth::user();
         $this->authorizeAction($user, 'store');
 
-        $validated = $this->validateSuratMasuk($request, true); 
+        $validated = $this->validateSuratMasuk($request, true);
         $validated['status_surat'] = 'Diajukan';
 
         if ($request->hasFile('file_surat')) {
@@ -96,7 +96,7 @@ class SuratMasukController extends Controller
             $validated['jurusan_id'] = $user->jurusan_id;
         }
 
-        $validated['user_id'] = $user->id; 
+        $validated['user_id'] = $user->id;
         SuratMasuk::create($validated);
 
         return redirect()->route('surat_masuk.index')->with('success', 'Surat masuk berhasil ditambahkan.');
@@ -107,10 +107,10 @@ class SuratMasukController extends Controller
      */
     public function show(SuratMasuk $suratMasuk)
     {
-        
+
         $user = Auth::user();
         $this->authorizeAction($user, 'show', $suratMasuk);
-        
+
         return view('surat_masuk.show', compact('suratMasuk'));
     }
 
@@ -119,16 +119,16 @@ class SuratMasukController extends Controller
      */
     public function edit(SuratMasuk $suratMasuk)
     {
-        
+
         $user = Auth::user();
         $this->authorizeAction($user, 'edit', $suratMasuk);
 
         $jurusans = $user->isOperator() && $user->jurusan_id
             ? Jurusan::where('id', $user->jurusan_id)->get()
             : Jurusan::all();
-        
+
         $divisis = Divisi::all();
-        
+
         return view('surat_masuk.edit', compact('suratMasuk', 'jurusans', 'divisis'));
     }
 
@@ -137,16 +137,16 @@ class SuratMasukController extends Controller
      */
     public function update(Request $request, SuratMasuk $suratMasuk)
     {
-        
+
         $user = Auth::user();
         $this->authorizeAction($user, 'update', $suratMasuk);
 
-        $validated = $this->validateSuratMasuk($request, false); 
+        $validated = $this->validateSuratMasuk($request, false);
         unset($validated['status_surat']); // Status surat tidak boleh diubah dari form update biasa
 
         if ($request->hasFile('file_surat')) {
             if ($suratMasuk->file_surat_path && File::exists(public_path($suratMasuk->file_surat_path))) {
-                File::delete(public_path( $suratMasuk->file_surat_path));
+                File::delete(public_path($suratMasuk->file_surat_path));
             }
             $this->handleFileUpload($request, $validated);
         } else {
@@ -168,7 +168,7 @@ class SuratMasukController extends Controller
      */
     public function destroy(SuratMasuk $suratMasuk)
     {
-        
+
         $user = Auth::user();
         $this->authorizeAction($user, 'delete', $suratMasuk);
 
@@ -186,14 +186,14 @@ class SuratMasukController extends Controller
      */
     public function proses(Request $request, SuratMasuk $suratMasuk)
     {
-        
+
         $user = Auth::user();
         // Otorisasi: Hanya Sekretaris yang bisa melakukan proses ini
-        if (!$user->isSekretaris()) {
+        if (! $user->isSekretaris()) {
             return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk memproses surat masuk ini.'], 403);
         }
         // Sekretaris bisa memproses jika statusnya 'Diajukan' atau 'Ditolak'
-        if (!in_array($suratMasuk->status_surat, ['Diajukan', 'Ditolak'])) {
+        if (! in_array($suratMasuk->status_surat, ['Diajukan', 'Ditolak'])) {
             return response()->json(['success' => false, 'message' => 'Surat ini tidak dalam status yang bisa diproses oleh Sekretaris.'], 400);
         }
 
@@ -206,30 +206,32 @@ class SuratMasukController extends Controller
         switch ($validated['action']) {
             case 'verifikasi':
                 $suratMasuk->update(['status_surat' => 'Diverifikasi']);
+
                 return response()->json(['success' => true, 'message' => 'Surat Masuk berhasil diverifikasi.']);
-            
+
             case 'kembalikan':
                 $suratMasuk->update([
                     'status_surat' => 'Ditolak',
-                    'keterangan' => $validated['alasan_kembali']
+                    'keterangan' => $validated['alasan_kembali'],
                 ]);
+
                 return response()->json(['success' => true, 'message' => 'Surat Masuk berhasil dikembalikan.']);
 
             case 'teruskan_ke_pimpinan':
                 $pimpinanTujuan = User::find($validated['pimpinan_tujuan_id']);
-                if (!$pimpinanTujuan || !($pimpinanTujuan->isPimpinan() || $pimpinanTujuan->isKepalaLembaga() || $pimpinanTujuan->isKepalaBidang())) { 
+                if (! $pimpinanTujuan || ! ($pimpinanTujuan->isPimpinan() || $pimpinanTujuan->isKepalaLembaga() || $pimpinanTujuan->isKepalaBidang())) {
                     return response()->json(['success' => false, 'message' => 'Pimpinan tujuan tidak valid.'], 422);
                 }
 
                 $suratMasuk->update(['status_surat' => 'Diproses']); // Status saat Sekretaris meneruskan ke Pimpinan
 
                 Disposisi::create([
-                    'surat_masuk_id'    => $suratMasuk->id,
-                    'user_pemberi_id'   => $pimpinanTujuan->id,
+                    'surat_masuk_id' => $suratMasuk->id,
+                    'user_pemberi_id' => $pimpinanTujuan->id,
                     'tanggal_disposisi' => now(),
-                    'status_disposisi'  => 'Baru',
-                    'isi_disposisi'     => '',
-                    'catatan'           => '',
+                    'status_disposisi' => 'Baru',
+                    'isi_disposisi' => '',
+                    'catatan' => '',
                 ]);
 
                 return response()->json(['success' => true, 'message' => 'Surat Masuk berhasil diteruskan ke Pimpinan.']);
@@ -243,7 +245,7 @@ class SuratMasukController extends Controller
      */
     private function authorizeAction($user, $action, $suratMasuk = null)
     {
-        
+
         if ($user->isAdmin()) {
             return;
         }
@@ -251,41 +253,48 @@ class SuratMasukController extends Controller
         switch ($action) {
             case 'create':
             case 'store':
-                if (!$user->isOperator()) {
+                if (! $user->isOperator()) {
                     abort(403, "Anda tidak memiliki izin untuk $action surat masuk.");
                 }
-                if (!$user->jurusan_id) {
+                if (! $user->jurusan_id) {
                     abort(403, "Operator harus terdaftar di jurusan untuk $action surat masuk.");
                 }
                 break;
 
             case 'show':
-                if (!$suratMasuk) {
+                if (! $suratMasuk) {
                     abort(403, "Akses tidak valid: $action memerlukan surat masuk.");
                 }
                 // Operator/Pimpinan melihat yang jurusannya sama
-                if (($user->isOperator() || $user->isPimpinan()) && $user->jurusan_id === $suratMasuk->jurusan_id) return;
-                
+                if (($user->isOperator() || $user->isPimpinan()) && $user->jurusan_id === $suratMasuk->jurusan_id) {
+                    return;
+                }
+
                 // Sekretaris melihat yang relevan dengan alurnya
-                if ($user->isSekretaris() && in_array($suratMasuk->status_surat, ['Diajukan', 'Diverifikasi', 'Ditolak', 'Diproses', 'Disetujui', 'Terkirim', 'Baru', 'Dibaca', 'Selesai', 'Diarsipkan'])) return;
-                
+                if ($user->isSekretaris() && in_array($suratMasuk->status_surat, ['Diajukan', 'Diverifikasi', 'Ditolak', 'Diproses', 'Disetujui', 'Terkirim', 'Baru', 'Dibaca', 'Selesai', 'Diarsipkan'])) {
+                    return;
+                }
+
                 // Pimpinan (termasuk Kepala Lembaga/Kepala Bidang) melihat yang relevan dengan alurnya
-                if (($user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()) && in_array($suratMasuk->status_surat, ['Diproses', 'Disetujui', 'Terkirim', 'Baru', 'Dibaca', 'Selesai', 'Diarsipkan'])) return;
-                
+                if (($user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()) && in_array($suratMasuk->status_surat, ['Diproses', 'Disetujui', 'Terkirim', 'Baru', 'Dibaca', 'Selesai', 'Diarsipkan'])) {
+                    return;
+                }
+
                 abort(403, "Anda tidak memiliki izin untuk $action surat masuk ini.");
                 break;
 
             case 'edit':
             case 'update':
-                if (!$suratMasuk) {
+                if (! $suratMasuk) {
                     abort(403, "Akses tidak valid: $action memerlukan surat masuk.");
                 }
                 // Operator bisa edit jika mereka yang membuat DAN status memungkinkan
                 if ($user->isOperator()) {
                     if ($user->id === $suratMasuk->user_id && in_array($suratMasuk->status_surat, ['Diajukan', 'Ditolak'])) {
-                        if (!$user->jurusan_id || $user->jurusan_id !== $suratMasuk->jurusan_id) {
+                        if (! $user->jurusan_id || $user->jurusan_id !== $suratMasuk->jurusan_id) {
                             abort(403, "Anda tidak memiliki izin (jurusan) untuk $action surat masuk ini.");
                         }
+
                         return;
                     }
                 }
@@ -297,15 +306,16 @@ class SuratMasukController extends Controller
                 break;
 
             case 'delete':
-                if (!$suratMasuk) {
+                if (! $suratMasuk) {
                     abort(403, "Akses tidak valid: $action memerlukan surat masuk.");
                 }
                 // Hanya Operator yang bisa menghapus DAN status memungkinkan
                 if ($user->isOperator()) {
                     if ($user->id === $suratMasuk->user_id && in_array($suratMasuk->status_surat, ['Diajukan', 'Ditolak'])) {
-                        if (!$user->jurusan_id || $user->jurusan_id !== $suratMasuk->jurusan_id) {
+                        if (! $user->jurusan_id || $user->jurusan_id !== $suratMasuk->jurusan_id) {
                             abort(403, "Anda tidak memiliki izin (jurusan) untuk $action surat masuk ini.");
                         }
+
                         return;
                     }
                 }
@@ -325,7 +335,7 @@ class SuratMasukController extends Controller
         $fileRule = $isStore ? 'required' : 'nullable';
 
         $rules = [
-            'nomor_agenda' => 'required|string|max:100|unique:surat_masuks,nomor_agenda' . ($isStore ? '' : ',' . $request->route('surat_masuk')->id),
+            'nomor_agenda' => 'required|string|max:100|unique:surat_masuks,nomor_agenda'.($isStore ? '' : ','.$request->route('surat_masuk')->id),
             'nomor_surat_pengirim' => 'required|string|max:100',
             'tanggal_surat_pengirim' => 'required|date',
             'tanggal_terima' => 'required|date',
@@ -338,9 +348,9 @@ class SuratMasukController extends Controller
 
         // Validasi untuk status_surat dan sifat_surat hanya jika bukan dari form create/edit biasa
         // Ini memastikan mereka divalidasi ketika diatur melalui aksi 'proses'
-        if (!$isStore) {
-             $rules['status_surat'] = ['nullable', Rule::in(['Diajukan', 'Diproses', 'Ditolak', 'Disetujui', 'Terkirim', 'Baru', 'Dibaca', 'Selesai', 'Diarsipkan'])];
-             $rules['sifat_surat'] = ['nullable', Rule::in(['Sangat Penting', 'Penting', 'Biasa'])];
+        if (! $isStore) {
+            $rules['status_surat'] = ['nullable', Rule::in(['Diajukan', 'Diproses', 'Ditolak', 'Disetujui', 'Terkirim', 'Baru', 'Dibaca', 'Selesai', 'Diarsipkan'])];
+            $rules['sifat_surat'] = ['nullable', Rule::in(['Sangat Penting', 'Penting', 'Biasa'])];
         } else {
             $rules['sifat_surat'] = ['required', Rule::in(['Sangat Penting', 'Penting', 'Biasa'])];
         }
@@ -360,16 +370,16 @@ class SuratMasukController extends Controller
     private function handleFileUpload(Request $request, array &$validated)
     {
         $file = $request->file('file_surat');
-        $namaFile = time() . '_' . $file->getClientOriginalName();
+        $namaFile = time().'_'.$file->getClientOriginalName();
         $pathTarget = public_path('surat_masuk_uploads');
 
-        if (!File::isDirectory($pathTarget)) {
+        if (! File::isDirectory($pathTarget)) {
             File::makeDirectory($pathTarget, 0777, true, true);
         }
 
         $file->move($pathTarget, $namaFile);
 
-        $validated['file_surat_path'] = 'surat_masuk_uploads/' . $namaFile;
+        $validated['file_surat_path'] = 'surat_masuk_uploads/'.$namaFile;
         $validated['nama_file_surat_asli'] = $file->getClientOriginalName();
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Dokumen extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'dokumens';
 
     protected $fillable = [
@@ -27,13 +27,13 @@ class Dokumen extends Model
         'status',
         'jenis',
         'jurusan_id',
-        'user_id'
+        'user_id',
     ];
 
     protected $casts = [
         'tanggal_dokumen' => 'date',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
     // Relasi dengan Kategori

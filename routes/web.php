@@ -1,25 +1,23 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
-
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\DisposisiController;
+use App\Http\Controllers\DivisiController;
+use App\Http\Controllers\DokumenController;
+use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
-use App\Http\Controllers\BeritaController;
-use App\Http\Controllers\JurusanController;
-use App\Http\Controllers\DivisiController;
-use App\Http\Controllers\RetensiController;
-use App\Http\Controllers\DokumenController;
-use App\Http\Controllers\DisposisiController;
-use App\Models\Dokumen;
-
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RetensiController;
 use App\Http\Controllers\SuratMasukController;
+use App\Http\Controllers\UserController;
+use App\Models\Dokumen;
 use App\Models\SuratMasuk;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -56,9 +54,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/register', [UserController::class, 'showRegister'])->name('register'); // Register di UserController
 Route::post('/register', [UserController::class, 'register']); // Register di UserController
 
-Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');  
+Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');
 Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
-
 
 // --- Grup Rute yang Membutuhkan Autentikasi (`auth` middleware) ---
 Route::middleware(['auth'])->group(function () {
@@ -149,7 +146,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/dokumen/{dokumen}', [DokumenController::class, 'destroy'])->name('dokumen.destroy');
 
     // Rute khusus untuk mendownload file dokumen dari public_path
-    Route::get('/dokumen/{dokumen}/download', function(Dokumen $dokumen) {
+    Route::get('/dokumen/{dokumen}/download', function (Dokumen $dokumen) {
         $user = Auth::user();
 
         // Hak Akses: Admin bisa download semua dokumen.
@@ -169,7 +166,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
-
     // Tabel Surat Masuk (CRUD utama)
     Route::get('/surat_masuk', [SuratMasukController::class, 'index'])->name('surat_masuk.index');
     Route::get('/surat_masuk/create', [SuratMasukController::class, 'create'])->name('surat_masuk.create');
@@ -180,9 +176,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'destroy'])->name('surat_masuk.destroy');
     Route::post('/surat_masuk/{surat_masuk}/proses', [SuratMasukController::class, 'proses'])->name('surat_masuk.proses');
 
-
     // Rute khusus untuk mendownload file surat masuk dari public_path
-    Route::get('/surat_masuk/{surat_masuk}/download', function(SuratMasuk $surat_masuk) {
+    Route::get('/surat_masuk/{surat_masuk}/download', function (SuratMasuk $surat_masuk) {
         $user = Auth::user();
         if (($user->isOperator() || $user->isPimpinan()) && $user->jurusan_id !== $surat_masuk->jurusan_id) {
             abort(403, 'Anda tidak memiliki akses untuk mengunduh surat masuk ini.');
@@ -194,7 +189,7 @@ Route::middleware(['auth'])->group(function () {
             abort(404, 'File surat masuk tidak ditemukan.');
         }
     })->name('surat_masuk.download');
-    
+
     Route::get('/disposisi', [DisposisiController::class, 'index'])->name('disposisi.index');
     Route::get('/disposisi/create', [DisposisiController::class, 'create'])->name('disposisi.create');
     Route::post('/disposisi', [DisposisiController::class, 'store'])->name('disposisi.store');
