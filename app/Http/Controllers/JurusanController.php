@@ -11,17 +11,16 @@ class JurusanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Jurusan::query();
+        $jurusans = Jurusan::query()
+            ->when($request->search, fn($query, $search) =>
+                $query->where('nama_jurusan', 'like', "%{$search}%")
+                      ->orWhere('kode_jurusan', 'like', "%{$search}%")
+                      ->orWhere('keterangan', 'like', "%{$search}%")
+            )
+            ->oldest()
+            ->paginate(5)
+            ->withQueryString();
 
-        if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
-                $q->where('nama_jurusan', 'like', "%{$search}%")
-                  ->orWhere('kode_jurusan', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%");
-            });
-        }
-
-        $jurusans = $query->oldest()->paginate(5)->withQueryString();
         return view('jurusan.index', compact('jurusans'));
     }
 
@@ -32,45 +31,46 @@ class JurusanController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'kode_jurusan' => 'required|min:2|unique:jurusans,kode_jurusan',
-            'nama_jurusan' => 'required|min:3',
-            'keterangan' => 'nullable|max:255'
-        ]);
+        Jurusan::create($this->validateJurusan($request));
 
-        Jurusan::create($validated);
-        return redirect()->route('jurusan.index')->with('success', 'Jurusan berhasil ditambahkan.');
+        return redirect()
+            ->route('jurusan.index')
+            ->with('success', 'Jurusan berhasil ditambahkan.');
     }
 
-    public function edit($id)
+    public function edit(Jurusan $jurusan)
     {
-        $jurusan = Jurusan::findOrFail($id);
         return view('jurusan.edit', compact('jurusan'));
     }
 
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, Jurusan $jurusan): RedirectResponse
     {
-        $validated = $request->validate([
+        $jurusan->update($this->validateJurusan($request, $jurusan->id));
+
+        return redirect()
+            ->route('jurusan.index')
+            ->with('success', 'Jurusan berhasil diperbarui.');
+    }
+
+    public function destroy(Jurusan $jurusan): RedirectResponse
+    {
+        $jurusan->delete();
+
+        return redirect()
+            ->route('jurusan.index')
+            ->with('success', 'Jurusan berhasil dihapus.');
+    }
+
+    protected function validateJurusan(Request $request, $ignoreId = null): array
+    {
+        return $request->validate([
             'kode_jurusan' => [
                 'required',
                 'min:2',
-                Rule::unique('jurusans', 'kode_jurusan')->ignore($id),
+                Rule::unique('jurusans', 'kode_jurusan')->ignore($ignoreId),
             ],
             'nama_jurusan' => 'required|min:3',
-            'keterangan' => 'nullable|max:255'
+            'keterangan' => 'nullable|max:255',
         ]);
-
-        $jurusan = Jurusan::findOrFail($id);
-        $jurusan->update($validated);
-
-        return redirect()->route('jurusan.index')->with('success', 'Jurusan berhasil diperbarui.');
-    }
-
-    public function destroy($id): RedirectResponse
-    {
-        $jurusan = Jurusan::findOrFail($id);
-        $jurusan->delete();
-
-        return redirect()->route('jurusan.index')->with('success', 'Jurusan berhasil dihapus.');
     }
 }
