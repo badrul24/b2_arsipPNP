@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-
 
 class AuthController extends Controller
 {
@@ -16,18 +14,27 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $this->validateLogin($request);
 
-        if(Auth::attempt($credentials)){
-            return redirect('/dashboard');
-        }
-
-        return back()->with('error', 'Email atau password salah.');
+        return Auth::attempt($credentials)
+            ? redirect()->intended('/dashboard')
+            : back()->with('error', 'Email atau password salah.');
     }
 
     public function logout()
     {
         Auth::logout();
         return redirect('/login');
+    }
+
+    /**
+     * Validasi input login.
+     */
+    protected function validateLogin(Request $request): array
+    {
+        return $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:4',
+        ]);
     }
 }
