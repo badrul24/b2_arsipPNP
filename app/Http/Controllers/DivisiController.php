@@ -6,22 +6,16 @@ use App\Models\Divisi;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-namespace App\Http\Controllers;
-
-use App\Models\Divisi;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-
 class DivisiController extends Controller
 {
     public function index(Request $request)
     {
         $divisis = Divisi::query()
-            ->when($request->search, function ($query, $search) {
+            ->when($request->search, fn($query, $search) =>
                 $query->where('kode_divisi', 'like', "%{$search}%")
                       ->orWhere('nama_divisi', 'like', "%{$search}%")
-                      ->orWhere('keterangan', 'like', "%{$search}%");
-            })
+                      ->orWhere('keterangan', 'like', "%{$search}%")
+            )
             ->oldest()
             ->paginate(5)
             ->withQueryString();
@@ -36,9 +30,7 @@ class DivisiController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $this->validateDivisi($request);
-
-        Divisi::create($validated);
+        Divisi::create($this->validateDivisi($request));
 
         return redirect()
             ->route('divisi.index')
@@ -57,9 +49,7 @@ class DivisiController extends Controller
 
     public function update(Request $request, Divisi $divisi)
     {
-        $validated = $this->validateDivisi($request, $divisi->id);
-
-        $divisi->update($validated);
+        $divisi->update($this->validateDivisi($request, $divisi->id));
 
         return redirect()
             ->route('divisi.index')
@@ -75,7 +65,7 @@ class DivisiController extends Controller
             ->with('success', 'Divisi berhasil dihapus.');
     }
 
-    protected function validateDivisi(Request $request, $ignoreId = null)
+    protected function validateDivisi(Request $request, $ignoreId = null): array
     {
         return $request->validate([
             'kode_divisi' => [
