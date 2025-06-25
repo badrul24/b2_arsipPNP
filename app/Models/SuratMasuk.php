@@ -33,6 +33,8 @@ class SuratMasuk extends Model
         'tanggal_terima' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'status_surat' => 'string',
+        'sifat_surat' => 'string',
     ];
 
     public function jurusan(): BelongsTo

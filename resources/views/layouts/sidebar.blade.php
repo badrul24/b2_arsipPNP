@@ -6,9 +6,7 @@
     <!-- Logo -->
     <div class="flex items-center justify-between h-20 px-4 border-b border-gray-200">
         <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-            </svg>
+            <img src="{{ asset('icons/logo.png') }}" alt="Logo" class="w-8 h-8" />
             <div class="ml-2" x-show="sidebarOpen">
                 <span class="block text-lg font-bold text-gray-800">SI ARSIP</span>
                 <span class="block text-sm text-primary-600">Politeknik Negeri Padang</span>

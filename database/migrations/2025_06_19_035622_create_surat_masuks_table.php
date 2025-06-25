@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('surat_masuks', function (Blueprint $table) {
@@ -14,7 +17,6 @@ return new class extends Migration
             $table->string('nomor_surat_pengirim');
             $table->date('tanggal_surat_pengirim');
             $table->date('tanggal_terima');
-
             $table->string('pengirim');
             $table->string('perihal');
             $table->text('keterangan')->nullable();
@@ -32,19 +34,25 @@ return new class extends Migration
                   ->onDelete('restrict');
 
             $table->enum('status_surat', [
+                'Diajukan',
+                'Diproses',
+                'Ditolak',
+                'Disetujui',
+                'Terkirim',
                 'Baru',
                 'Dibaca',
-                'Dikonfirmasi',
-                'Didisposisi',
                 'Selesai',
                 'Diarsipkan'
-            ])->default('Baru');
+            ])->default('Diajukan');
 
             $table->enum('sifat_surat', ['Sangat Penting', 'Penting', 'Biasa'])->default('Biasa');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('surat_masuks');

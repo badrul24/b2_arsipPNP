@@ -14,7 +14,8 @@ use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\RetensiController;
 use App\Http\Controllers\DokumenController;
-use App\Models\Dokumen; // Diperlukan untuk route dokumen.download
+use App\Http\Controllers\DisposisiController;
+use App\Models\Dokumen;
 
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SuratMasukController;
@@ -177,6 +178,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/surat_masuk/{surat_masuk}/edit', [SuratMasukController::class, 'edit'])->name('surat_masuk.edit');
     Route::put('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'update'])->name('surat_masuk.update');
     Route::delete('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'destroy'])->name('surat_masuk.destroy');
+    Route::post('/surat_masuk/{surat_masuk}/proses', [SuratMasukController::class, 'proses'])->name('surat_masuk.proses');
+
 
     // Rute khusus untuk mendownload file surat masuk dari public_path
     Route::get('/surat_masuk/{surat_masuk}/download', function(SuratMasuk $surat_masuk) {
@@ -190,5 +193,16 @@ Route::middleware(['auth'])->group(function () {
         } else {
             abort(404, 'File surat masuk tidak ditemukan.');
         }
-    })->name('surat_masuk.download'); 
+    })->name('surat_masuk.download');
+    
+    Route::get('/disposisi', [DisposisiController::class, 'index'])->name('disposisi.index');
+    Route::get('/disposisi/create', [DisposisiController::class, 'create'])->name('disposisi.create');
+    Route::post('/disposisi', [DisposisiController::class, 'store'])->name('disposisi.store');
+    Route::get('/disposisi/{disposisi}', [DisposisiController::class, 'show'])->name('disposisi.show');
+    Route::get('/disposisi/{disposisi}/edit', [DisposisiController::class, 'edit'])->name('disposisi.edit');
+    Route::put('/disposisi/{disposisi}', [DisposisiController::class, 'update'])->name('disposisi.update');
+    Route::delete('/disposisi/{disposisi}', [DisposisiController::class, 'destroy'])->name('disposisi.destroy');
+    // Rute untuk mengupdate status disposisi (digunakan oleh penerima disposisi untuk 'Selesai')
+    Route::put('/disposisi/{disposisi}/update-status', [DisposisiController::class, 'updateStatus'])->name('disposisi.updateStatus');
+
 });
