@@ -10,17 +10,16 @@ class RetensiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Retensi::query();
-
-        if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
+        $retensis = Retensi::query()
+            ->when($request->search, fn($q, $search) =>
                 $q->where('kode_retensi', 'like', "%{$search}%")
                   ->orWhere('nama_retensi', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%");
-            });
-        }
+                  ->orWhere('keterangan', 'like', "%{$search}%")
+            )
+            ->oldest()
+            ->paginate(5)
+            ->withQueryString();
 
-        $retensis = $query->oldest()->paginate(5)->withQueryString();
         return view('retensi.index', compact('retensis'));
     }
 
@@ -31,22 +30,8 @@ class RetensiController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'kode_retensi'  => 'required|max:10|unique:retensis,kode_retensi',
-            'nama_retensi'  => 'required|max:100',
-            'tahun_aktif'   => 'required|integer|min:0',
-            'tahun_inaktif' => 'required|integer|min:0',
-            'nasib_akhir'   => ['required', Rule::in(['Musnah', 'Permanen', 'Dinilai Kembali'])],
-            'keterangan'    => 'nullable|string', 
-        ]);
-
-        Retensi::create($validated);
+        Retensi::create($this->validateRetensi($request));
         return redirect()->route('retensi.index')->with('success', 'Retensi berhasil ditambahkan.');
-    }
-
-    public function show(Retensi $retensi)
-    {
-        //
     }
 
     public function edit(Retensi $retensi)
@@ -56,16 +41,7 @@ class RetensiController extends Controller
 
     public function update(Request $request, Retensi $retensi)
     {
-        $validated = $request->validate([
-            'kode_retensi'  => ['required', 'max:10', Rule::unique('retensis', 'kode_retensi')->ignore($retensi->id)],
-            'nama_retensi'  => 'required|max:100',
-            'tahun_aktif'   => 'required|integer|min:0',
-            'tahun_inaktif' => 'required|integer|min:0',
-            'nasib_akhir'   => ['required', Rule::in(['Musnah', 'Permanen', 'Dinilai Kembali'])],
-            'keterangan'    => 'nullable|string',
-        ]);
-
-        $retensi->update($validated);
+        $retensi->update($this->validateRetensi($request, $retensi->id));
         return redirect()->route('retensi.index')->with('success', 'Retensi berhasil diperbarui.');
     }
 
@@ -73,5 +49,17 @@ class RetensiController extends Controller
     {
         $retensi->delete();
         return redirect()->route('retensi.index')->with('success', 'Retensi berhasil dihapus.');
+    }
+
+    protected function validateRetensi(Request $request, $ignoreId = null): array
+    {
+        return $request->validate([
+            'kode_retensi'  => ['required', 'max:10', Rule::unique('retensis', 'kode_retensi')->ignore($ignoreId)],
+            'nama_retensi'  => 'required|max:100',
+            'tahun_aktif'   => 'required|integer|min:0',
+            'tahun_inaktif' => 'required|integer|min:0',
+            'nasib_akhir'   => ['required', Rule::in(['Musnah', 'Permanen', 'Dinilai Kembali'])],
+            'keterangan'    => 'nullable|string',
+        ]);
     }
 }
