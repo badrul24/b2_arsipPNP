@@ -193,7 +193,7 @@ class SuratMasukController extends Controller
             return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk memproses surat masuk ini.'], 403);
         }
         // Sekretaris bisa memproses jika statusnya 'Diajukan' atau 'Ditolak'
-        if (! in_array($suratMasuk->status_surat, ['Diajukan', 'Ditolak'])) {
+        if (! in_array($suratMasuk->status_surat, ['Diajukan', 'Ditolak','Diverifikasi'])) {
             return response()->json(['success' => false, 'message' => 'Surat ini tidak dalam status yang bisa diproses oleh Sekretaris.'], 400);
         }
 
@@ -205,9 +205,17 @@ class SuratMasukController extends Controller
 
         switch ($validated['action']) {
             case 'verifikasi':
-                $suratMasuk->update(['status_surat' => 'Diverifikasi']);
-
-                return response()->json(['success' => true, 'message' => 'Surat Masuk berhasil diverifikasi.']);
+                try {
+                    $suratMasuk->update(['status_surat' => 'Diverifikasi']);
+                    return response()->json(['success' => true, 'message' => 'Surat Masuk berhasil diverifikasi.']);
+                } catch (\Exception $e) {
+                    // Tangkap exception dan kembalikan sebagai response JSON yang informatif
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Terjadi kesalahan saat verifikasi.',
+                        'error' => $e->getMessage() // Kirim pesan error asli untuk debugging
+                    ], 500);
+                }
 
             case 'kembalikan':
                 $suratMasuk->update([

@@ -110,11 +110,11 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-900 max-w-xs overflow-hidden text-ellipsis">
                                 <span class="block font-medium">{{ Str::limit($disposisi->isi_disposisi, 40) }}</span>
-                                @if($disposisi->instruksi_kepada || $disposisi->petunjuk_disposisi)
+                                {{-- @if($disposisi->instruksi_kepada || $disposisi->petunjuk_disposisi)
                                     <span class="text-xs text-gray-500 block">
                                         ({{ implode(', ', array_filter([implode(', ', $disposisi->getInstruksiKepadaArray()), implode(', ', $disposisi->getPetunjukDisposisiArray())])) }})
                                     </span>
-                                @endif
+                                @endif --}}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $disposisi->tanggal_disposisi ? \Carbon\Carbon::parse($disposisi->tanggal_disposisi)->format('d-m-Y') : '-' }}
