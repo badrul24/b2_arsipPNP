@@ -104,12 +104,11 @@
                                 @php
                                     $statusClass = [
                                         'Diajukan' => 'bg-blue-100 text-blue-800',
-                                        'Diverifikasi' => 'bg-green-100 text-green-800',
-                                        'Disetujui' => 'bg-green-100 text-green-800',
+                                        'Diproses' => 'bg-orange-100 text-orange-800',
                                         'Ditolak' => 'bg-red-100 text-red-800',
-                                        'Menunggu Disposisi' => 'bg-yellow-100 text-yellow-800',
-                                        'Didisposisi' => 'bg-purple-100 text-purple-800',
+                                        'Diverifikasi' => 'bg-green-100 text-green-800',
                                         'Terkirim' => 'bg-indigo-100 text-indigo-800',
+                                        'Baru' => 'bg-purple-100 text-purple-800',
                                         'Dibaca' => 'bg-gray-100 text-gray-800',
                                         'Selesai' => 'bg-teal-100 text-teal-800',
                                         'Diarsipkan' => 'bg-gray-500 text-white',
@@ -401,8 +400,8 @@
                             icon: icon,
                             showCancelButton: true,
                             confirmButtonText: (action === 'kembalikan' ? 'Kembalikan' : (
-                                    action === 'verifikasi' ? 'Verifikasi' : 'Teruskan'
-                                    )),
+                                action === 'verifikasi' ? 'Verifikasi' : 'Teruskan'
+                            )),
                             cancelButtonText: 'Batal',
                             reverseButtons: true,
                             input: input,
@@ -574,7 +573,7 @@
                             formData.append('_method', 'PUT');
                             formData.append('action', 'selesaikan_disposisi');
                             formData.append('surat_masuk_id',
-                            suratMasukId); // Kirim surat_masuk_id juga
+                                suratMasukId); // Kirim surat_masuk_id juga
 
                             fetch(`{{ route('disposisi.updateStatus', ['disposisi' => ':id']) }}`
                                     .replace(':id', disposisiId), {
