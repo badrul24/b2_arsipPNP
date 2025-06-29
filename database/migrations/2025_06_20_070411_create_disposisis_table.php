@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('disposisis', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('surat_masuk_id')
                 ->constrained('surat_masuks')
                 ->onDelete('cascade');
@@ -31,13 +32,8 @@ return new class extends Migration
                 ->constrained('divisis')
                 ->onDelete('set null');
 
-            $table->foreignId('jurusan_penerima_id')
-                ->nullable()
-                ->constrained('jurusans')
-                ->onDelete('set null');
-
-            $table->text('instruksi_kepada')->nullable();
-            $table->text('petunjuk_disposisi')->nullable();
+            $table->json('instruksi_kepada')->nullable();
+            $table->json('petunjuk_disposisi')->nullable();
 
             $table->text('isi_disposisi');
             $table->text('catatan')->nullable();

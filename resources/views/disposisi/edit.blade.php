@@ -11,9 +11,11 @@
         </div>
         <div class="flex justify-end">
             <a href="{{ route('disposisi.index') }}"
-                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Kembali
             </a>
@@ -26,46 +28,56 @@
             <form action="{{ route('disposisi.update', $disposisi->id) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                     <!-- Kolom Kiri -->
-                    <div class="space-y-6">
+                    <div class="space-y-4">
+                        {{-- Nomor Surat --}}
                         <div>
-                            <label for="surat_masuk_id" class="block font-medium text-gray-700 mb-1">Surat Masuk</label>
-                            {{-- Surat Masuk ini harus disabled karena disposisi terikat ke SM ini --}}
-                            <select name="surat_masuk_id" id="surat_masuk_id" 
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed" 
-                                disabled required>
-                                <option value="" disabled>Pilih Surat Masuk</option>
-                                @foreach($suratMasuks as $sm)
-                                    <option value="{{ $sm->id }}" 
-                                        {{ old('surat_masuk_id', $disposisi->surat_masuk_id) == $sm->id ? 'selected' : '' }}>
-                                        {{ $sm->nomor_surat_pengirim }} - {{ $sm->perihal }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            {{-- Input hidden agar nilai tetap terkirim --}}
-                            <input type="hidden" name="surat_masuk_id" value="{{ old('surat_masuk_id', $disposisi->surat_masuk_id) }}">
-                            @error('surat_masuk_id')
+                            <label for="sm_nomor_surat_pengirim" class="block font-medium text-gray-700 mb-1">Nomor Surat</label>
+                            <input type="text" id="sm_nomor_surat_pengirim"
+                                class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2"
+                                value="{{ $disposisi->suratMasuk->nomor_surat_pengirim ?? '-' }}" disabled>
+                        </div>
+
+                        {{-- Perihal --}}
+                        <div>
+                            <label for="sm_perihal" class="block font-medium text-gray-700 mb-1">Perihal</label>
+                            <input type="text" id="sm_perihal"
+                                class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2"
+                                value="{{ $disposisi->suratMasuk->perihal ?? '-' }}" disabled>
+                        </div>
+
+                        {{-- Asal Surat --}}
+                        <div>
+                            <label for="sm_pengirim" class="block font-medium text-gray-700 mb-1">Asal Surat</label>
+                            <input type="text" id="sm_pengirim"
+                                class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2"
+                                value="{{ $disposisi->suratMasuk->pengirim ?? '-' }}" disabled>
+                        </div>
+
+                        {{-- Tanggal Disposisi --}}
+                        <div>
+                            <label for="tanggal_disposisi" class="block font-medium text-gray-700 mb-1">Tanggal Disposisi</label>
+                            <input type="date" name="tanggal_disposisi" id="tanggal_disposisi"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 @error('tanggal_disposisi') border-red-500 @enderror"
+                                value="{{ old('tanggal_disposisi', optional($disposisi->tanggal_disposisi)->format('Y-m-d')) }}">
+                            @error('tanggal_disposisi')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Instruksi Kepada (Multi-select) --}}
+                        {{-- Disposisi Kepada --}}
                         <div>
-                            <label for="instruksi_kepada" class="block font-medium text-gray-700 mb-1">Disposisi Kepada (Tindakan)</label>
-                            <select name="instruksi_kepada[]" id="instruksi_kepada" multiple
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('instruksi_kepada') border-red-500 @enderror">
+                            <label for="instruksi_kepada" class="block font-medium text-gray-700 mb-1">Disposisi Kepada (User)</label>
+                            <select name="instruksi_kepada[]" id="instruksi_kepada"
+                                class="select2 w-full border border-gray-300 rounded-md @error('instruksi_kepada') border-red-500 @enderror"
+                                multiple>
                                 @php
-                                    $instruksiKepadaOptions = [
-                                        'Teliti dan Pendapat', 'Untuk Diketahui', 'Sebarkan', 'File',
-                                        'Edarkan', 'Selesai', 'Tindak Lanjuti', 'Jawab', 'Buatkan Konsep',
-                                    ];
-                                    // Ambil nilai lama atau dari database (pastikan ini di-decode jika disimpan sebagai JSON)
-                                    $oldInstruksiKepada = old('instruksi_kepada', $disposisi->getInstruksiKepadaArray());
+                                    $selectedInstruksi = old('instruksi_kepada', $disposisi->getInstruksiKepadaArray());
                                 @endphp
-                                @foreach($instruksiKepadaOptions as $option)
-                                    <option value="{{ $option }}" {{ in_array($option, $oldInstruksiKepada) ? 'selected' : '' }}>
-                                        {{ $option }}
+                                @foreach ($usersWithDivisions as $user)
+                                    <option value="{{ $user->id }}" {{ in_array($user->id, $selectedInstruksi) ? 'selected' : '' }}>
+                                        {{ $user->name }}{{ $user->divisi ? ' (' . $user->divisi->nama_divisi . ')' : '' }}
                                     </option>
                                 @endforeach
                             </select>
@@ -74,23 +86,73 @@
                             @enderror
                         </div>
 
-                        {{-- Petunjuk Disposisi (Multi-select) --}}
+                        {{-- Catatan Disposisi --}}
+                        <div>
+                            <label for="isi_disposisi" class="block font-medium text-gray-700 mb-1">Catatan Disposisi</label>
+                            <textarea name="isi_disposisi" id="isi_disposisi" rows="5"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 @error('isi_disposisi') border-red-500 @enderror"
+                                required>{{ old('isi_disposisi', $disposisi->isi_disposisi) }}</textarea>
+                            @error('isi_disposisi')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <input type="hidden" name="surat_masuk_id" value="{{ $disposisi->surat_masuk_id }}">
+                    </div>
+
+                    <!-- Kolom Kanan -->
+                    <div class="space-y-4">
+                        {{-- Status Surat --}}
+                        <div>
+                            <label for="sm_status_surat_display" class="block font-medium text-gray-700 mb-1">Status Surat</label>
+                            <input type="text" id="sm_status_surat_display"
+                                class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2"
+                                value="{{ $disposisi->suratMasuk->status_surat ?? '-' }}" disabled>
+                        </div>
+
+                        {{-- Tanggal Surat --}}
+                        <div>
+                            <label for="sm_tanggal_surat_pengirim_kanan" class="block font-medium text-gray-700 mb-1">Tanggal Surat</label>
+                            <input type="text" id="sm_tanggal_surat_pengirim_kanan"
+                                class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2"
+                                value="{{ optional($disposisi->suratMasuk->tanggal_surat_pengirim)->format('d-m-Y') ?? '-' }}" disabled>
+                    </div>
+
+                        {{-- Tanggal Terima --}}
+                        <div>
+                            <label for="sm_tanggal_terima" class="block font-medium text-gray-700 mb-1">Tanggal Terima</label>
+                            <input type="text" id="sm_tanggal_terima"
+                                class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2"
+                                value="{{ optional($disposisi->suratMasuk->tanggal_terima)->format('d-m-Y') ?? '-' }}" disabled>
+                        </div>
+
+                        {{-- Status Disposisi --}}
+                        <div>
+                            <label for="status_disposisi" class="block font-medium text-gray-700 mb-1">Status Disposisi</label>
+                            <select name="status_disposisi" id="status_disposisi"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 @error('status_disposisi') border-red-500 @enderror">
+                                @foreach (['Baru', 'Diterima', 'Dikerjakan', 'Selesai', 'Ditolak', 'Diteruskan'] as $status)
+                                    <option value="{{ $status }}" {{ old('status_disposisi', $disposisi->status_disposisi) == $status ? 'selected' : '' }}>
+                                        {{ $status }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('status_disposisi')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Petunjuk Disposisi --}}
                         <div>
                             <label for="petunjuk_disposisi" class="block font-medium text-gray-700 mb-1">Petunjuk Disposisi</label>
-                            <select name="petunjuk_disposisi[]" id="petunjuk_disposisi" multiple
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('petunjuk_disposisi') border-red-500 @enderror">
+                            <select name="petunjuk_disposisi[]" id="petunjuk_disposisi"
+                                class="select2 w-full border border-gray-300 rounded-md @error('petunjuk_disposisi') border-red-500 @enderror"
+                                multiple>
                                 @php
-                                    $petunjukDisposisiOptions = [
-                                        'Tindak Lanjuti', 'Selesaikan', 'Edarkan', 'Arsip',
-                                        'Siapkan Rapat', 'Bahas Bersama', 'Untuk Perhatian',
-                                    ];
-                                    // Ambil nilai lama atau dari database (pastikan ini di-decode jika disimpan sebagai JSON)
-                                    $oldPetunjukDisposisi = old('petunjuk_disposisi', $disposisi->getPetunjukDisposisiArray());
+                                    $selectedPetunjuk = old('petunjuk_disposisi', $disposisi->getPetunjukDisposisiArray());
                                 @endphp
-                                @foreach($petunjukDisposisiOptions as $option)
-                                    <option value="{{ $option }}" {{ in_array($option, $oldPetunjukDisposisi) ? 'selected' : '' }}>
-                                        {{ $option }}
-                                    </option>
+                                @foreach (['Tindak Lanjuti', 'Selesaikan', 'Edarkan', 'Arsip', 'Siapkan Rapat', 'Bahas Bersama', 'Untuk Perhatian'] as $option)
+                                    <option value="{{ $option }}" {{ in_array($option, $selectedPetunjuk) ? 'selected' : '' }}>{{ $option }}</option>
                                 @endforeach
                             </select>
                             @error('petunjuk_disposisi')
@@ -98,93 +160,27 @@
                             @enderror
                         </div>
 
+                        {{-- Catatan Sekretaris --}}
                         <div>
-                            <label for="isi_disposisi" class="block font-medium text-gray-700 mb-1">Isi Disposisi (Catatan Bebas)</label>
-                            <textarea name="isi_disposisi" id="isi_disposisi" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('isi_disposisi') border-red-500 @enderror" placeholder="Masukkan instruksi atau catatan bebas disposisi" required>{{ old('isi_disposisi', $disposisi->isi_disposisi) }}</textarea>
-                            @error('isi_disposisi')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        
-                        <div>
-                            <label for="catatan" class="block font-medium text-gray-700 mb-1">Catatan Tambahan</label>
-                            <textarea name="catatan" id="catatan" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('catatan') border-red-500 @enderror" placeholder="Masukkan catatan tambahan (opsional)">{{ old('catatan', $disposisi->catatan) }}</textarea>
+                            <label for="catatan_sekretaris" class="block font-medium text-gray-700 mb-1">Catatan untuk Sekretaris</label>
+                            <textarea name="catatan" id="catatan_sekretaris" rows="5"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 @error('catatan') border-red-500 @enderror"
+                                placeholder="Catatan tambahan untuk sekretaris (opsional)">{{ old('catatan', $disposisi->catatan) }}</textarea>
                             @error('catatan')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
-                    <!-- Kolom Kanan (Penerima dan Status) -->
-                    <div class="space-y-6">
-                        <div>
-                            <label for="user_penerima_id" class="block font-medium text-gray-700 mb-1">User Penerima</label>
-                            <select name="user_penerima_id" id="user_penerima_id" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('user_penerima_id') border-red-500 @enderror">
-                                <option value="">-- Pilih User Penerima (opsional) --</option>
-                                @foreach($users as $userOption)
-                                    <option value="{{ $userOption->id }}" {{ old('user_penerima_id', $disposisi->user_penerima_id) == $userOption->id ? 'selected' : '' }}>{{ $userOption->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('user_penerima_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="divisi_penerima_id" class="block font-medium text-gray-700 mb-1">Divisi Penerima</label>
-                            <select name="divisi_penerima_id" id="divisi_penerima_id" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('divisi_penerima_id') border-red-500 @enderror">
-                                <option value="">-- Pilih Divisi Penerima (opsional) --</option>
-                                @foreach($divisis as $divisi)
-                                    <option value="{{ $divisi->id }}" {{ old('divisi_penerima_id', $disposisi->divisi_penerima_id) == $divisi->id ? 'selected' : '' }}>{{ $divisi->nama_divisi }}</option>
-                                @endforeach
-                            </select>
-                            @error('divisi_penerima_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="jurusan_penerima_id" class="block font-medium text-gray-700 mb-1">Jurusan Penerima</label>
-                            <select name="jurusan_penerima_id" id="jurusan_penerima_id" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('jurusan_penerima_id') border-red-500 @enderror">
-                                <option value="">-- Pilih Jurusan Penerima (opsional) --</option>
-                                @foreach($jurusans as $jurusan)
-                                    <option value="{{ $jurusan->id }}" {{ old('jurusan_penerima_id', $disposisi->jurusan_penerima_id) == $jurusan->id ? 'selected' : '' }}>{{ $jurusan->nama_jurusan }}</option>
-                                @endforeach
-                            </select>
-                            @error('jurusan_penerima_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        @if($errors->has('penerima'))
-                            <p class="text-red-500 text-sm mt-1">{{ $errors->first('penerima') }}</p>
-                        @endif
 
+                        {{-- Parent Disposisi --}}
                         <div>
-                            <label for="tanggal_disposisi" class="block font-medium text-gray-700 mb-1">Tanggal Disposisi</label>
-                            <input type="date" name="tanggal_disposisi" id="tanggal_disposisi" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('tanggal_disposisi') border-red-500 @enderror" value="{{ old('tanggal_disposisi', optional($disposisi->tanggal_disposisi)->format('Y-m-d')) }}" required>
-                            @error('tanggal_disposisi')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="status_disposisi" class="block font-medium text-gray-700 mb-1">Status Disposisi</label>
-                            <select name="status_disposisi" id="status_disposisi" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('status_disposisi') border-red-500 @enderror" required>
-                                <option value="" disabled>Pilih Status</option>
-                                <option value="Baru" {{ old('status_disposisi', $disposisi->status_disposisi) == 'Baru' ? 'selected' : '' }}>Baru</option>
-                                <option value="Diterima" {{ old('status_disposisi', $disposisi->status_disposisi) == 'Diterima' ? 'selected' : '' }}>Diterima</option>
-                                <option value="Dikerjakan" {{ old('status_disposisi', $disposisi->status_disposisi) == 'Dikerjakan' ? 'selected' : '' }}>Dikerjakan</option>
-                                <option value="Selesai" {{ old('status_disposisi', $disposisi->status_disposisi) == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                                <option value="Ditolak" {{ old('status_disposisi', $disposisi->status_disposisi) == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-                                <option value="Diteruskan" {{ old('status_disposisi', $disposisi->status_disposisi) == 'Diteruskan' ? 'selected' : '' }}>Diteruskan</option>
-                            </select>
-                            @error('status_disposisi')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="parent_disposisi_id" class="block font-medium text-gray-700 mb-1">Disposisi Induk (Parent)</label>
-                            <select name="parent_disposisi_id" id="parent_disposisi_id" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('parent_disposisi_id') border-red-500 @enderror">
-                                <option value="" selected>-- Pilih Disposisi Induk (opsional) --</option>
+                            <label for="parent_disposisi_id" class="block font-medium text-gray-700 mb-1">Disposisi Induk (Opsional)</label>
+                            <select name="parent_disposisi_id" id="parent_disposisi_id"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 @error('parent_disposisi_id') border-red-500 @enderror">
+                                <option value="">-- Pilih Disposisi Induk --</option>
                                 @foreach($parentDisposisis as $parent)
-                                    <option value="{{ $parent->id }}" {{ old('parent_disposisi_id', $disposisi->parent_disposisi_id) == $parent->id ? 'selected' : '' }}>
-                                        {{ $parent->isi_disposisi }} ({{ $parent->tanggal_disposisi ? date('d-m-Y', strtotime($parent->tanggal_disposisi)) : '' }})
+                                    <option value="{{ $parent->id }}"
+                                        {{ old('parent_disposisi_id', $disposisi->parent_disposisi_id) == $parent->id ? 'selected' : '' }}>
+                                        {{ $parent->isi_disposisi }} ({{ optional($parent->tanggal_disposisi)->format('d-m-Y') }})
                                     </option>
                                 @endforeach
                             </select>
@@ -194,13 +190,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex space-x-2">
+
+                <div class="flex space-x-2 mt-6">
                     <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700">
                         Update
                     </button>
                     <button type="reset"
-                        class="px-4 py-2 text-sm font-medium text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                        class="px-4 py-2 text-sm font-medium text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
                         Reset
                     </button>
                 </div>

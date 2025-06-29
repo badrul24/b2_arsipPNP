@@ -31,6 +31,8 @@ class Disposisi extends Model
         'tanggal_disposisi' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'instruksi_kepada' => 'array',   // Ditambahkan: Cast ke array
+        'petunjuk_disposisi' => 'array', // Ditambahkan: Cast ke array
     ];
 
     public function suratMasuk(): BelongsTo
@@ -53,13 +55,18 @@ class Disposisi extends Model
         return $this->belongsTo(Divisi::class, 'divisi_penerima_id');
     }
 
-    public function jurusanPenerima(): BelongsTo
-    {
-        return $this->belongsTo(Jurusan::class, 'jurusan_penerima_id');
-    }
-
     public function parentDisposisi(): BelongsTo
     {
         return $this->belongsTo(Disposisi::class, 'parent_disposisi_id');
+    }
+
+    public function getInstruksiKepadaArray(): array
+    {
+        return $this->instruksi_kepada ?? [];
+    }
+
+    public function getPetunjukDisposisiArray(): array
+    {
+        return $this->petunjuk_disposisi ?? [];
     }
 }

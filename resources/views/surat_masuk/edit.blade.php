@@ -39,6 +39,7 @@
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+
                         <div>
                             <label for="nomor_surat_pengirim" class="block font-medium text-gray-700 mb-1">Nomor Surat Pengirim</label>
                             <input type="text" name="nomor_surat_pengirim" id="nomor_surat_pengirim"
@@ -49,24 +50,27 @@
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+
                         <div>
                             <label for="tanggal_surat_pengirim" class="block font-medium text-gray-700 mb-1">Tanggal Surat Pengirim</label>
                             <input type="date" name="tanggal_surat_pengirim" id="tanggal_surat_pengirim"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('tanggal_surat_pengirim') border-red-500 @enderror"
-                                value="{{ old('tanggal_surat_pengirim', optional($suratMasuk->tanggal_surat_pengirim)->format('Y-m-d')) }}" required>
+                                value="{{ old('tanggal_surat_pengirim', \Carbon\Carbon::parse($suratMasuk->tanggal_surat_pengirim)->format('Y-m-d')) }}" required>
                             @error('tanggal_surat_pengirim')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+
                         <div>
                             <label for="tanggal_terima" class="block font-medium text-gray-700 mb-1">Tanggal Terima</label>
                             <input type="date" name="tanggal_terima" id="tanggal_terima"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('tanggal_terima') border-red-500 @enderror"
-                                value="{{ old('tanggal_terima', optional($suratMasuk->tanggal_terima)->format('Y-m-d')) }}" required>
+                                value="{{ old('tanggal_terima', \Carbon\Carbon::parse($suratMasuk->tanggal_terima)->format('Y-m-d')) }}" required>
                             @error('tanggal_terima')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+
                         <div>
                             <label for="pengirim" class="block font-medium text-gray-700 mb-1">Pengirim</label>
                             <input type="text" name="pengirim" id="pengirim"
@@ -78,6 +82,7 @@
                             @enderror
                         </div>
                     </div>
+
                     <!-- Kolom Kanan -->
                     <div class="space-y-6">
                         <div>
@@ -90,14 +95,13 @@
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        
-                        {{-- Sifat Surat Field (ENUM) --}}
+
                         <div>
                             <label for="sifat_surat" class="block font-medium text-gray-700 mb-1">Sifat Surat</label>
                             <select name="sifat_surat" id="sifat_surat"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('sifat_surat') border-red-500 @enderror"
                                 required>
-                                <option value="" disabled>Pilih Sifat</option>
+                                <option disabled value="">Pilih Sifat</option>
                                 <option value="Sangat Penting" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Sangat Penting' ? 'selected' : '' }}>Sangat Penting</option>
                                 <option value="Penting" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Penting' ? 'selected' : '' }}>Penting</option>
                                 <option value="Biasa" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Biasa' ? 'selected' : '' }}>Biasa</option>
@@ -107,40 +111,28 @@
                             @enderror
                         </div>
 
-                        {{-- Status Surat Field (untuk menampilkan, tidak diubah dari form ini) --}}
-                        <div>
-                            <label for="status_surat_display" class="block font-medium text-gray-700 mb-1">Status Surat (Saat Ini)</label>
-                            {{-- Tampilkan status surat saat ini. Field ini disabled karena hanya diubah melalui aksi proses --}}
-                            <input type="text" id="status_surat_display" 
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed" 
-                                value="{{ $suratMasuk->status_surat }}" disabled>
-                            {{-- Input hidden untuk memastikan status_surat tetap terkirim jika controller butuh --}}
+                        {{-- <div>
+                            <label for="status_surat" class="block font-medium text-gray-700 mb-1">Status Surat (Tidak dapat diubah dari sini)</label>
+                            <input type="text" class="w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2" value="{{ $suratMasuk->status_surat }}" disabled>
                             <input type="hidden" name="status_surat" value="{{ $suratMasuk->status_surat }}">
-                        </div>
+                        </div> --}}
 
-                        {{-- Jurusan Field - Dinamis berdasarkan peran user --}}
                         <div>
-                            <label for="jurusan_id" class="block font-medium text-gray-700 mb-1">Jurusan</label>
+                            {{-- <label for="jurusan_id" class="block font-medium text-gray-700 mb-1">Jurusan</label> --}}
                             @php
                                 $currentUser = Auth::user();
-                                // Jurusan hanya bisa diedit jika status masih 'Diajukan' atau 'Ditolak'
-                                // dan user adalah operator yang membuat surat, atau admin.
-                                // Jika tidak, disabled.
-                                $canEditJurusan = ($currentUser->isOperator() && $currentUser->id === $suratMasuk->user_id && in_array($suratMasuk->status_surat, ['Diajukan', 'Ditolak'])) || $currentUser->isAdmin();
-                                $isDisabled = $canEditJurusan ? '' : 'disabled';
+                                $canEdit = ($currentUser->isOperator() && $currentUser->id === $suratMasuk->user_id && in_array($suratMasuk->status_surat, ['Diajukan', 'Ditolak'])) || $currentUser->isAdmin();
                             @endphp
-                            <select name="jurusan_id" id="jurusan_id" {{ $isDisabled }}
+                            {{-- <select name="jurusan_id" id="jurusan_id" {{ !$canEdit ? 'disabled' : '' }}
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('jurusan_id') border-red-500 @enderror">
-                                <option value="">Pilih Jurusan (Opsional)</option>
+                                <option value="">Pilih Jurusan</option>
                                 @foreach($jurusans as $jurusan)
-                                    <option value="{{ $jurusan->id }}" 
-                                        {{ old('jurusan_id', $suratMasuk->jurusan_id) == $jurusan->id ? 'selected' : '' }}>
+                                    <option value="{{ $jurusan->id }}" {{ old('jurusan_id', $suratMasuk->jurusan_id) == $jurusan->id ? 'selected' : '' }}>
                                         {{ $jurusan->nama_jurusan }}
                                     </option>
                                 @endforeach
-                            </select>
-                            @if($isDisabled)
-                                {{-- Input hidden agar nilai tetap terkirim saat submit jika dropdown disabled --}}
+                            </select> --}}
+                            @if(!$canEdit)
                                 <input type="hidden" name="jurusan_id" value="{{ old('jurusan_id', $suratMasuk->jurusan_id) }}">
                             @endif
                             @error('jurusan_id')
@@ -148,45 +140,43 @@
                             @enderror
                         </div>
 
-                        {{-- Input File Surat --}}
                         <div>
                             <label for="file_surat" class="block font-medium text-gray-700 mb-1">File Surat</label>
                             @if($suratMasuk->file_surat_path)
-                                <div class="mb-2">
-                                    <p class="text-sm text-gray-600">File saat ini: {{ $suratMasuk->nama_file_surat_asli }}</p>
-                                    <a href="{{ route('surat_masuk.download', $suratMasuk->id) }}" target="_blank" class="text-primary-600 hover:text-primary-500">
-                                        Lihat File
+                                <p class="text-sm text-gray-600 mb-1">File saat ini:
+                                    <a href="{{ route('surat_masuk.download', $suratMasuk->id) }}" target="_blank" class="text-blue-600 underline">
+                                        {{ $suratMasuk->nama_file_surat_asli }}
                                     </a>
-                                </div>
+                                </p>
                             @endif
                             <input type="file" name="file_surat" id="file_surat"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('file_surat') border-red-500 @enderror"
                                 accept=".pdf,.doc,.docx,.xls,.xlsx">
-                            <p class="text-xs text-gray-500 mt-1">PDF, DOC, DOCX, XLS, XLSX maksimal 10MB (kosongkan jika tidak ingin mengubah)</p>
+                            <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah file. Maks 10MB.</p>
                             @error('file_surat')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Keterangan --}}
                         <div>
                             <label for="keterangan" class="block font-medium text-gray-700 mb-1">Keterangan</label>
                             <textarea name="keterangan" id="keterangan" rows="3"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 whitespace-normal break-words resize-none @error('keterangan') border-red-500 @enderror"
-                                placeholder="Masukkan keterangan surat masuk">{{ old('keterangan', $suratMasuk->keterangan) }}</textarea>
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none @error('keterangan') border-red-500 @enderror"
+                                placeholder="Masukkan keterangan">{{ old('keterangan', $suratMasuk->keterangan) }}</textarea>
                             @error('keterangan')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
                 </div>
-                <div class="flex space-x-2">
+
+                <div class="flex space-x-2 mt-6">
                     <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:focus:border-primary-500">
+                        class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700">
                         Update
                     </button>
                     <button type="reset"
-                        class="px-4 py-2 text-sm font-medium text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:focus:border-yellow-500">
+                        class="px-4 py-2 text-sm font-medium text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
                         Reset
                     </button>
                 </div>

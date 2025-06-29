@@ -174,7 +174,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/surat_masuk/{surat_masuk}/edit', [SuratMasukController::class, 'edit'])->name('surat_masuk.edit');
     Route::put('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'update'])->name('surat_masuk.update');
     Route::delete('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'destroy'])->name('surat_masuk.destroy');
+    Route::get('/surat_masuk/{surat_masuk}/print', [SuratMasukController::class, 'print'])->name('surat_masuk.print');
     Route::post('/surat_masuk/{surat_masuk}/proses', [SuratMasukController::class, 'proses'])->name('surat_masuk.proses');
+    Route::post('/surat-masuk/{suratMasuk}/update-status', [SuratMasukController::class, 'updateStatus'])
+    ->name('surat_masuk.updateStatus');
+
 
     // Rute khusus untuk mendownload file surat masuk dari public_path
     Route::get('/surat_masuk/{surat_masuk}/download', function (SuratMasuk $surat_masuk) {
@@ -197,7 +201,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/disposisi/{disposisi}/edit', [DisposisiController::class, 'edit'])->name('disposisi.edit');
     Route::put('/disposisi/{disposisi}', [DisposisiController::class, 'update'])->name('disposisi.update');
     Route::delete('/disposisi/{disposisi}', [DisposisiController::class, 'destroy'])->name('disposisi.destroy');
+    Route::get('/disposisi/{disposisi}/print', [DisposisiController::class, 'print'])->name('disposisi.print');
     // Rute untuk mengupdate status disposisi (digunakan oleh penerima disposisi untuk 'Selesai')
     Route::put('/disposisi/{disposisi}/update-status', [DisposisiController::class, 'updateStatus'])->name('disposisi.updateStatus');
+    Route::post('/disposisi/terima/{surat_masuk}', [DisposisiController::class, 'terima'])->name('disposisi.terima');
+
 
 });

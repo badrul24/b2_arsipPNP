@@ -37,6 +37,7 @@ return new class extends Migration
                 'Diajukan',
                 'Diproses',
                 'Ditolak',
+                'Diverifikasi',
                 'Disetujui',
                 'Terkirim',
                 'Baru',

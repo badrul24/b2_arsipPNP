@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Disposisi;
-use App\Models\Divisi;
-use App\Models\Jurusan;
-use App\Models\SuratMasuk;
-use App\Models\User;
+use App\Models\{Disposisi, Divisi, SuratMasuk, User};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -17,20 +13,16 @@ class DisposisiController extends Controller
     {
         $user = Auth::user();
 
-        $query = Disposisi::with([
-            'suratMasuk', 'userPemberi', 'userPenerima', 'divisiPenerima', 'jurusanPenerima', 'parentDisposisi',
-        ]);
+        $query = Disposisi::with(['suratMasuk', 'userPemberi', 'userPenerima', 'divisiPenerima', 'parentDisposisi']);
 
-        if (! $user->isAdmin()) {
+        // Hanya tampilkan disposisi untuk Admin, Pimpinan, Kepala Lembaga, Kepala Bidang, atau user terkait disposisi
+        if (!($user->isAdmin() || $user->isOperator() || $user->isSekretaris() || $user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang())) {
             $query->where(function ($q) use ($user) {
                 $q->where('user_pemberi_id', $user->id)
                     ->orWhere('user_penerima_id', $user->id);
 
                 if ($user->divisi_id) {
                     $q->orWhere('divisi_penerima_id', $user->divisi_id);
-                }
-                if ($user->jurusan_id) {
-                    $q->orWhere('jurusan_penerima_id', $user->jurusan_id);
                 }
             });
         }
@@ -56,53 +48,85 @@ class DisposisiController extends Controller
     public function create()
     {
         $user = Auth::user();
-        abort_unless($user->isPimpinan(), 403, 'Anda tidak memiliki izin untuk membuat disposisi.');
+        abort_unless($user->isPimpinan(), 403, 'Anda tidak memiliki izin.');
 
-        $suratMasuks = SuratMasuk::all();
-        $users = User::all();
+        $suratMasuks = SuratMasuk::latest()->get();
+
+        $usersWithDivisions = User::whereNotNull('divisi_id')
+            ->with('divisi')
+            ->get(['id', 'name', 'divisi_id']);
+
         $divisis = Divisi::all();
-        $jurusans = Jurusan::all();
 
-        $selectedSuratMasuk = request('surat_masuk_id') ? SuratMasuk::find(request('surat_masuk_id')) : null;
+        $selectedSuratMasuk = request()->filled('surat_masuk_id')
+            ? SuratMasuk::find(request('surat_masuk_id'))
+            : null;
+
         $parentDisposisis = $selectedSuratMasuk
             ? Disposisi::where('surat_masuk_id', $selectedSuratMasuk->id)->get()
             : collect();
 
-        return view('disposisi.create', compact('suratMasuks', 'users', 'divisis', 'jurusans', 'parentDisposisis', 'selectedSuratMasuk'));
+        return view('disposisi.create', compact(
+            'suratMasuks',
+            'divisis',
+            'parentDisposisis',
+            'selectedSuratMasuk',
+            'usersWithDivisions'
+        ));
     }
+
 
     public function store(Request $request)
     {
         $user = Auth::user();
-        abort_unless($user->isPimpinan(), 403, 'Anda tidak memiliki izin untuk menyimpan disposisi.');
+        abort_unless(
+            $user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang() || $user->isAdmin(),
+            403
+        );
 
         $validated = $this->validateRequest($request);
 
-        if (empty($validated['user_penerima_id']) && empty($validated['divisi_penerima_id']) && empty($validated['jurusan_penerima_id'])) {
-            return back()->withInput()->withErrors(['penerima' => 'Minimal satu penerima (User, Divisi, atau Jurusan) harus dipilih.']);
+        if (empty($validated['instruksi_kepada'])) {
+            return back()->withInput()->withErrors(['instruksi_kepada' => 'Pilih minimal satu penerima disposisi.']);
         }
 
-        $validated['user_pemberi_id'] = $user->id;
-        $validated['instruksi_kepada'] = json_encode($validated['instruksi_kepada'] ?? []);
-        $validated['petunjuk_disposisi'] = json_encode($validated['petunjuk_disposisi'] ?? []);
+        foreach ($validated['instruksi_kepada'] as $idPenerima) {
+            $penerima = User::with('divisi')->find($idPenerima);
 
-        $disposisi = Disposisi::create($validated);
+            Disposisi::create([
+                'surat_masuk_id'      => $validated['surat_masuk_id'],
+                'user_pemberi_id'     => $user->id,
+                'user_penerima_id'    => $idPenerima,
+                'divisi_penerima_id'  => $penerima->divisi_id, // ✅ INI YANG KURANG
+                'tanggal_disposisi'   => now()->format('Y-m-d'),
+                'status_disposisi'    => 'Baru',
+                'isi_disposisi'       => $validated['isi_disposisi'],
+                'catatan'             => $validated['catatan'] ?? null,
+                'petunjuk_disposisi'  => $validated['petunjuk_disposisi'] ?? null,
+                'parent_disposisi_id' => $validated['parent_disposisi_id'] ?? null,
+            ]);
+        }
 
-        SuratMasuk::where('id', $validated['surat_masuk_id'])->update(['status_surat' => 'Disetujui']);
+        if ($suratMasuk = SuratMasuk::find($validated['surat_masuk_id'])) {
+            $suratMasuk->update(['status_surat' => 'Terkirim']);
+        }
 
         return redirect()->route('disposisi.index')->with('success', 'Disposisi berhasil dibuat.');
     }
 
+
     public function show(Disposisi $disposisi)
     {
         $user = Auth::user();
-        $authorized = $user->isAdmin() ||
-                      $disposisi->user_pemberi_id === $user->id ||
-                      $disposisi->user_penerima_id === $user->id ||
-                      ($disposisi->divisi_penerima_id && $user->divisi_id === $disposisi->divisi_penerima_id) ||
-                      ($disposisi->jurusan_penerima_id && $user->jurusan_id === $disposisi->jurusan_penerima_id);
 
-        abort_unless($authorized, 403, 'Anda tidak memiliki izin untuk melihat disposisi ini.');
+        $authorized = $user->isAdmin() ||
+            $user->isPimpinan() ||
+            $disposisi->user_pemberi_id === $user->id ||
+            $disposisi->user_penerima_id === $user->id ||
+            ($disposisi->divisi_penerima_id && $user->divisi_id === $disposisi->divisi_penerima_id) ||
+            ($disposisi->jurusan_penerima_id && $user->jurusan_id === $disposisi->jurusan_penerima_id);
+
+        abort_unless($authorized, 403);
 
         return view('disposisi.show', compact('disposisi'));
     }
@@ -110,37 +134,35 @@ class DisposisiController extends Controller
     public function edit(Disposisi $disposisi)
     {
         $user = Auth::user();
-        abort_unless($user->isAdmin() || $disposisi->user_pemberi_id === $user->id, 403, 'Anda tidak memiliki izin untuk mengedit disposisi ini.');
+        abort_unless($user->isAdmin() || $disposisi->user_pemberi_id === $user->id, 403);
 
         $suratMasuks = SuratMasuk::all();
-        $users = User::all();
         $divisis = Divisi::all();
-        $jurusans = Jurusan::all();
         $parentDisposisis = Disposisi::where('surat_masuk_id', $disposisi->surat_masuk_id)
             ->where('id', '!=', $disposisi->id)->get();
+        $usersWithDivisions = User::whereNotNull('divisi_id')->with('divisi')->get(['id', 'name', 'divisi_id']);
 
-        return view('disposisi.edit', compact('disposisi', 'suratMasuks', 'users', 'divisis', 'jurusans', 'parentDisposisis'));
+        return view('disposisi.edit', compact(
+            'disposisi',
+            'parentDisposisis',
+            'usersWithDivisions',
+            'suratMasuks',
+            'divisis'
+        ));
     }
 
     public function update(Request $request, Disposisi $disposisi)
     {
         $user = Auth::user();
-        abort_unless($user->isAdmin() || $disposisi->user_pemberi_id === $user->id, 403, 'Anda tidak memiliki izin untuk memperbarui disposisi ini.');
+        abort_unless($user->isAdmin() || $disposisi->user_pemberi_id === $user->id, 403);
 
         $validated = $this->validateRequest($request);
 
-        if (empty($validated['user_penerima_id']) && empty($validated['divisi_penerima_id']) && empty($validated['jurusan_penerima_id'])) {
-            return back()->withInput()->withErrors(['penerima' => 'Minimal satu penerima (User, Divisi, atau Jurusan) harus dipilih.']);
+        if (empty($validated['instruksi_kepada'])) {
+            return back()->withInput()->withErrors(['instruksi_kepada' => 'Pilih minimal satu penerima disposisi.']);
         }
-
-        $validated['instruksi_kepada'] = json_encode($validated['instruksi_kepada'] ?? []);
-        $validated['petunjuk_disposisi'] = json_encode($validated['petunjuk_disposisi'] ?? []);
 
         $disposisi->update($validated);
-
-        if ($disposisi->suratMasuk && $disposisi->suratMasuk->status_surat === 'Diproses') {
-            $disposisi->suratMasuk->update(['status_surat' => 'Disetujui']);
-        }
 
         return redirect()->route('disposisi.index')->with('success', 'Disposisi berhasil diperbarui.');
     }
@@ -148,7 +170,7 @@ class DisposisiController extends Controller
     public function destroy(Disposisi $disposisi)
     {
         $user = Auth::user();
-        abort_unless($user->isAdmin() || $disposisi->user_pemberi_id === $user->id, 403, 'Anda tidak memiliki izin untuk menghapus disposisi ini.');
+        abort_unless($user->isAdmin() || $disposisi->user_pemberi_id === $user->id, 403);
 
         $disposisi->delete();
 
@@ -158,62 +180,79 @@ class DisposisiController extends Controller
     public function updateStatus(Request $request, Disposisi $disposisi)
     {
         $user = Auth::user();
-        $allowed = $user->isAdmin() ||
-                   $disposisi->user_penerima_id === $user->id ||
-                   ($disposisi->divisi_penerima_id && $user->divisi_id === $disposisi->divisi_penerima_id) ||
-                   ($disposisi->jurusan_penerima_id && $user->jurusan_id === $disposisi->jurusan_penerima_id);
 
-        if (! $allowed) {
-            return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk memperbarui status disposisi ini.'], 403);
+        $allowed = $user->isAdmin() ||
+            $disposisi->user_penerima_id === $user->id ||
+            ($disposisi->divisi_penerima_id && $user->divisi_id === $disposisi->divisi_penerima_id) ||
+            ($disposisi->jurusan_penerima_id && $user->jurusan_id === $disposisi->jurusan_penerima_id);
+
+        if (!$allowed) {
+            return response()->json(['success' => false, 'message' => 'Tidak punya izin.'], 403);
         }
 
         $validated = $request->validate([
-            'status' => ['required', Rule::in(['Diterima', 'Dikerjakan', 'Selesai', 'Ditolak', 'Dibaca', 'Terkirim'])],
-            'surat_masuk_id' => 'required|exists:surat_masuks,id',
+            'status' => ['required', Rule::in(['Baru', 'Diterima', 'Dikerjakan', 'Selesai', 'Ditolak', 'Diteruskan'])],
+            'surat_masuk_id' => 'sometimes|exists:surat_masuks,id',
         ]);
 
         $disposisi->update(['status_disposisi' => $validated['status']]);
 
-        $suratMasuk = SuratMasuk::find($validated['surat_masuk_id']);
-        if ($suratMasuk) {
-            $statusMap = [
-                'Diterima' => 'Baru',
-                'Dibaca' => 'Dibaca',
-                'Selesai' => 'Selesai',
-            ];
-            if (isset($statusMap[$validated['status']])) {
-                $suratMasuk->update(['status_surat' => $statusMap[$validated['status']]]);
+        if ($request->has('surat_masuk_id')) {
+            if ($suratMasuk = SuratMasuk::find($request->surat_masuk_id)) {
+                if ($validated['status'] === 'Selesai') {
+                    $suratMasuk->update(['status_surat' => 'Selesai']);
+                } elseif ($validated['status'] === 'Diterima') {
+                    $suratMasuk->update(['status_surat' => 'Terkirim']);
+                }
             }
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'Status disposisi berhasil diperbarui menjadi '.$validated['status'].'.',
+            'message' => 'Status berhasil diperbarui.'
         ], 200);
+    }
+
+    public function terima($id)
+    {
+        $suratMasuk = SuratMasuk::findOrFail($id);
+
+        // Hanya buat catatan disposisi penerima jika status surat adalah Terkirim
+        if ($suratMasuk->status_surat !== 'Terkirim') {
+            return redirect()->back()->with('info', 'Surat belum dikirim. Tidak dapat mencatat penerimaan.');
+        }
+
+        $existing = Disposisi::where('surat_masuk_id', $id)
+            ->where('oleh', Auth::id())
+            ->where('status', 'Diterima oleh penerima')
+            ->first();
+
+        if (!$existing) {
+            Disposisi::create([
+                'surat_masuk_id' => $id,
+                'oleh' => Auth::id(),
+                'tujuan_disposisi' => Auth::user()->name,
+                'catatan' => 'Surat diterima oleh penerima.',
+                'status' => 'Diterima oleh penerima',
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Surat ditandai telah diterima dan dicatat dalam disposisi.');
     }
 
     private function validateRequest(Request $request): array
     {
         return $request->validate([
             'surat_masuk_id' => 'required|exists:surat_masuks,id',
-            'user_penerima_id' => 'nullable|exists:users,id',
-            'divisi_penerima_id' => 'nullable|exists:divisis,id',
-            'jurusan_penerima_id' => 'nullable|exists:jurusans,id',
-            'instruksi_kepada' => 'nullable|array',
+            'instruksi_kepada' => 'required|array',
+            'instruksi_kepada.*' => 'string|max:255',
             'petunjuk_disposisi' => 'nullable|array',
+            'petunjuk_disposisi.*' => 'string|max:255',
             'isi_disposisi' => 'required|string',
             'catatan' => 'nullable|string',
-            'tanggal_disposisi' => 'required|date',
-            'status_disposisi' => ['required', Rule::in(['Baru', 'Diterima', 'Dikerjakan', 'Selesai', 'Ditolak', 'Diteruskan'])],
+            'tanggal_disposisi' => 'nullable|date',
+            'status_disposisi' => 'nullable|string|in:Baru,Diterima,Dikerjakan,Selesai,Ditolak,Diteruskan',
             'parent_disposisi_id' => 'nullable|exists:disposisis,id',
-        ], [
-            'user_penerima_id.exists' => 'Penerima user tidak valid.',
-            'divisi_penerima_id.exists' => 'Penerima divisi tidak valid.',
-            'jurusan_penerima_id.exists' => 'Penerima jurusan tidak valid.',
-            'instruksi_kepada.array' => 'Format instruksi disposisi kepada tidak valid.',
-            'petunjuk_disposisi.array' => 'Format petunjuk disposisi tidak valid.',
-            'status_disposisi.in' => 'Status disposisi tidak valid.',
-            'parent_disposisi_id.exists' => 'Disposisi induk tidak valid.',
         ]);
     }
 }
