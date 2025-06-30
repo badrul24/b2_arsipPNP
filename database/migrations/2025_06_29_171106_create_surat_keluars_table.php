@@ -42,6 +42,7 @@ return new class extends Migration
 
             $table->enum('status_surat', [
                 'Draft',
+                'Baru',
                 'Terkirim',
                 'Diterima',
                 'Dibaca',

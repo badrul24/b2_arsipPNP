@@ -27,7 +27,6 @@ class SuratKeluarController extends Controller
                 $query->where('divisi_id', $user->divisi_id);
             }
         } elseif ($user->isOperator()) {
-            // Operator hanya bisa lihat surat keluar yang dia buat
             $query->where('user_id', $user->id);
         } else {
             $query->whereRaw('1 = 0');
@@ -53,6 +52,14 @@ class SuratKeluarController extends Controller
         }
 
         $suratKeluars = $query->latest()->paginate(10)->withQueryString();
+
+        // Ubah status ke 'Baru' jika penerima membuka surat keluar yang statusnya 'Terkirim'
+        foreach ($suratKeluars as $surat) {
+            if ($user->name === $surat->penerima && $surat->status_surat === 'Terkirim') {
+                $surat->update(['status_surat' => 'Baru']);
+                $surat->status_surat = 'Baru'; // update di koleksi agar tampilan langsung berubah
+            }
+        }
 
         return view('surat_keluar.index', compact('suratKeluars'));
     }
@@ -104,7 +111,7 @@ class SuratKeluarController extends Controller
         ]);
 
         // Logika status otomatis
-        // Status Terkirim jika semua field wajib terisi dan isi_surat serta keterangan tidak kosong
+        // Status Baru jika semua field wajib terisi dan isi_surat serta keterangan tidak kosong
         $requiredFields = [
             'nomor_agenda', 'nomor_surat_keluar', 'tanggal_surat', 'tujuan_surat', 
             'perihal', 'pengirim', 'penerima', 'sifat_surat', 'jenis_surat'
@@ -218,7 +225,7 @@ class SuratKeluarController extends Controller
         ]);
 
         // Logika status otomatis
-        // Status Terkirim jika semua field wajib terisi dan isi_surat serta keterangan tidak kosong
+        // Status Baru jika semua field wajib terisi dan isi_surat serta keterangan tidak kosong
         $requiredFields = [
             'nomor_agenda', 'nomor_surat_keluar', 'tanggal_surat', 'tujuan_surat', 
             'perihal', 'pengirim', 'penerima', 'sifat_surat', 'jenis_surat'
@@ -333,8 +340,8 @@ class SuratKeluarController extends Controller
 
         abort_unless($authorized, 403);
 
-        // Update status menjadi Dibaca jika user adalah penerima dan status masih Terkirim/Diterima
-        if ($user->name === $suratKeluar->penerima && in_array($suratKeluar->status_surat, ['Terkirim', 'Diterima'])) {
+        // Jika penerima dan status 'Baru', ubah ke 'Dibaca'
+        if ($user->name === $suratKeluar->penerima && $suratKeluar->status_surat === 'Baru') {
             $suratKeluar->update(['status_surat' => 'Dibaca']);
         }
 

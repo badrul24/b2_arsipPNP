@@ -11,7 +11,13 @@
             <h2 class="text-2xl font-bold text-gray-900">Surat Keluar</h2>
             <p class="mt-1 text-sm text-gray-500">Kelola Data Surat Keluar</p>
         </div>
-        @if ($currentUser->isAdmin() || $currentUser->isSekretaris() || $currentUser->isPimpinan() || $currentUser->isKepalaLembaga() || $currentUser->isKepalaBidang() || $currentUser->isOperator())
+        @if (
+            $currentUser->isAdmin() ||
+                $currentUser->isSekretaris() ||
+                $currentUser->isPimpinan() ||
+                $currentUser->isKepalaLembaga() ||
+                $currentUser->isKepalaBidang() ||
+                $currentUser->isOperator())
             <a href="{{ route('surat_keluar.create') }}"
                 class="inline-flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
@@ -31,26 +37,40 @@
                     placeholder="Cari nomor agenda, nomor surat, atau lainnya...">
             </div>
             <div class="flex gap-2">
-                <select name="status_surat" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                <select name="status_surat"
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     <option value="">Semua Status</option>
                     <option value="Draft" {{ request('status_surat') == 'Draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="Baru" {{ request('status_surat') == 'Baru' ? 'selected' : '' }}>Baru</option>
                     <option value="Terkirim" {{ request('status_surat') == 'Terkirim' ? 'selected' : '' }}>Terkirim</option>
                     <option value="Diterima" {{ request('status_surat') == 'Diterima' ? 'selected' : '' }}>Diterima</option>
                     <option value="Dibaca" {{ request('status_surat') == 'Dibaca' ? 'selected' : '' }}>Dibaca</option>
                     <option value="Selesai" {{ request('status_surat') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                    <option value="Diarsipkan" {{ request('status_surat') == 'Diarsipkan' ? 'selected' : '' }}>Diarsipkan</option>
+                    <option value="Diarsipkan" {{ request('status_surat') == 'Diarsipkan' ? 'selected' : '' }}>Diarsipkan
+                    </option>
                 </select>
-                <select name="jenis_surat" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                <select name="jenis_surat"
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     <option value="">Semua Jenis</option>
-                    <option value="Surat Undangan" {{ request('jenis_surat') == 'Surat Undangan' ? 'selected' : '' }}>Surat Undangan</option>
-                    <option value="Surat Pemberitahuan" {{ request('jenis_surat') == 'Surat Pemberitahuan' ? 'selected' : '' }}>Surat Pemberitahuan</option>
-                    <option value="Surat Permohonan" {{ request('jenis_surat') == 'Surat Permohonan' ? 'selected' : '' }}>Surat Permohonan</option>
-                    <option value="Surat Keputusan" {{ request('jenis_surat') == 'Surat Keputusan' ? 'selected' : '' }}>Surat Keputusan</option>
-                    <option value="Surat Edaran" {{ request('jenis_surat') == 'Surat Edaran' ? 'selected' : '' }}>Surat Edaran</option>
-                    <option value="Surat Tugas" {{ request('jenis_surat') == 'Surat Tugas' ? 'selected' : '' }}>Surat Tugas</option>
-                    <option value="Surat Pengantar" {{ request('jenis_surat') == 'Surat Pengantar' ? 'selected' : '' }}>Surat Pengantar</option>
-                    <option value="Surat Keterangan" {{ request('jenis_surat') == 'Surat Keterangan' ? 'selected' : '' }}>Surat Keterangan</option>
-                    <option value="Surat Lainnya" {{ request('jenis_surat') == 'Surat Lainnya' ? 'selected' : '' }}>Surat Lainnya</option>
+                    <option value="Surat Undangan" {{ request('jenis_surat') == 'Surat Undangan' ? 'selected' : '' }}>Surat
+                        Undangan</option>
+                    <option value="Surat Pemberitahuan"
+                        {{ request('jenis_surat') == 'Surat Pemberitahuan' ? 'selected' : '' }}>Surat Pemberitahuan
+                    </option>
+                    <option value="Surat Permohonan" {{ request('jenis_surat') == 'Surat Permohonan' ? 'selected' : '' }}>
+                        Surat Permohonan</option>
+                    <option value="Surat Keputusan" {{ request('jenis_surat') == 'Surat Keputusan' ? 'selected' : '' }}>
+                        Surat Keputusan</option>
+                    <option value="Surat Edaran" {{ request('jenis_surat') == 'Surat Edaran' ? 'selected' : '' }}>Surat
+                        Edaran</option>
+                    <option value="Surat Tugas" {{ request('jenis_surat') == 'Surat Tugas' ? 'selected' : '' }}>Surat Tugas
+                    </option>
+                    <option value="Surat Pengantar" {{ request('jenis_surat') == 'Surat Pengantar' ? 'selected' : '' }}>
+                        Surat Pengantar</option>
+                    <option value="Surat Keterangan" {{ request('jenis_surat') == 'Surat Keterangan' ? 'selected' : '' }}>
+                        Surat Keterangan</option>
+                    <option value="Surat Lainnya" {{ request('jenis_surat') == 'Surat Lainnya' ? 'selected' : '' }}>Surat
+                        Lainnya</option>
                 </select>
                 <button type="submit"
                     class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition duration-200">
@@ -132,6 +152,7 @@
                                         @php
                                             $statusClass = [
                                                 'Draft' => 'bg-gray-100 text-gray-800',
+                                                'Baru' => 'bg-purple-100 text-purple-800',
                                                 'Terkirim' => 'bg-blue-100 text-blue-800',
                                                 'Diterima' => 'bg-green-100 text-green-800',
                                                 'Dibaca' => 'bg-indigo-100 text-indigo-800',
@@ -162,8 +183,8 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         @if ($suratKeluar->file_surat_path)
-                                            <a href="{{ route('surat_keluar.download', $suratKeluar->id) }}" target="_blank"
-                                                class="text-primary-600 hover:text-primary-900">
+                                            <a href="{{ route('surat_keluar.download', $suratKeluar->id) }}"
+                                                target="_blank" class="text-primary-600 hover:text-primary-900">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -181,17 +202,20 @@
                                             $status = $suratKeluar->status_surat;
                                             $isOwner = $currentUser->id === $suratKeluar->user_id;
                                             $isPenerima = $currentUser->name === $suratKeluar->penerima;
-                                            $canEdit = ($currentUser->isAdmin() || $currentUser->isSekretaris() || 
-                                                      ($currentUser->isPimpinan() && $currentUser->divisi_id == $suratKeluar->divisi_id) ||
-                                                      ($currentUser->isOperator() && $isOwner));
+                                            $canEdit =
+                                                $currentUser->isAdmin() ||
+                                                $currentUser->isSekretaris() ||
+                                                ($currentUser->isPimpinan() &&
+                                                    $currentUser->divisi_id == $suratKeluar->divisi_id) ||
+                                                ($currentUser->isOperator() && $isOwner);
                                         @endphp
 
                                         {{-- Aksi untuk Penerima Surat (Hanya Cetak) --}}
-                                        @if ($isPenerima && in_array($status, ['Terkirim', 'Diterima']))
+                                        @if ($isPenerima && in_array($status, ['Baru', 'Terkirim']))
                                             <div class="flex gap-2">
-                                                <a href="{{ route('surat_keluar.print', $suratKeluar->id) }}" 
-                                                   title="Cetak Surat Keluar"
-                                                   class="inline-flex items-center p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition">
+                                                <a href="{{ route('surat_keluar.print', $suratKeluar->id) }}"
+                                                    title="Cetak Surat Keluar"
+                                                    class="inline-flex items-center p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5"
                                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -205,7 +229,8 @@
                                             {{-- Aksi untuk Edit dan Delete (Bukan Penerima) --}}
                                             @if (($canEdit && $status === 'Draft') || $currentUser->isAdmin())
                                                 <div class="flex gap-2">
-                                                    <a href="{{ route('surat_keluar.edit', $suratKeluar->id) }}" title="Edit"
+                                                    <a href="{{ route('surat_keluar.edit', $suratKeluar->id) }}"
+                                                        title="Edit"
                                                         class="inline-flex items-center p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5"
                                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,22 +242,22 @@
                                                     </a>
 
                                                     <form action="{{ route('surat_keluar.destroy', $suratKeluar->id) }}"
-                                                    method="POST" class="inline-block delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" title="Hapus"
-                                                        class="delete-btn inline-flex items-center p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                        </svg>
-                                                        Hapus
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        @endif
+                                                        method="POST" class="inline-block delete-form">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" title="Hapus"
+                                                            class="delete-btn inline-flex items-center p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5"
+                                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                            Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @endif
                                         @endif
                                     </td>
                                 </tr>
