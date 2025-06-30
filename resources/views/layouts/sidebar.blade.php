@@ -220,73 +220,31 @@
 
         {{-- Pengaturan Sistem --}}
         @if (Auth::check() && $user->isAdmin())
-            <div x-data="{ open: {{ request()->is('user*') || request()->is('log-aktivitas*') ? 'true' : 'false' }} }">
-                <button @click="open = !open"
-                    class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100 hover:text-gray-900">
-                    <div class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span x-show="sidebarOpen">Pengaturan Sistem</span>
-                    </div>
-                    <svg x-show="sidebarOpen" xmlns="http://www.w3.org/2000/svg"
-                        class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90' : ''"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
-                <div x-show="open && sidebarOpen" class="pl-6 mt-1 space-y-1">
-                    <a href="{{ route('user.index') }}"
-                        class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('user*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        Manajemen Pengguna
-                    </a>
-                </div>
-            </div>
+            <a href="{{ route('user.index') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('user*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <span x-show="sidebarOpen">Manajemen Pengguna</span>
+            </a>
         @endif
 
         {{-- Konten & Informasi --}}
-        @if (Auth::check() &&
-                ($user->isAdmin()))
-            <div x-data="{ open: {{ request()->is('berita*') ? 'true' : 'false' }} }" class="mb-4">
-                <button @click="open = !open"
-                    class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100 hover:text-gray-900">
-                    <div class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 2v4M8 2v4M3 10h18M8 14h8" />
-                        </svg>
-                        <span x-show="sidebarOpen">Konten & Informasi</span>
-                    </div>
-                    <svg x-show="sidebarOpen" xmlns="http://www.w3.org/2000/svg"
-                        class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90' : ''"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
-                <div x-show="open && sidebarOpen" class="pl-6 mt-1 space-y-1">
-                    <a href="{{ route('berita.index') }}"
-                        class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('berita*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                        </svg>
-                        Berita & Pengumuman
-                    </a>
-                </div>
-            </div>
+        @if (Auth::check() && $user->isAdmin())
+            <a href="{{ route('berita.index') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('berita*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+                <span x-show="sidebarOpen">Berita & Pengumuman</span>
+            </a>
         @endif
+
+        {{-- Spacer untuk memberikan jarak dari bagian bawah --}}
+        <div class="h-8"></div>
     </nav>
 </aside>
