@@ -148,14 +148,20 @@ class DashboardController extends Controller
         // Notifikasi berdasarkan role
         $notifications = [];
         
-        if ($user->isSekretaris()) {
+        if (
+            $user->isSekretaris()
+        ) {
             // Sekretaris: notifikasi surat yang perlu diverifikasi/dikembalikan
             $notifications['suratMasuk'] = SuratMasuk::whereIn('status_surat', ['Diajukan', 'Ditolak'])->count();
             $notifications['disposisi'] = 0; // Sekretaris tidak menerima disposisi
+            $notifications['suratKeluar'] = 0; // Sekretaris tidak menerima surat keluar
         } elseif ($user->isPimpinan()) {
             // Pimpinan: notifikasi surat yang perlu diproses dan disposisi yang perlu dibuat
             $notifications['suratMasuk'] = SuratMasuk::where('status_surat', 'Diproses')->count();
             $notifications['disposisi'] = 0; // Pimpinan membuat disposisi, bukan menerima
+            $notifications['suratKeluar'] = SuratKeluar::where('penerima', $user->name)
+                ->whereIn('status_surat', ['Baru', 'Terkirim'])
+                ->count();
         } elseif ($user->isKepalaLembaga() || $user->isKepalaBidang()) {
             // Kepala Lembaga/Bidang: bisa menerima disposisi dan menangani surat masuk
             // Cek disposisi baru untuk user ini
@@ -173,14 +179,19 @@ class DashboardController extends Controller
             }
             
             $notifications['disposisi'] = $disposisiBaru;
+            $notifications['suratKeluar'] = SuratKeluar::where('penerima', $user->name)
+                ->whereIn('status_surat', ['Baru', 'Terkirim'])
+                ->count();
         } elseif ($user->isAdmin()) {
             // Admin: melihat semua notifikasi
             $notifications['suratMasuk'] = SuratMasuk::whereIn('status_surat', ['Diajukan', 'Ditolak', 'Diproses'])->count();
             $notifications['disposisi'] = Disposisi::where('status_disposisi', 'Baru')->count();
+            $notifications['suratKeluar'] = 0; // Admin tidak menerima surat keluar
         } elseif ($user->isOperator()) {
             // Operator: tidak menerima notifikasi count karena surat masuk dan keluar berasal dari operator
             $notifications['suratMasuk'] = 0;
             $notifications['disposisi'] = 0;
+            $notifications['suratKeluar'] = 0;
         } else {
             // User lain (termasuk penerima disposisi) - default case
             // Cek apakah user perlu menangani surat masuk (misalnya untuk role tertentu)
@@ -191,6 +202,10 @@ class DashboardController extends Controller
                 ->where('status_disposisi', 'Baru')
                 ->count();
             $notifications['disposisi'] = $disposisiBaru;
+            // Notifikasi surat keluar untuk penerima
+            $notifications['suratKeluar'] = SuratKeluar::where('penerima', $user->name)
+                ->whereIn('status_surat', ['Baru', 'Terkirim'])
+                ->count();
         }
 
         return view('layouts.dashboard', compact(

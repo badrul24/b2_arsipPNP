@@ -49,7 +49,12 @@
 
         <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="window.location.href='{{ route('surat_keluar.index') }}'">
             <div class="flex items-center">
-                <div class="p-3 mr-4 bg-blue-100 rounded-full">
+                <div class="p-3 mr-4 bg-blue-100 rounded-full relative">
+                    @if(isset($notifications['suratKeluar']) && $notifications['suratKeluar'] > 0)
+                        <div class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
+                            {{ $notifications['suratKeluar'] > 99 ? '99+' : $notifications['suratKeluar'] }}
+                        </div>
+                    @endif
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
@@ -189,52 +194,64 @@
                         $allRecent = $allRecent->sortByDesc('tanggal')->take(5);
                     @endphp
                     
+                    @php $isOperator = Auth::user() && Auth::user()->isOperator(); @endphp
+                    
                     @forelse($allRecent as $item)
-                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location.href='{{ route($item['route']) }}'">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $item['nomor'] }}</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900">{{ $item['judul'] }}</div>
-                                <div class="text-xs text-gray-500">
-                                    @if(isset($item['jurusan']))
-                                        Jurusan: {{ $item['jurusan'] }}
-                                    @elseif(isset($item['kategori']))
-                                        Kategori: {{ $item['kategori'] }}
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $item['jenis'] }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $item['tanggal']->format('d M Y') }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $statusClass = [
-                                        'Diajukan' => 'bg-yellow-100 text-yellow-800',
-                                        'Diverifikasi' => 'bg-blue-100 text-blue-800',
-                                        'Diproses' => 'bg-orange-100 text-orange-800',
-                                        'Ditolak' => 'bg-red-100 text-red-800',
-                                        'Disetujui' => 'bg-green-100 text-green-800',
-                                        'Terkirim' => 'bg-indigo-100 text-indigo-800',
-                                        'Baru' => 'bg-purple-100 text-purple-800',
-                                        'Dibaca' => 'bg-blue-100 text-blue-800',
-                                        'Selesai' => 'bg-teal-100 text-teal-800',
-                                        'Diarsipkan' => 'bg-gray-500 text-white',
-                                        'Draft' => 'bg-gray-100 text-gray-800',
-                                        'Diterima' => 'bg-green-100 text-green-800',
-                                        'Aktif' => 'bg-green-100 text-green-800',
-                                        'Inaktif' => 'bg-yellow-100 text-yellow-800',
-                                        'Musnah' => 'bg-red-100 text-red-800',
-                                    ];
-                                @endphp
-                                <span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full {{ $statusClass[$item['status']] ?? 'bg-gray-100 text-gray-800' }}">
-                                    {{ $item['status'] }}
-                                </span>
-                            </td>
+                        @if($item['jenis'] === 'Dokumen')
+                            @if($isOperator)
+                                <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location.href='{{ route($item['route']) }}'">
+                            @else
+                                <tr>
+                            @endif
+                        @else
+                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location.href='{{ route($item['route']) }}'">
+                        @endif
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ $item['nomor'] }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">{{ $item['judul'] }}</div>
+                            <div class="text-xs text-gray-500">
+                                @if(isset($item['jurusan']))
+                                    Jurusan: {{ $item['jurusan'] }}
+                                @elseif(isset($item['kategori']))
+                                    Kategori: {{ $item['kategori'] }}
+                                @endif
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $item['jenis'] }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $item['tanggal']->format('d M Y') }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @php
+                                $statusClass = [
+                                    'Diajukan' => 'bg-yellow-100 text-yellow-800',
+                                    'Diverifikasi' => 'bg-blue-100 text-blue-800',
+                                    'Diproses' => 'bg-orange-100 text-orange-800',
+                                    'Ditolak' => 'bg-red-100 text-red-800',
+                                    'Disetujui' => 'bg-green-100 text-green-800',
+                                    'Terkirim' => 'bg-indigo-100 text-indigo-800',
+                                    'Baru' => 'bg-purple-100 text-purple-800',
+                                    'Dibaca' => 'bg-blue-100 text-blue-800',
+                                    'Selesai' => 'bg-teal-100 text-teal-800',
+                                    'Diarsipkan' => 'bg-gray-500 text-white',
+                                    'Draft' => 'bg-gray-100 text-gray-800',
+                                    'Diterima' => 'bg-green-100 text-green-800',
+                                    'Aktif' => 'bg-green-100 text-green-800',
+                                    'Inaktif' => 'bg-yellow-100 text-yellow-800',
+                                    'Musnah' => 'bg-red-100 text-red-800',
+                                ];
+                            @endphp
+                            <span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full {{ $statusClass[$item['status']] ?? 'bg-gray-100 text-gray-800' }}">
+                                {{ $item['status'] }}
+                            </span>
+                        </td>
+                        @if($item['jenis'] === 'Dokumen' && !$isOperator)
                         </tr>
+                        @endif
                     @empty
                         <tr>
                             <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
