@@ -30,6 +30,15 @@ class DokumenController extends Controller
                         ->orWhere('keterangan', 'like', "%{$search}%");
                 });
             })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($request->jenis, function ($query, $jenis) {
+                $query->where('jenis', $jenis);
+            })
+            ->when($request->sifat, function ($query, $sifat) {
+                $query->where('sifat', $sifat);
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();

@@ -24,11 +24,11 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-        <form action="{{ route('surat_keluar.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+        <form action="{{ route('surat_keluar.index') }}" method="GET" class="flex flex-col md:flex-row gap-2">
             <div class="flex-1">
                 <input type="text" name="search" value="{{ request('search') }}"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="Cari nomor agenda, nomor surat, tujuan, pengirim, penerima, atau perihal...">
+                    placeholder="Cari nomor agenda, nomor surat, atau lainnya...">
             </div>
             <div class="flex gap-2">
                 <select name="status_surat" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
