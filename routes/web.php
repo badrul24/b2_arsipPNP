@@ -11,9 +11,11 @@ use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RetensiController;
+use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\UserController;
 use App\Models\Dokumen;
+use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -175,10 +177,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'update'])->name('surat_masuk.update');
     Route::delete('/surat_masuk/{surat_masuk}', [SuratMasukController::class, 'destroy'])->name('surat_masuk.destroy');
     Route::get('/surat_masuk/{surat_masuk}/print', [SuratMasukController::class, 'print'])->name('surat_masuk.print');
-    Route::post('/surat_masuk/{surat_masuk}/proses', [SuratMasukController::class, 'proses'])->name('surat_masuk.proses');
     Route::post('/surat-masuk/{suratMasuk}/update-status', [SuratMasukController::class, 'updateStatus'])
     ->name('surat_masuk.updateStatus');
-
 
     // Rute khusus untuk mendownload file surat masuk dari public_path
     Route::get('/surat_masuk/{surat_masuk}/download', function (SuratMasuk $surat_masuk) {
@@ -194,6 +194,47 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('surat_masuk.download');
 
+    // Tabel Surat Keluar (CRUD utama)
+    Route::get('/surat_keluar', [SuratKeluarController::class, 'index'])->name('surat_keluar.index');
+    Route::get('/surat_keluar/create', [SuratKeluarController::class, 'create'])->name('surat_keluar.create');
+    Route::post('/surat_keluar', [SuratKeluarController::class, 'store'])->name('surat_keluar.store');
+    Route::get('/surat_keluar/{surat_keluar}/edit', [SuratKeluarController::class, 'edit'])->name('surat_keluar.edit');
+    Route::put('/surat_keluar/{surat_keluar}', [SuratKeluarController::class, 'update'])->name('surat_keluar.update');
+    Route::delete('/surat_keluar/{surat_keluar}', [SuratKeluarController::class, 'destroy'])->name('surat_keluar.destroy');
+    Route::get('/surat_keluar/{surat_keluar}/print', [SuratKeluarController::class, 'print'])->name('surat_keluar.print');
+
+    // Rute khusus untuk mendownload file surat keluar dari public_path
+    Route::get('/surat_keluar/{surat_keluar}/download', function (SuratKeluar $surat_keluar) {
+        $user = Auth::user();
+        
+        // Cek apakah user adalah penerima surat
+        if ($user->name === $surat_keluar->penerima) {
+            abort(403, 'Penerima surat tidak dapat mengunduh file surat keluar.');
+        }
+        
+        // Cek akses berdasarkan role
+        if (!$user->isAdmin() && !$user->isSekretaris()) {
+            if ($user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()) {
+                if ($surat_keluar->divisi_id !== $user->divisi_id) {
+                    abort(403, 'Anda tidak memiliki akses untuk mengunduh surat keluar ini.');
+                }
+            } elseif ($user->isOperator()) {
+                if ($surat_keluar->user_id !== $user->id) {
+                    abort(403, 'Anda tidak memiliki akses untuk mengunduh surat keluar ini.');
+                }
+            } else {
+                abort(403, 'Anda tidak memiliki akses untuk mengunduh surat keluar ini.');
+            }
+        }
+        
+        $filePath = public_path($surat_keluar->file_surat_path);
+        if (File::exists($filePath)) {
+            return response()->download($filePath, $surat_keluar->nama_file_surat_asli);
+        } else {
+            abort(404, 'File surat keluar tidak ditemukan.');
+        }
+    })->name('surat_keluar.download');
+
     Route::get('/disposisi', [DisposisiController::class, 'index'])->name('disposisi.index');
     Route::get('/disposisi/create', [DisposisiController::class, 'create'])->name('disposisi.create');
     Route::post('/disposisi', [DisposisiController::class, 'store'])->name('disposisi.store');
@@ -205,6 +246,5 @@ Route::middleware(['auth'])->group(function () {
     // Rute untuk mengupdate status disposisi (digunakan oleh penerima disposisi untuk 'Selesai')
     Route::put('/disposisi/{disposisi}/update-status', [DisposisiController::class, 'updateStatus'])->name('disposisi.updateStatus');
     Route::post('/disposisi/terima/{surat_masuk}', [DisposisiController::class, 'terima'])->name('disposisi.terima');
-
 
 });

@@ -58,7 +58,7 @@
                     $user->isPimpinan() ||
                     $user->isKepalaLembaga() ||
                     $user->isKepalaBidang()))
-            <div x-data="{ open: {{ request()->is('surat_masuk*') || request()->is('surat-keluar*') || request()->is('dokumen*') || request()->is('disposisi*') ? 'true' : 'false' }} }">
+            <div x-data="{ open: {{ request()->is('surat_masuk*') || request()->is('surat_keluar*') || request()->is('dokumen*') || request()->is('disposisi*') ? 'true' : 'false' }} }">
                 <button @click="open = !open"
                     class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100 hover:text-gray-900">
                     <div class="flex items-center">
@@ -93,10 +93,10 @@
                             Surat Masuk
                         </a>
                     @endif
-                    @if (Auth::check() && ($user->isAdmin() || $user->isOperator() || $user->isKepalaLembaga() || $user->isKepalaBidang()))
+                    @if (Auth::check() && ($user->isAdmin() || $user->isOperator() || $user->isSekretaris() || $user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()))
                         {{-- Hanya peran-peran ini yang bisa melihat Surat Keluar --}}
-                        <a href="/surat-keluar"
-                            class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('surat-keluar*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
+                        <a href="/surat_keluar"
+                            class="flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->is('surat_keluar*') ? 'text-primary-700 bg-primary-50' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
