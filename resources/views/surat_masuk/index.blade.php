@@ -24,13 +24,24 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-        <form action="{{ route('surat_masuk.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+        <form action="{{ route('surat_masuk.index') }}" method="GET" class="flex flex-col md:flex-row gap-2">
             <div class="flex-1">
                 <input type="text" name="search" value="{{ request('search') }}"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Cari nomor agenda, nomor surat, pengirim, perihal, atau keterangan...">
             </div>
             <div class="flex gap-2">
+                <select name="status_surat" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <option value="">Semua Status</option>
+                    <option value="Diajukan" {{ request('status_surat') == 'Diajukan' ? 'selected' : '' }}>Diajukan</option>
+                    <option value="Diverifikasi" {{ request('status_surat') == 'Diverifikasi' ? 'selected' : '' }}>Diverifikasi</option>
+                    <option value="Diproses" {{ request('status_surat') == 'Diproses' ? 'selected' : '' }}>Diproses</option>
+                    <option value="Ditolak" {{ request('status_surat') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                    <option value="Disetujui" {{ request('status_surat') == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
+                    <option value="Terkirim" {{ request('status_surat') == 'Terkirim' ? 'selected' : '' }}>Terkirim</option>
+                    <option value="Baru" {{ request('status_surat') == 'Baru' ? 'selected' : '' }}>Baru</option>
+                    <option value="Dibaca" {{ request('status_surat') == 'Dibaca' ? 'selected' : '' }}>Dibaca</option>
+                </select>
                 <button type="submit"
                     class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -260,7 +271,7 @@
 
                                         @if ($isPenerimaDisposisi)
                                         <a href="{{ route('surat_masuk.print', $suratMasuk->id) }}"
-                                            class="inline-flex items-center mt-2 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+                                            class="inline-flex items-center mt-2 p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition"
                                             title="Cetak Surat Masuk">
                                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                  viewBox="0 0 24 24" stroke="currentColor">

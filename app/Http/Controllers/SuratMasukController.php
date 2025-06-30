@@ -71,6 +71,11 @@ class SuratMasukController extends Controller
             });
         });
 
+        // Filter status surat
+        $query->when($request->status_surat, function ($query, $status) {
+            $query->where('status_surat', $status);
+        });
+
         $suratMasuks = $query->latest()->paginate(10)->withQueryString();
 
         foreach ($suratMasuks as $surat) {
