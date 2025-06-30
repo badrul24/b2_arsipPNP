@@ -48,7 +48,7 @@
                     <label class="block font-medium text-gray-700 mb-1">Kategori</label>
                     <select name="kategori_id"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('kategori_id') border-red-500 @enderror">
-                        <option value="">Pilih Kategori</option>
+                        <option value="" disabled selected>Pilih Kategori</option>
                         @foreach($kategoris as $kategori)
                             <option value="{{ $kategori->id }}" {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
                                 {{ $kategori->nama_kategori }}

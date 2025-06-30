@@ -1,30 +1,30 @@
 @extends('layouts.index')
 
-@section('title', 'Hak Akses')
+@section('title', 'Dokumen')
 
 @section('content')
     <!-- Page Header -->
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900">Hak Akses</h2>
-            <p class="mt-1 text-sm text-gray-500">Kelola Data Hak Akses</p>
+            <h2 class="text-2xl font-bold text-gray-900">Dokumen</h2>
+            <p class="mt-1 text-sm text-gray-500">Kelola Data Dokumen</p>
         </div>
-        <a href="{{ route('hak-akses.create') }}"
+        <a href="{{ route('dokumen.create') }}"
             class="inline-flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            Tambah Hak Akses
+            Tambah Dokumen
         </a>
     </div>
 
     <!-- Search Section -->
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-        <form action="{{ route('hak-akses.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+        <form action="{{ route('dokumen.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
                 <input type="text" name="search" value="{{ request('search') }}"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="Cari hak akses...">
+                    placeholder="Cari nomor surat, judul, atau keterangan...">
             </div>
             <div class="flex gap-2">
                 <button type="submit"
@@ -35,7 +35,7 @@
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </button>
-                <a href="{{ route('hak-akses.index') }}"
+                <a href="{{ route('dokumen.index') }}"
                     class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -61,55 +61,58 @@
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hak Akses</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Surat</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach ($hakAkses as $hak)
+                    @foreach ($dokumens as $dokumen)
                         <tr class="hover:bg-gray-50 transition duration-200">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $hakAkses->firstItem() + $loop->index }}
+                                {{ $dokumens->firstItem() + $loop->index }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ ucfirst($hak->role) }}
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-500">
-                                <div class="space-y-1">
-                                    @if($hak->can_view)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                            Lihat
-                                        </span>
-                                    @endif
-                                    @if($hak->can_create)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                            Buat
-                                        </span>
-                                    @endif
-                                    @if($hak->can_edit)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                            Edit
-                                        </span>
-                                    @endif
-                                    @if($hak->can_delete)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                                            Hapus
-                                        </span>
-                                    @endif
-                                    @if($hak->can_approve)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                                            Setujui
-                                        </span>
-                                    @endif
-                                </div>
+                                {{ $dokumen->nomor_surat }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 max-w-xs">
-                                <div class="whitespace-normal break-words">{{ $hak->keterangan }}</div>
+                                <div class="whitespace-normal break-words">{{ $dokumen->judul }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $dokumen->kategori->nama_kategori }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $dokumen->kode->kode }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{-- PERBAIKAN: Akses langsung kolom 'status' (ENUM) --}}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {{ $dokumen->status === 'Aktif' ? 'bg-green-100 text-green-800' : 
+                                       ($dokumen->status === 'Inaktif' ? 'bg-yellow-100 text-yellow-800' : 
+                                       'bg-red-100 text-red-800') }}">
+                                    {{ $dokumen->status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                @if($dokumen->file_path)
+                                    {{-- PERBAIKAN: Gunakan route dokumen.download --}}
+                                    <a href="{{ route('dokumen.download', $dokumen->id) }}"
+                                       class="text-primary-600 hover:text-primary-900">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </a>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                <a href="{{ route('hak-akses.edit', $hak->id) }}"
+                                <a href="{{ route('dokumen.edit', $dokumen->id) }}"
                                     class="inline-flex items-center px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition duration-200">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -117,7 +120,7 @@
                                     Edit
                                 </a>
 
-                                <form action="{{ route('hak-akses.destroy', $hak->id) }}" method="POST"
+                                <form action="{{ route('dokumen.destroy', $dokumen->id) }}" method="POST"
                                     class="inline-block delete-form">
                                     @csrf
                                     @method('DELETE')
@@ -139,7 +142,7 @@
 
     <!-- Pagination -->
     <div class="mt-6">
-        {{ $hakAkses->links() }}
+        {{ $dokumens->links() }}
     </div>
 
     <!-- Footer -->
@@ -151,6 +154,7 @@
 @endsection
 
 @push('scripts')
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- Pastikan SweetAlert2 ter-load jika belum --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Handle delete button click
@@ -160,7 +164,7 @@
                 const form = this.closest('.delete-form');
 
                 Swal.fire({
-                    title: 'Hapus hak akses?',
+                    title: 'Hapus dokumen?',
                     text: "Data yang dihapus tidak dapat dikembalikan",
                     icon: 'warning',
                     showCancelButton: true,
@@ -202,7 +206,7 @@
             });
         @endif
 
-        // Show error message if exists
+        // Show error message if exists (jika ada error dari controller)
         @if(session('error'))
             Swal.fire({
                 icon: 'error',
