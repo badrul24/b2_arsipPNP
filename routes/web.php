@@ -62,9 +62,7 @@ Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::clas
 // --- Grup Rute yang Membutuhkan Autentikasi (`auth` middleware) ---
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('layouts.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     // Tabel User
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
