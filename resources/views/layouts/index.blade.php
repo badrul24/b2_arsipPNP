@@ -71,7 +71,7 @@
         @include('layouts.sidebar')
 
         <!-- Main Content -->
-        <main class="transition-all duration-300" :class="sidebarOpen ? 'md:ml-64' : 'md:ml-16'">
+        <main class="transition-all duration-300" :class="sidebarOpen ? 'md:ml-52' : 'md:ml-16'">
             @include('layouts.header')
 
             <!-- Page Content -->

@@ -200,6 +200,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/surat_keluar/{surat_keluar}', [SuratKeluarController::class, 'update'])->name('surat_keluar.update');
     Route::delete('/surat_keluar/{surat_keluar}', [SuratKeluarController::class, 'destroy'])->name('surat_keluar.destroy');
     Route::get('/surat_keluar/{surat_keluar}/print', [SuratKeluarController::class, 'print'])->name('surat_keluar.print');
+    Route::get('/surat_keluar/report', [\App\Http\Controllers\SuratKeluarController::class, 'report'])->name('surat_keluar.report');
 
     // Rute khusus untuk mendownload file surat keluar dari public_path
     Route::get('/surat_keluar/{surat_keluar}/download', function (SuratKeluar $surat_keluar) {

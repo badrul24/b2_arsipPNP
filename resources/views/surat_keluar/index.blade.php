@@ -11,22 +11,31 @@
             <h2 class="text-2xl font-bold text-gray-900">Surat Keluar</h2>
             <p class="mt-1 text-sm text-gray-500">Kelola Data Surat Keluar</p>
         </div>
-        @if (
-            $currentUser->isAdmin() ||
-                $currentUser->isSekretaris() ||
-                $currentUser->isPimpinan() ||
-                $currentUser->isKepalaLembaga() ||
-                $currentUser->isKepalaBidang() ||
-                $currentUser->isOperator())
-            <a href="{{ route('surat_keluar.create') }}"
-                class="inline-flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        <div class="flex gap-2">
+            @if (
+                $currentUser->isAdmin() ||
+                    $currentUser->isSekretaris() ||
+                    $currentUser->isPimpinan() ||
+                    $currentUser->isKepalaLembaga() ||
+                    $currentUser->isKepalaBidang() ||
+                    $currentUser->isOperator())
+                <a href="{{ route('surat_keluar.create') }}"
+                    class="inline-flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Tambah Surat Keluar
+                </a>
+            @endif
+            <a href="{{ route('surat_keluar.report', request()->only(['search','status_surat','jenis_surat'])) }}" target="_blank"
+                class="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-8m0 8l-4-4m4 4l4-4m-8 8h8a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v9a2 2 0 002 2z" />
                 </svg>
-                Tambah Surat Keluar
+                Laporan
             </a>
-        @endif
+        </div>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -43,11 +52,7 @@
                     <option value="Draft" {{ request('status_surat') == 'Draft' ? 'selected' : '' }}>Draft</option>
                     <option value="Baru" {{ request('status_surat') == 'Baru' ? 'selected' : '' }}>Baru</option>
                     <option value="Terkirim" {{ request('status_surat') == 'Terkirim' ? 'selected' : '' }}>Terkirim</option>
-                    <option value="Diterima" {{ request('status_surat') == 'Diterima' ? 'selected' : '' }}>Diterima</option>
                     <option value="Dibaca" {{ request('status_surat') == 'Dibaca' ? 'selected' : '' }}>Dibaca</option>
-                    <option value="Selesai" {{ request('status_surat') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                    <option value="Diarsipkan" {{ request('status_surat') == 'Diarsipkan' ? 'selected' : '' }}>Diarsipkan
-                    </option>
                 </select>
                 <select name="jenis_surat"
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
@@ -115,10 +120,13 @@
                                     No</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Tgl Surat</th>
+                                    Info Surat</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Perihal</th>
+                                    Penerima</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Tanggal</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Jenis</th>
@@ -140,10 +148,21 @@
                                         {{ $suratKeluars->firstItem() + $loop->index }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ optional($suratKeluar->tanggal_surat)->format('d-m-Y') }}
+                                        <p class="font-semibold text-gray-800">
+                                            {{ $suratKeluar->nomor_surat_keluar }}
+                                        </p>
+                                        <p class="text-xs text-gray-600">
+                                            <span class="font-medium">Perihal:</span> {{ Str::limit($suratKeluar->perihal, 40) }}
+                                        </p>
+                                        <p class="text-xs text-gray-600">
+                                            <span class="font-medium">Dari:</span> {{ $suratKeluar->user->name ?? '-' }}
+                                        </p>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $suratKeluar->perihal }}
+                                        {{ $suratKeluar->penerima }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ optional($suratKeluar->tanggal_surat)->format('d-m-Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ $suratKeluar->jenis_surat }}
