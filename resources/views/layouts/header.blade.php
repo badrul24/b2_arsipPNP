@@ -15,13 +15,18 @@
             </svg>
         </button>
         <div class="relative">
-            <input type="text" placeholder="Cari arsip..."
-                class="w-64 px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="absolute w-5 h-5 text-gray-400 right-3 top-2" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <form action="{{ route('dashboard') }}" method="GET" class="flex items-center">
+                <input type="text" name="search" placeholder="Cari arsip..."
+                    value="{{ request('search') }}"
+                    class="w-64 px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                <button type="submit" class="absolute right-3 top-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </form>
         </div>
     </div>
 
@@ -29,7 +34,12 @@
         <!-- Notifications -->
         <div x-data="{ open: false }" class="relative">
             <button @click="open = !open" class="p-1 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none">
-                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                @php
+                    $notifCount = ($notifications['suratMasuk'] ?? 0) + ($notifications['suratKeluar'] ?? 0) + ($notifications['disposisi'] ?? 0);
+                @endphp
+                @if($notifCount > 0)
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                @endif
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -43,46 +53,78 @@
                     <h3 class="text-sm font-semibold text-gray-700">Notifikasi</h3>
                 </div>
                 <div class="max-h-64 overflow-y-auto">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-50">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <span class="inline-block w-2 h-2 mt-1 mr-2 bg-blue-500 rounded-full"></span>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Surat masuk baru</p>
-                                <p class="text-xs text-gray-500">Surat dari Kementerian Pendidikan telah diterima</p>
-                                <p class="text-xs text-gray-400">2 menit yang lalu</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-50">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <span class="inline-block w-2 h-2 mt-1 mr-2 bg-blue-500 rounded-full"></span>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Pengajuan surat</p>
-                                <p class="text-xs text-gray-500">Ahmad mengajukan surat keterangan</p>
-                                <p class="text-xs text-gray-400">1 jam yang lalu</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-50">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <span class="inline-block w-2 h-2 mt-1 mr-2 bg-gray-300 rounded-full"></span>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Pembaruan sistem</p>
-                                <p class="text-xs text-gray-500">Sistem telah diperbarui ke versi terbaru</p>
-                                <p class="text-xs text-gray-400">Kemarin</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="px-4 py-2 border-t border-gray-200">
-                    <a href="#" class="text-xs font-medium text-primary-600 hover:text-primary-500">Lihat semua
-                        notifikasi</a>
+                    {{-- Surat Masuk Notifikasi --}}
+                    @if(isset($notifSuratMasuk) && count($notifSuratMasuk) > 0)
+                        @foreach($notifSuratMasuk as $surat)
+                            <a href="{{ route('surat_masuk.index') }}"
+                               class="block px-4 py-2 hover:bg-gray-50 {{ in_array($surat->status_surat, ['Diajukan','Ditolak','Diproses']) ? 'bg-yellow-50 font-bold' : '' }}">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <span class="inline-block w-2 h-2 mt-1 mr-2 bg-green-500 rounded-full"></span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">Surat Masuk
+                                            @if(in_array($surat->status_surat, ['Diajukan','Ditolak','Diproses']))
+                                                <span class="ml-2 inline-block px-2 py-0.5 text-xs bg-yellow-400 text-white rounded">Baru</span>
+                                            @endif
+                                        </p>
+                                        <p class="text-xs text-gray-500">Pengirim: {{ $surat->pengirim ?? '-' }}</p>
+                                        <p class="text-xs text-gray-500">Perihal: {{ $surat->perihal ?? '-' }}</p>
+                                        <p class="text-xs text-gray-400">Tanggal: {{ $surat->tanggal_surat ? $surat->tanggal_surat->format('d M Y') : '-' }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    @endif
+                    {{-- Surat Keluar Notifikasi --}}
+                    @if(isset($notifSuratKeluar) && count($notifSuratKeluar) > 0)
+                        @foreach($notifSuratKeluar as $surat)
+                            <a href="{{ route('surat_keluar.index') }}"
+                               class="block px-4 py-2 hover:bg-gray-50 {{ in_array($surat->status_surat, ['Baru','Terkirim']) ? 'bg-blue-50 font-bold' : '' }}">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <span class="inline-block w-2 h-2 mt-1 mr-2 bg-blue-500 rounded-full"></span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">Surat Keluar
+                                            @if(in_array($surat->status_surat, ['Baru','Terkirim']))
+                                                <span class="ml-2 inline-block px-2 py-0.5 text-xs bg-blue-400 text-white rounded">Baru</span>
+                                            @endif
+                                        </p>
+                                        <p class="text-xs text-gray-500">Tujuan: {{ $surat->tujuan_surat ?? '-' }}</p>
+                                        <p class="text-xs text-gray-500">Perihal: {{ $surat->perihal ?? '-' }}</p>
+                                        <p class="text-xs text-gray-400">Tanggal: {{ $surat->tanggal_surat ? $surat->tanggal_surat->format('d M Y') : '-' }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    @endif
+                    {{-- Disposisi Notifikasi --}}
+                    @if(isset($notifDisposisi) && count($notifDisposisi) > 0)
+                        @foreach($notifDisposisi as $disposisi)
+                            <a href="{{ Auth::user() && (Auth::user()->isKepalaLembaga() || Auth::user()->isKepalaBidang()) ? route('surat_masuk.index') : route('disposisi.index') }}"
+                               class="block px-4 py-2 hover:bg-gray-50 {{ $disposisi->status_disposisi == 'Baru' ? 'bg-yellow-50 font-bold' : '' }}">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <span class="inline-block w-2 h-2 mt-1 mr-2 bg-yellow-500 rounded-full"></span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">Disposisi
+                                            @if($disposisi->status_disposisi == 'Baru')
+                                                <span class="ml-2 inline-block px-2 py-0.5 text-xs bg-yellow-400 text-white rounded">Baru</span>
+                                            @endif
+                                        </p>
+                                        <p class="text-xs text-gray-500">Pengirim: {{ $disposisi->userPemberi->name ?? '-' }}</p>
+                                        <p class="text-xs text-gray-500">Isi: {{ $disposisi->isi_disposisi ?? '-' }}</p>
+                                        <p class="text-xs text-gray-400">Tanggal: {{ $disposisi->tanggal_disposisi ? \Carbon\Carbon::parse($disposisi->tanggal_disposisi)->format('d M Y') : '-' }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    @endif
+                    @if((!isset($notifSuratMasuk) || count($notifSuratMasuk) == 0) && (!isset($notifDisposisi) || count($notifDisposisi) == 0) && (!isset($notifSuratKeluar) || count($notifSuratKeluar) == 0))
+                        <div class="px-4 py-2 text-sm text-gray-500">Tidak ada notifikasi baru.</div>
+                    @endif
                 </div>
             </div>
         </div>

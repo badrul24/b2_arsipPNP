@@ -8,7 +8,7 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900">Dashboard</h2>
-            <p class="mt-1 text-sm text-gray-500">Selamat datang di Sistem Informasi Arsip Politeknik Negeri Padang</p>
+            <p class="mt-1 text-sm text-gray-500">Selamat datang di Manajemen Arsip Politeknik Negeri Padang</p>
         </div>
     </div>
 
@@ -191,12 +191,22 @@
                         }
                         
                         // Urutkan berdasarkan tanggal terbaru dan ambil 5 teratas
-                        $allRecent = $allRecent->sortByDesc('tanggal')->take(5);
+                        $allRecent = $allRecent->sortByDesc('tanggal')->values();
+                        // Pagination manual jika total arsip > 10
+                        $perPage = 5;
+                        $currentPage = request()->get('page', 1);
+                        $pagedRecent = new Illuminate\Pagination\LengthAwarePaginator(
+                            $allRecent->forPage($currentPage, $perPage),
+                            $allRecent->count(),
+                            $perPage,
+                            $currentPage,
+                            ['path' => request()->url(), 'query' => request()->query()]
+                        );
                     @endphp
                     
                     @php $isOperator = Auth::user() && Auth::user()->isOperator(); @endphp
                     
-                    @forelse($allRecent as $item)
+                    @forelse($pagedRecent as $item)
                         @if($item['jenis'] === 'Dokumen')
                             @if($isOperator)
                                 <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location.href='{{ route($item['route']) }}'">
@@ -261,6 +271,11 @@
                     @endforelse
                 </tbody>
             </table>
+            @if($pagedRecent->lastPage() > 1)
+                <div class="px-6 py-2">
+                    {{ $pagedRecent->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </div>
