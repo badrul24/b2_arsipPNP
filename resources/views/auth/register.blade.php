@@ -110,7 +110,7 @@
             <form method="POST" action="{{ route('register') }}" class="space-y-4"> @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="name" class="block text-gray-700 text-sm font-semibold mb-2">Full Name</label>
+                        <label for="name" class="block text-gray-700 text-sm font-semibold mb-2">Nama Lengkap</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"> <svg
                                     class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200"
@@ -120,7 +120,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <input type="text" name="name" id="name" placeholder="John Doe" required
+                            <input type="text" name="name" id="name" placeholder="Nama Lengkap" required
                                 autofocus value="{{ old('name') }}" aria-describedby="name-error"
                                 class="pl-10 shadow-sm appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 text-sm leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 hover:border-gray-400">
                         </div>
@@ -130,8 +130,7 @@
                     </div>
 
                     <div>
-                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email
-                            Address</label>
+                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Alamat Email</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200"
@@ -141,7 +140,7 @@
                                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                                 </svg>
                             </div>
-                            <input type="email" name="email" id="email" placeholder="your@email.com" required
+                            <input type="email" name="email" id="email" placeholder="email@anda.com" required
                                 value="{{ old('email') }}" aria-describedby="email-error"
                                 class="pl-10 shadow-sm appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 text-sm leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 hover:border-gray-400">
                         </div>
@@ -153,7 +152,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Password</label>
+                        <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Kata Sandi</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200"
@@ -178,15 +177,15 @@
                                 </svg>
                             </button>
                         </div>
-                        {{-- <div class="password-strength mt-2">
+                        <div class="password-strength mt-2">
                             <div class="flex space-x-1">
                                 <div class="w-1/4 h-1 rounded bg-gray-200" id="strength-bar-1"></div>
                                 <div class="w-1/4 h-1 rounded bg-gray-200" id="strength-bar-2"></div>
                                 <div class="w-1/4 h-1 rounded bg-gray-200" id="strength-bar-3"></div>
                                 <div class="w-1/4 h-1 rounded bg-gray-200" id="strength-bar-4"></div>
                             </div>
-                            <p class="text-xs mt-1 text-gray-500" id="password-strength-text">Password strength</p>
-                        </div> --}}
+                            <p class="text-xs mt-1 text-gray-500" id="password-strength-text">Kekuatan kata sandi</p>
+                        </div>
                         @error('password')
                             <p id="password-error" class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -194,7 +193,7 @@
 
                     <div>
                         <label for="password_confirmation"
-                            class="block text-gray-700 text-sm font-semibold mb-2">Confirm Password</label>
+                            class="block text-gray-700 text-sm font-semibold mb-2">Konfirmasi Kata Sandi</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200"
@@ -225,21 +224,6 @@
                     </div>
                 </div>
 
-                <div class="flex items-center mt-2"> <input id="terms" name="terms" type="checkbox" required
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        aria-describedby="terms-error">
-                    <label for="terms" class="ml-1 block text-xs text-gray-700 font-medium"> I agree to the <a
-                            href="#"
-                            class="text-blue-600 hover:text-blue-800 font-semibold transition duration-200 hover:underline">Terms
-                            of Service</a> and <a href="#"
-                            class="text-blue-600 hover:text-blue-800 font-semibold transition duration-200 hover:underline">Privacy
-                            Policy</a>
-                    </label>
-                </div>
-                @error('terms')
-                    <p id="terms-error" class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-
                 <button type="submit" id="submit-btn"
                     class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]">
                     <span class="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -251,7 +235,7 @@
                                 clip-rule="evenodd" />
                         </svg>
                     </span>
-                    <span id="submit-text">Create Account</span>
+                    <span id="submit-text">Buat Akun</span>
                 </button>
 
                 <div class="relative my-6">
@@ -259,7 +243,7 @@
                         <div class="w-full border-t border-gray-300"></div>
                     </div>
                     <div class="relative flex justify-center text-sm">
-                        <span class="px-4 bg-white text-gray-500 font-medium">Or continue with</span>
+                        <span class="px-4 bg-white text-gray-500 font-medium">Atau lanjutkan dengan</span>
                     </div>
                 </div>
 
@@ -278,8 +262,7 @@
                             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                     </svg>
 
-                    <span class="text-gray-700 group-hover:text-gray-900 transition duration-200">Register with
-                        Google</span>
+                    <span class="text-gray-700 group-hover:text-gray-900 transition duration-200">Daftar dengan Google</span>
 
                     <svg class="w-4 h-4 ml-2 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,9 +272,8 @@
                 </a>
 
                 <div class="mt-4 text-center">
-                    <p class="text-gray-600 text-sm">Already have an account? <a href="{{ route('login') }}"
-                            class="text-blue-600 hover:text-blue-800 font-semibold transition duration-200 hover:underline">Sign
-                            in</a></p>
+                    <p class="text-gray-600 text-sm">Sudah punya akun? <a href="{{ route('login') }}"
+                            class="text-blue-600 hover:text-blue-800 font-semibold transition duration-200 hover:underline">Masuk</a></p>
                 </div>
             </form>
         </div>
@@ -351,8 +333,8 @@
                 bars[i].className = `w-1/4 h-1 rounded ${color}`;
             }
 
-            const messages = ['Very Weak', 'Weak', 'Medium', 'Strong', 'Very Strong'];
-            text.textContent = `Password strength: ${messages[strength]}`;
+            const messages = ['Sangat Lemah', 'Lemah', 'Sedang', 'Kuat', 'Sangat Kuat'];
+            text.textContent = `Kekuatan kata sandi: ${messages[strength]}`;
             text.className = `text-xs mt-1 ${
                 strength < 2 ? 'text-red-500' :
                 strength < 4 ? 'text-yellow-500' : 'text-green-500'
@@ -367,7 +349,7 @@
 
             btn.disabled = true;
             btn.classList.remove('hover:from-blue-700', 'hover:to-blue-800', 'hover:shadow-xl');
-            text.textContent = 'Creating Account...';
+            text.textContent = 'Membuat Akun...';
             icon.innerHTML =
                 '<path fill-rule="evenodd" d="M4 12a8 8 0 1116 0A8 8 0 014 12zm8-6a6 6 0 100 12 6 6 0 000-12zM12 4a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2A.5.5 0 0112 4zm-4.5 7.5a.5.5 0 01-.5-.5h-2a.5.5 0 010-1h2a.5.5 0 01.5.5zm8 0a.5.5 0 01.5-.5h2a.5.5 0 010 1h-2a.5.5 0 01-.5-.5zM12 18a.5.5 0 01-.5-.5v-2a.5.5 0 011 0v2a.5.5 0 01-.5.5zM15.5 7.5a.5.5 0 000-.707l-1.414-1.414a.5.5 0 00-.707 0 .5.5 0 000 .707l1.414 1.414a.5.5 0 00.707 0zM8.5 15.5a.5.5 0 000-.707L7.086 13.379a.5.5 0 00-.707 0 .5.5 0 000 .707l1.414 1.414a.5.5 0 00.707 0zM15.5 15.5a.5.5 0 00-.707 0L13.379 14.086a.5.5 0 000-.707 .5.5 0 00.707 0l1.414 1.414a.5.5 0 000 .707zM8.5 7.5a.5.5 0 00-.707 0L6.379 8.914a.5.5 0 000 .707 .5.5 0 00.707 0l1.414-1.414a.5.5 0 000-.707z" clip-rule="evenodd" />';
             icon.classList.add('animate-spin');

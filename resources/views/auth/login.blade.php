@@ -77,7 +77,7 @@
             <form method="POST" action="{{ route('login') }}" class="space-y-4"> @csrf
 
                 <div>
-                    <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email Address</label>
+                    <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Alamat Email</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -85,13 +85,13 @@
                                 <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                             </svg>
                         </div>
-                        <input type="email" name="email" placeholder="your@email.com" required
+                        <input type="email" name="email" placeholder="email@anda.com" required
                             class="pl-10 shadow-sm appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 text-sm leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 hover:border-gray-400">
                     </div>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Password</label>
+                    <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Kata Sandi</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -100,22 +100,20 @@
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input type="password" name="password" placeholder="••••••••" required
-                            class="pl-10 shadow-sm appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 text-sm leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 hover:border-gray-400">
+                        <input type="password" name="password" id="password" placeholder="••••••••" required
+                            class="pl-10 pr-10 shadow-sm appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 text-sm leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 hover:border-gray-400">
+                        <button type="button" onclick="togglePassword('password')"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-2"
+                            aria-label="Tampilkan/sembunyikan password">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
-
-                {{-- <div class="flex items-center justify-between text-sm">
-                    <div class="flex items-center">
-                        <input id="remember_me" name="remember" type="checkbox"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition duration-200">
-                        <label for="remember_me" class="ml-2 block text-gray-700 font-medium">Remember me</label>
-                    </div>
-                    <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold transition duration-200 hover:underline">
-                        Forgot password?
-                    </a>
-                </div> --}}
-
                 <button type="submit"
                     class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]">
                     <span class="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -123,14 +121,14 @@
                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                         </svg>
                     </span>
-                    Sign In to Your Account
+                    Masuk ke Akun Anda
                 </button>
 
                 <div class="relative my-4"> <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t border-gray-300"></div>
                     </div>
                     <div class="relative flex justify-center text-sm">
-                        <span class="px-4 bg-white text-gray-500 font-medium">Or continue with</span>
+                        <span class="px-4 bg-white text-gray-500 font-medium">Atau lanjutkan dengan</span>
                     </div>
                 </div>
 
@@ -144,7 +142,7 @@
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                     </svg>
 
-                    <span class="text-gray-700 group-hover:text-gray-900 transition duration-200">Continue with Google</span>
+                    <span class="text-gray-700 group-hover:text-gray-900 transition duration-200">Lanjutkan dengan Google</span>
 
                     <svg class="w-4 h-4 ml-2 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -152,9 +150,9 @@
                 </a>
             </form>
 
-            <div class="mt-4 text-center"> <p class="text-gray-600 text-sm">Don't have an account?
+            <div class="mt-4 text-center"> <p class="text-gray-600 text-sm">Belum punya akun?
                     <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800 font-semibold transition duration-200 hover:underline">
-                        Create one here
+                        Daftar di sini
                     </a>
                 </p>
             </div>
@@ -164,6 +162,25 @@
             Copyright &copy; {{ date('Y') }} PNP | Politeknik Negeri Padang
         </div>
     </div>
+
+    <script>
+    function togglePassword(id) {
+        const input = document.getElementById(id);
+        const button = input.nextElementSibling;
+        const iconPaths = button.querySelectorAll('path');
+        if (input.type === 'password') {
+            input.type = 'text';
+            iconPaths[1].setAttribute('d',
+                'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21'
+            );
+        } else {
+            input.type = 'password';
+            iconPaths[1].setAttribute('d',
+                'M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
+            );
+        }
+    }
+    </script>
 </body>
 
 </html>
