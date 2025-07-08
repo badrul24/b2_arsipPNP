@@ -246,4 +246,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/disposisi/{disposisi}/update-status', [DisposisiController::class, 'updateStatus'])->name('disposisi.updateStatus');
     Route::post('/disposisi/terima/{surat_masuk}', [DisposisiController::class, 'terima'])->name('disposisi.terima');
 
+    Route::get('surat-masuk/laporan/pdf', [SuratMasukController::class, 'report'])->name('surat_masuk.laporan.pdf');
+
 });

@@ -11,16 +11,27 @@
             <h2 class="text-2xl font-bold text-gray-900">Surat Masuk</h2>
             <p class="mt-1 text-sm text-gray-500">Kelola Data Surat Masuk</p>
         </div>
-        @if ($currentUser->isAdmin() || $currentUser->isOperator())
-            <a href="{{ route('surat_masuk.create') }}"
-                class="inline-flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Tambah Surat Masuk
-            </a>
-        @endif
+        <div class="flex gap-2">
+            @if ($currentUser->isAdmin() || $currentUser->isOperator())
+                <a href="{{ route('surat_masuk.create') }}"
+                    class="inline-flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Tambah Surat Masuk
+                </a>
+            @endif
+            @if ($currentUser->isAdmin() || $currentUser->isOperator())
+                <a href="{{ route('surat_masuk.laporan.pdf', request()->only(['search','status_surat','jenis_surat'])) }}" target="_blank"
+                    class="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-8m0 8l-4-4m4 4l4-4m-8 8h8a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v9a2 2 0 002 2z" />
+                    </svg>
+                    Laporan
+                </a>
+            @endif
+        </div>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6">

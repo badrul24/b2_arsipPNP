@@ -23,6 +23,7 @@ class SuratMasukController extends Controller
         $query = SuratMasuk::with(['jurusan', 'user', 'disposisis']);
 
         if ($user->isAdmin()) {
+            // Admin melihat semua surat, tidak ada perubahan
         } elseif ($user->isSekretaris()) {
             $query->whereIn('status_surat', [
                 'Diajukan',
@@ -41,23 +42,13 @@ class SuratMasukController extends Controller
                 ->orWhere('divisi_penerima_id', $user->divisi_id)
                 ->pluck('surat_masuk_id');
 
-            $query->where(function ($q) use ($disposisiSuratIds) {
-                $q->whereIn('status_surat', [
-                    'Diproses',
-                    'Disetujui',
-                    'Terkirim',
-                    'Baru',
-                    'Dibaca',
-                    'Selesai',
-                    'Diarsipkan',
-                    'Didisposisi'
-                ])
-                    ->orWhereIn('id', $disposisiSuratIds);
-            });
+            $query->whereIn('id', $disposisiSuratIds);
+
         } elseif ($user->isOperator() && $user->jurusan_id) {
             $query->where('user_id', $user->id)
                 ->where('jurusan_id', $user->jurusan_id);
         } else {
+            // Jika role tidak cocok, jangan tampilkan apa-apa
             $query->whereRaw('1 = 0');
         }
 
@@ -80,21 +71,15 @@ class SuratMasukController extends Controller
 
         foreach ($suratMasuks as $surat) {
             $status = $surat->status_surat;
-
             $adaDisposisiBaru = $surat->disposisis->contains(
                 fn($d) =>
                 $d->user_penerima_id == $user->id && $d->status_disposisi === 'Baru'
             );
 
-            $surat->status_tampilan = match (true) {
-                $adaDisposisiBaru => 'Baru',
-                $status === 'Dibaca' => 'Dibaca',
-                $status === 'Selesai' => 'Selesai',
-                $status === 'Diarsipkan' => 'Diarsipkan',
-                default => $status,
-            };
+            // Logika untuk status tampilan bisa disederhanakan
             $surat->status_tampilan = $adaDisposisiBaru ? 'Baru' : $status;
         }
+
         $pimpinanUsers = User::whereIn('role', ['pimpinan'])->get(['id', 'name']);
         return view('surat_masuk.index', compact('suratMasuks', 'pimpinanUsers'));
     }
@@ -296,6 +281,44 @@ class SuratMasukController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Aksi tidak dikenali.'], 400);
+    }
+
+    /**
+     * Export laporan surat masuk ke PDF (report)
+     */
+    public function report(Request $request)
+    {
+        $user = Auth::user();
+        $query = SuratMasuk::with(['user']);
+        if (!$user->isAdmin()) {
+            if ($user->isOperator() && $user->jurusan_id) {
+                $query->where('user_id', $user->id)
+                    ->where('jurusan_id', $user->jurusan_id);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        }
+        $query->when($request->search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor_agenda', 'like', "%{$search}%")
+                    ->orWhere('nomor_surat_pengirim', 'like', "%{$search}%")
+                    ->orWhere('perihal', 'like', "%{$search}%")
+                    ->orWhere('pengirim', 'like', "%{$search}%")
+                    ->orWhere('user_id', function ($sub) use ($search) {
+                        $sub->select('id')->from('users')->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('keterangan', 'like', "%{$search}%");
+            });
+        });
+        if ($request->status_surat) {
+            $query->where('status_surat', $request->status_surat);
+        }
+        if ($request->jenis_surat) {
+            $query->where('jenis_surat', $request->jenis_surat);
+        }
+        $suratMasuks = $query->orderBy('tanggal_surat_pengirim', 'desc')->get();
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('surat_masuk.laporan_pdf', compact('suratMasuks'));
+        return $pdf->download('laporan_surat_masuk.pdf');
     }
 
     /**
