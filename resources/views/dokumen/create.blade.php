@@ -72,7 +72,7 @@
                                 @endforeach
                             </select>
                             @error('kategori_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-1">Kategori wajib diisi.</p>
                             @enderror
                         </div>
 
@@ -88,7 +88,7 @@
                                 @endforeach
                             </select>
                             @error('kode_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-1">Kode klasifikasi wajib diisi.</p>
                             @enderror
                         </div>
 
@@ -104,7 +104,7 @@
                                 @endforeach
                             </select>
                             @error('lokasi_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-1">Lokasi wajib diisi.</p>
                             @enderror
                         </div>
                     </div>
@@ -123,7 +123,7 @@
                                 @endforeach
                             </select>
                             @error('retensi_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-1">Retensi wajib diisi.</p>
                             @enderror
                         </div>
 
@@ -201,7 +201,7 @@
                                 <input type="hidden" name="jurusan_id" value="{{ old('jurusan_id', $currentUser->jurusan_id) }}">
                             @endif
                             @error('jurusan_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-1">Jurusan wajib diisi.</p>
                             @enderror
                         </div>
 

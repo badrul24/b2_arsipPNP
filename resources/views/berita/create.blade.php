@@ -56,7 +56,7 @@
                         @endforeach
                     </select>
                     @error('kategori_id')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">Kategori wajib diisi.</p>
                     @enderror
                 </div>
 
