@@ -74,6 +74,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse ($disposisis as $disposisi)
+                        @if ($disposisi->isi_disposisi !== '[AUTO] Disposisi otomatis dari sekretaris ke pimpinan')
                         <tr class="hover:bg-gray-50 transition duration-200">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $disposisis->firstItem() + $loop->index }}
@@ -159,6 +160,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                     @empty
                         <tr>
                             <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">

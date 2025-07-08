@@ -14,10 +14,6 @@
                 
                 @php
                     $totalNotifCount = ($notifications['suratMasukCount'] ?? 0) + ($notifications['disposisiCount'] ?? 0) + ($notifications['suratKeluarCount'] ?? 0);
-                    // Karena untuk pimpinan notif surat masuk & disposisi sama, kita hitung salah satunya saja agar tidak double
-                    if(Auth::user()->isPimpinan() || Auth::user()->isKepalaLembaga() || Auth::user()->isKepalaBidang()) {
-                        $totalNotifCount = ($notifications['disposisiCount'] ?? 0) + ($notifications['suratKeluarCount'] ?? 0);
-                    }
                 @endphp
                 @if($totalNotifCount > 0)
                     <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -32,6 +28,31 @@
                 </div>
                 <div class="max-h-80 overflow-y-auto">
 
+                    @if(($notifications['suratMasukCount'] ?? 0) > 0)
+                        @foreach($notifications['suratMasukItems'] as $surat)
+                            @php
+                                if ($surat instanceof \App\Models\Disposisi && $surat->suratMasuk) {
+                                    $sm = $surat->suratMasuk;
+                                } else {
+                                    $sm = $surat;
+                                }
+                            @endphp
+                            <a href="{{ route('surat_masuk.index') }}" class="block px-4 py-2 hover:bg-gray-100 bg-yellow-50 font-medium">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 pt-1">
+                                        <span class="inline-block w-2 h-2 mr-3 bg-yellow-500 rounded-full"></span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-900 font-bold">Surat Masuk Baru</p>
+                                        <p class="text-xs text-gray-600">No. Agenda: {{ $sm->nomor_agenda ?? '-' }}</p>
+                                        <p class="text-xs text-gray-500 truncate">Perihal: {{ $sm->perihal ?? '-' }}</p>
+                                        <p class="text-xs text-gray-400">{{ $sm->created_at ? $sm->created_at->diffForHumans() : '-' }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    @endif
+
                     @if(($notifications['disposisiCount'] ?? 0) > 0)
                         @foreach($notifications['disposisiItems'] as $disposisi)
                             <a href="{{ route('disposisi.index') }}" class="block px-4 py-2 hover:bg-gray-100 bg-blue-50 font-medium">
@@ -40,7 +61,7 @@
                                         <span class="inline-block w-2 h-2 mr-3 bg-blue-500 rounded-full"></span>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-900">Disposisi Baru</p>
+                                        <p class="text-sm text-gray-900 font-bold">Disposisi Baru</p>
                                         <p class="text-xs text-gray-600">Dari: {{ $disposisi->userPemberi->name ?? '-' }}</p>
                                         <p class="text-xs text-gray-500 truncate">Perihal: {{ $disposisi->suratMasuk->perihal ?? '-' }}</p>
                                         <p class="text-xs text-gray-400">{{ \Carbon\Carbon::parse($disposisi->tanggal_disposisi)->diffForHumans() }}</p>
@@ -50,18 +71,18 @@
                         @endforeach
                     @endif
                     
-                    @if(($notifications['suratMasukCount'] ?? 0) > 0 && (Auth::user()->isSekretaris() || Auth::user()->isOperator()))
-                        @foreach($notifications['suratMasukItems'] as $surat)
-                            <a href="{{ route('surat_masuk.index') }}" class="block px-4 py-2 hover:bg-gray-100 bg-yellow-50 font-medium">
+                    @if(($notifications['suratKeluarCount'] ?? 0) > 0)
+                        @foreach($notifications['suratKeluarItems'] as $sk)
+                            <a href="{{ route('surat_keluar.index') }}" class="block px-4 py-2 hover:bg-gray-100 bg-purple-50 font-medium">
                                 <div class="flex items-start">
                                     <div class="flex-shrink-0 pt-1">
-                                        <span class="inline-block w-2 h-2 mr-3 bg-yellow-500 rounded-full"></span>
+                                        <span class="inline-block w-2 h-2 mr-3 bg-purple-500 rounded-full"></span>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-900">Surat {{ $surat->status_surat }}</p>
-                                        <p class="text-xs text-gray-600">No. Agenda: {{ $surat->nomor_agenda ?? '-' }}</p>
-                                        <p class="text-xs text-gray-500 truncate">Perihal: {{ $surat->perihal ?? '-' }}</p>
-                                        <p class="text-xs text-gray-400">{{ $surat->created_at->diffForHumans() }}</p>
+                                        <p class="text-sm text-gray-900">Surat Keluar {{ $sk->status_surat }}</p>
+                                        <p class="text-xs text-gray-600">Dari: {{ $sk->pengirim ?? '-' }}</p>
+                                        <p class="text-xs text-gray-500 truncate">Perihal: {{ $sk->perihal ?? '-' }}</p>
+                                        <p class="text-xs text-gray-400">{{ $sk->created_at->diffForHumans() }}</p>
                                     </div>
                                 </div>
                             </a>

@@ -130,6 +130,9 @@ class SuratKeluarController extends Controller
         }
 
         $validated['user_id'] = $user->id;
+        if ($user->isOperator() && $user->jurusan_id) {
+            $validated['jurusan_id'] = $user->jurusan_id;
+        }
         SuratKeluar::create($validated);
         return redirect()->route('surat_keluar.index')->with('success', 'Surat keluar berhasil dibuat.');
     }

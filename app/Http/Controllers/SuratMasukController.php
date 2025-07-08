@@ -38,18 +38,18 @@ class SuratMasukController extends Controller
                 'Diarsipkan'
             ]);
         } elseif ($user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()) {
-            $disposisiSuratIds = Disposisi::where('user_penerima_id', $user->id)
-                ->orWhere('divisi_penerima_id', $user->divisi_id)
-                ->pluck('surat_masuk_id');
-
-            $query->whereIn('id', $disposisiSuratIds);
-
+            $query->whereIn('status_surat', ['Diproses', 'Terkirim', 'Dibaca']);
         } elseif ($user->isOperator() && $user->jurusan_id) {
             $query->where('user_id', $user->id)
                 ->where('jurusan_id', $user->jurusan_id);
+        } elseif ($user->isKepalaBidang() || $user->isKepalaLembaga() || $user->isPimpinan() || $user->isSekretaris() || $user->isAdmin()) {
+            // Sudah di-handle di atas
         } else {
-            // Jika role tidak cocok, jangan tampilkan apa-apa
-            $query->whereRaw('1 = 0');
+            // Untuk penerima disposisi (user lain), tampilkan surat masuk yang didisposisikan ke user login
+            $disposisiSuratIds = \App\Models\Disposisi::where('user_penerima_id', $user->id)
+                ->whereIn('status_disposisi', ['Baru', 'Diterima'])
+                ->pluck('surat_masuk_id');
+            $query->whereIn('id', $disposisiSuratIds);
         }
 
         // Pencarian
@@ -65,11 +65,6 @@ class SuratMasukController extends Controller
         // Filter status surat
         $query->when($request->status_surat, function ($query, $status) {
             $query->where('status_surat', $status);
-        });
-
-        // Filter sifat surat
-        $query->when($request->sifat_surat, function ($query, $sifat) {
-            $query->where('sifat_surat', $sifat);
         });
 
         $suratMasuks = $query->latest()->paginate(10)->withQueryString();
@@ -219,16 +214,16 @@ class SuratMasukController extends Controller
 
         abort_unless($authorized, 403);
 
-        if (in_array($suratMasuk->status_surat, ['Terkirim', 'Baru'])) {
-            $suratMasuk->update(['status_surat' => 'Dibaca']);
-        }
-
-        $disposisi = $suratMasuk->disposisis
-            ->where('user_penerima_id', $user->id)
+        // Update status surat masuk dan disposisi jika user adalah penerima disposisi
+        $disposisi = \App\Models\Disposisi::where('surat_masuk_id', $suratMasuk->id)
+            ->where(function($q) use ($user) {
+                $q->where('user_penerima_id', $user->id)
+                  ->orWhere('divisi_penerima_id', $user->divisi_id);
+            })
             ->where('status_disposisi', 'Baru')
             ->first();
-
         if ($disposisi) {
+            $suratMasuk->update(['status_surat' => 'Dibaca']);
             $disposisi->update(['status_disposisi' => 'Diterima']);
         }
 
@@ -282,6 +277,7 @@ class SuratMasukController extends Controller
                     return response()->json(['success' => false, 'message' => 'Pimpinan tujuan tidak valid.'], 422);
                 }
                 $suratMasuk->update(['status_surat' => 'Diproses']);
+
                 return response()->json(['success' => true, 'message' => 'Surat berhasil diteruskan ke pimpinan.']);
         }
 
@@ -317,9 +313,6 @@ class SuratMasukController extends Controller
         });
         if ($request->status_surat) {
             $query->where('status_surat', $request->status_surat);
-        }
-        if ($request->sifat_surat) {
-            $query->where('sifat_surat', $request->sifat_surat);
         }
         $suratMasuks = $query->orderBy('tanggal_surat_pengirim', 'desc')->get();
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('surat_masuk.laporan_pdf', compact('suratMasuks'));
@@ -415,11 +408,12 @@ class SuratMasukController extends Controller
             'file_surat' => "$fileRule|file|mimes:pdf,doc,docx,xls,xlsx|max:10240",
             'jurusan_id' => 'nullable|exists:jurusans,id',
         ];
+        $sifatEnum = ['Sangat Penting', 'Penting', 'Biasa'];
         if (!$isStore) {
             $rules['status_surat'] = ['nullable', Rule::in(['Diajukan', 'Diproses', 'Ditolak', 'Disetujui', 'Terkirim', 'Baru', 'Dibaca', 'Selesai', 'Diarsipkan'])];
-            $rules['sifat_surat'] = ['nullable', Rule::in(['Biasa', 'Segera', 'Sangat Segera', 'Rahasia', 'Sangat Rahasia'])];
+            $rules['sifat_surat'] = ['nullable', Rule::in($sifatEnum)];
         } else {
-            $rules['sifat_surat'] = ['required', Rule::in(['Biasa', 'Segera', 'Sangat Segera', 'Rahasia', 'Sangat Rahasia'])];
+            $rules['sifat_surat'] = ['required', Rule::in($sifatEnum)];
         }
         $messages = [
             'jurusan_id.exists' => 'Jurusan yang dipilih tidak valid.',

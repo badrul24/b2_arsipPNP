@@ -27,7 +27,7 @@
         <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="window.location.href='{{ route('surat_masuk.index') }}'">
             <div class="flex items-center">
                 <div class="p-3 mr-4 bg-green-100 rounded-full relative">
-                    @if(($notifications['suratMasukCount'] ?? 0) > 0)
+                    @if(($notifications['suratMasukCount'] ?? 0) > 0 && !Auth::user()->isOperator())
                         <div class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
                             {{ $notifications['suratMasukCount'] > 99 ? '99+' : $notifications['suratMasukCount'] }}
                         </div>

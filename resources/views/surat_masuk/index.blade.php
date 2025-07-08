@@ -53,14 +53,6 @@
                     <option value="Baru" {{ request('status_surat') == 'Baru' ? 'selected' : '' }}>Baru</option>
                     <option value="Dibaca" {{ request('status_surat') == 'Dibaca' ? 'selected' : '' }}>Dibaca</option>
                 </select>
-                <select name="sifat_surat" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                    <option value="">Semua Sifat</option>
-                    <option value="Biasa" {{ request('sifat_surat') == 'Biasa' ? 'selected' : '' }}>Biasa</option>
-                    <option value="Segera" {{ request('sifat_surat') == 'Segera' ? 'selected' : '' }}>Segera</option>
-                    <option value="Sangat Segera" {{ request('sifat_surat') == 'Sangat Segera' ? 'selected' : '' }}>Sangat Segera</option>
-                    <option value="Rahasia" {{ request('sifat_surat') == 'Rahasia' ? 'selected' : '' }}>Rahasia</option>
-                    <option value="Sangat Rahasia" {{ request('sifat_surat') == 'Sangat Rahasia' ? 'selected' : '' }}>Sangat Rahasia</option>
-                </select>
                 <button type="submit"
                     class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -140,7 +132,14 @@
                                         </p>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $suratMasuk->pengirim }}
+                                        @php
+                                            $penerimaList = $suratMasuk->disposisis->pluck('userPenerima.name')->unique();
+                                        @endphp
+                                        @if($penerimaList->count())
+                                            {!! $penerimaList->implode('<br>') !!}
+                                        @else
+                                            -
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ optional($suratMasuk->tanggal_surat_pengirim)->format('d-m-Y') }}

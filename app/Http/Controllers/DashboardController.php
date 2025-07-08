@@ -55,29 +55,36 @@ class DashboardController extends Controller
             $totalSuratMasuk = SuratMasuk::count();
             $totalSuratKeluar = SuratKeluar::count();
             $totalDokumen = Dokumen::count();
-            $totalDisposisi = Disposisi::count();
+            $totalDisposisi = Disposisi::where('isi_disposisi', '!=', '[AUTO] Disposisi otomatis dari sekretaris ke pimpinan')->count();
         } elseif ($user->isKepalaLembaga() || $user->isKepalaBidang()) {
-            // Kepala Lembaga & Kepala Bidang tetap melihat data berdasarkan disposisi yang mereka terima.
             $disposisiSuratIds = Disposisi::where('user_penerima_id', $user->id)
                 ->orWhere('divisi_penerima_id', $user->divisi_id)
+                ->where('isi_disposisi', '!=', '[AUTO] Disposisi otomatis dari sekretaris ke pimpinan')
                 ->pluck('surat_masuk_id')
                 ->unique();
 
             $totalSuratMasuk = $disposisiSuratIds->count();
-            $totalSuratKeluar = 0; // Role ini tidak terkait langsung dengan surat keluar
-            $totalDokumen = 0; // Role ini tidak terkait langsung dengan dokumen
+            $totalSuratKeluar = SuratKeluar::where('penerima', $user->name)->count();
+            $totalDokumen = 0;
             $totalDisposisi = Disposisi::where('user_penerima_id', $user->id)
                 ->orWhere('divisi_penerima_id', $user->divisi_id)
+                ->where('isi_disposisi', '!=', '[AUTO] Disposisi otomatis dari sekretaris ke pimpinan')
                 ->count();
         } elseif ($user->isOperator() && $user->jurusan_id) {
-            // Operator melihat data yang terkait dengan jurusannya.
-            $totalSuratMasuk = SuratMasuk::where('jurusan_id', $user->jurusan_id)->count();
+            // Untuk operator, jumlah surat masuk = semua surat masuk yang dibuat oleh operator
+            $totalSuratMasuk = SuratMasuk::where('user_id', $user->id)->count();
             $totalSuratKeluar = SuratKeluar::where('jurusan_id', $user->jurusan_id)->count();
             $totalDokumen = Dokumen::where('jurusan_id', $user->jurusan_id)->count();
             $totalDisposisi = 0;
         } else {
-            // Default jika role tidak terdefinisi.
-            return [0, 0, 0, 0];
+            // Untuk penerima disposisi (user lain)
+            $suratMasukIds = Disposisi::where('user_penerima_id', $user->id)
+                ->whereIn('status_disposisi', ['Baru', 'Diterima'])
+                ->pluck('surat_masuk_id')
+                ->unique();
+            $suratMasukItems = SuratMasuk::whereIn('id', $suratMasukIds)->latest()->take(5)->get();
+            $notifications['suratMasukCount'] = $suratMasukItems->count();
+            $notifications['suratMasukItems'] = $suratMasukItems;
         }
         return [$totalSuratMasuk, $totalSuratKeluar, $totalDokumen, $totalDisposisi];
     }
@@ -93,7 +100,6 @@ class DashboardController extends Controller
             'suratMasukItems' => collect(),
             'disposisiCount' => 0,
             'disposisiItems' => collect(),
-            // Tambahkan untuk surat keluar jika diperlukan
             'suratKeluarCount' => 0,
             'suratKeluarItems' => collect(),
         ];
@@ -102,25 +108,58 @@ class DashboardController extends Controller
             $query = SuratMasuk::whereIn('status_surat', ['Diajukan']);
             $notifications['suratMasukCount'] = $query->count();
             $notifications['suratMasukItems'] = $query->latest()->take(5)->get();
-        } elseif ($user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()) {
+        } elseif ($user->isPimpinan()) {
+            // Notifikasi surat masuk status Diproses untuk pimpinan
+            $query = \App\Models\SuratMasuk::where('status_surat', 'Diproses');
+            $notifications['suratMasukCount'] = $query->count();
+            $notifications['suratMasukItems'] = $query->latest()->take(5)->get();
             $query = Disposisi::with('suratMasuk.user', 'userPemberi')
                 ->where(function ($q) use ($user) {
                     $q->where('user_penerima_id', $user->id)
                         ->orWhere('divisi_penerima_id', $user->divisi_id);
                 })
-                ->where('status_disposisi', 'Baru');
+                ->where('status_disposisi', 'Baru')
+                ->where('isi_disposisi', '!=', '[AUTO] Disposisi otomatis dari sekretaris ke pimpinan');
 
             $count = $query->count();
-            // PERBAIKAN: Hitung notifikasi untuk kedua kartu
             $notifications['disposisiCount'] = $count;
-            $notifications['suratMasukCount'] = $count; // <-- Tambahkan ini agar badge di kartu Surat Masuk muncul
-
             $notifications['disposisiItems'] = $query->latest()->take(5)->get();
+        } elseif ($user->isKepalaLembaga() || $user->isKepalaBidang()) {
+            // Notifikasi surat masuk dari disposisi untuk kepala lembaga/bidang
+            $disposisi = Disposisi::with('suratMasuk')
+                ->where(function ($q) use ($user) {
+                    $q->where('user_penerima_id', $user->id)
+                        ->orWhere('divisi_penerima_id', $user->divisi_id);
+                })
+                ->where('status_disposisi', 'Baru')
+                ->where('isi_disposisi', '!=', '[AUTO] Disposisi otomatis dari sekretaris ke pimpinan')
+                ->latest()->take(10)->get();
+            $suratMasukItems = $disposisi->pluck('suratMasuk')->filter()->unique('id')->take(5);
+            $notifications['suratMasukCount'] = $suratMasukItems->count();
+            $notifications['suratMasukItems'] = $suratMasukItems;
+            $notifications['disposisiCount'] = $disposisi->count();
+            $notifications['disposisiItems'] = $disposisi;
         } elseif ($user->isOperator()) {
             $query = SuratMasuk::where('user_id', $user->id)->where('status_surat', 'Ditolak');
             $notifications['suratMasukCount'] = $query->count();
             $notifications['suratMasukItems'] = $query->latest()->take(5)->get();
+        } else {
+            // Untuk penerima disposisi (user lain)
+            $disposisi = Disposisi::with('suratMasuk')
+                ->where('user_penerima_id', $user->id)
+                ->whereIn('status_disposisi', ['Baru', 'Diterima'])
+                ->where('isi_disposisi', '!=', '[AUTO] Disposisi otomatis dari sekretaris ke pimpinan')
+                ->latest()->take(10)->get();
+            $suratMasukItems = $disposisi->pluck('suratMasuk')->filter()->unique('id')->take(5);
+            $notifications['suratMasukCount'] = $suratMasukItems->count();
+            $notifications['suratMasukItems'] = $suratMasukItems;
         }
+
+        // Notifikasi untuk surat keluar yang diterima user (status Baru/Terkirim)
+        $skQuery = \App\Models\SuratKeluar::where('penerima', $user->name)
+            ->whereIn('status_surat', ['Baru', 'Terkirim']);
+        $notifications['suratKeluarCount'] = $skQuery->count();
+        $notifications['suratKeluarItems'] = $skQuery->latest()->take(5)->get();
 
         return $notifications;
     }

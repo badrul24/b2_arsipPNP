@@ -12,21 +12,18 @@ class DisposisiController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $query = Disposisi::with(['suratMasuk', 'userPemberi', 'userPenerima', 'divisiPenerima', 'parentDisposisi']);
+        $query = Disposisi::with(['suratMasuk', 'userPemberi', 'userPenerima', 'divisiPenerima', 'parentDisposisi'])
+            ->where('isi_disposisi', '!=', '[AUTO] Disposisi otomatis dari sekretaris ke pimpinan');
 
         if ($user->isAdmin() || $user->isSekretaris()) {
             // Admin dan Sekretaris dapat melihat semua disposisi, tidak perlu filter tambahan.
         } 
         elseif ($user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()) {
-            // Pimpinan, Kepala Lembaga, dan Kepala Bidang melihat disposisi yang MEREKA KIRIM atau MEREKA TERIMA.
+            // Tampilkan disposisi yang DIBUAT atau DITERIMA oleh pimpinan/kepala lembaga/kepala bidang
             $query->where(function ($q) use ($user) {
-                $q->where('user_pemberi_id', $user->id)      // Disposisi yang mereka kirim
-                  ->orWhere('user_penerima_id', $user->id); // Disposisi yang mereka terima secara personal
-
-                // Jika user memiliki divisi, tampilkan juga disposisi yang ditujukan ke divisinya
-                if ($user->divisi_id) {
-                    $q->orWhere('divisi_penerima_id', $user->divisi_id);
-                }
+                $q->where('user_pemberi_id', $user->id)
+                  ->orWhere('user_penerima_id', $user->id)
+                  ->orWhere('divisi_penerima_id', $user->divisi_id);
             });
         } 
         elseif ($user->isOperator()) {
@@ -107,7 +104,7 @@ class DisposisiController extends Controller
                 'surat_masuk_id'      => $validated['surat_masuk_id'],
                 'user_pemberi_id'     => $user->id,
                 'user_penerima_id'    => $idPenerima,
-                'divisi_penerima_id'  => $penerima->divisi_id, // ✅ INI YANG KURANG
+                'divisi_penerima_id'  => $penerima->divisi_id ?? null,
                 'tanggal_disposisi'   => now()->format('Y-m-d'),
                 'status_disposisi'    => 'Baru',
                 'isi_disposisi'       => $validated['isi_disposisi'],

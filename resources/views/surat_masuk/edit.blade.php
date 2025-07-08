@@ -102,11 +102,9 @@
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('sifat_surat') border-red-500 @enderror"
                                 required>
                                 <option disabled value="">Pilih Sifat</option>
+                                <option value="Sangat Penting" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Sangat Penting' ? 'selected' : '' }}>Sangat Penting</option>
+                                <option value="Penting" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Penting' ? 'selected' : '' }}>Penting</option>
                                 <option value="Biasa" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Biasa' ? 'selected' : '' }}>Biasa</option>
-                                <option value="Segera" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Segera' ? 'selected' : '' }}>Segera</option>
-                                <option value="Sangat Segera" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Sangat Segera' ? 'selected' : '' }}>Sangat Segera</option>
-                                <option value="Rahasia" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Rahasia' ? 'selected' : '' }}>Rahasia</option>
-                                <option value="Sangat Rahasia" {{ old('sifat_surat', $suratMasuk->sifat_surat) == 'Sangat Rahasia' ? 'selected' : '' }}>Sangat Rahasia</option>
                             </select>
                             @error('sifat_surat')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
