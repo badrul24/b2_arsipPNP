@@ -326,7 +326,7 @@
                         html: `
                         <div class="grid grid-cols-2 gap-5 text-sm my-3">
                             <!-- Kolom Kiri -->
-                            <div class="space-y-2 text-left pl-5">
+                            <div class="space-y-3 text-left pl-5">
                                 <p><strong>Nomor Surat:</strong><br>${nomorSurat}</p>
                                 <p><strong>Tanggal Surat:</strong><br>${tglSurat}</p>
                                 <p><strong>Tujuan:</strong><br>${tujuan}</p>
@@ -335,7 +335,7 @@
                             </div>
                             
                             <!-- Kolom Kanan -->
-                            <div class="space-y-2 text-left pl-5">
+                            <div class="space-y-3 text-left pl-5">
                                 <p><strong>Penerima:</strong><br>${penerima}</p>
                                 <p><strong>Jenis:</strong><br>${jenis}</p>
                                 <p><strong>Sifat:</strong><br>${sifat}</p>

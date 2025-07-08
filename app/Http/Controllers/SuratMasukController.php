@@ -67,6 +67,11 @@ class SuratMasukController extends Controller
             $query->where('status_surat', $status);
         });
 
+        // Filter sifat surat
+        $query->when($request->sifat_surat, function ($query, $sifat) {
+            $query->where('sifat_surat', $sifat);
+        });
+
         $suratMasuks = $query->latest()->paginate(10)->withQueryString();
 
         foreach ($suratMasuks as $surat) {
@@ -313,8 +318,8 @@ class SuratMasukController extends Controller
         if ($request->status_surat) {
             $query->where('status_surat', $request->status_surat);
         }
-        if ($request->jenis_surat) {
-            $query->where('jenis_surat', $request->jenis_surat);
+        if ($request->sifat_surat) {
+            $query->where('sifat_surat', $request->sifat_surat);
         }
         $suratMasuks = $query->orderBy('tanggal_surat_pengirim', 'desc')->get();
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('surat_masuk.laporan_pdf', compact('suratMasuks'));
@@ -412,9 +417,9 @@ class SuratMasukController extends Controller
         ];
         if (!$isStore) {
             $rules['status_surat'] = ['nullable', Rule::in(['Diajukan', 'Diproses', 'Ditolak', 'Disetujui', 'Terkirim', 'Baru', 'Dibaca', 'Selesai', 'Diarsipkan'])];
-            $rules['sifat_surat'] = ['nullable', Rule::in(['Sangat Penting', 'Penting', 'Biasa'])];
+            $rules['sifat_surat'] = ['nullable', Rule::in(['Biasa', 'Segera', 'Sangat Segera', 'Rahasia', 'Sangat Rahasia'])];
         } else {
-            $rules['sifat_surat'] = ['required', Rule::in(['Sangat Penting', 'Penting', 'Biasa'])];
+            $rules['sifat_surat'] = ['required', Rule::in(['Biasa', 'Segera', 'Sangat Segera', 'Rahasia', 'Sangat Rahasia'])];
         }
         $messages = [
             'jurusan_id.exists' => 'Jurusan yang dipilih tidak valid.',

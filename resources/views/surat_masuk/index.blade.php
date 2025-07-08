@@ -23,7 +23,7 @@
                 </a>
             @endif
             @if ($currentUser->isAdmin() || $currentUser->isOperator())
-                <a href="{{ route('surat_masuk.laporan.pdf', request()->only(['search','status_surat','jenis_surat'])) }}" target="_blank"
+                <a href="{{ route('surat_masuk.laporan.pdf', request()->only(['search','status_surat','sifat_surat'])) }}" target="_blank"
                     class="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-8m0 8l-4-4m4 4l4-4m-8 8h8a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v9a2 2 0 002 2z" />
@@ -39,7 +39,7 @@
             <div class="flex-1">
                 <input type="text" name="search" value="{{ request('search') }}"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="Cari nomor agenda, nomor surat, pengirim, perihal, atau keterangan...">
+                    placeholder="Cari nomor agenda, nomor surat, atau lainnya...">
             </div>
             <div class="flex gap-2">
                 <select name="status_surat" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
@@ -52,6 +52,14 @@
                     <option value="Terkirim" {{ request('status_surat') == 'Terkirim' ? 'selected' : '' }}>Terkirim</option>
                     <option value="Baru" {{ request('status_surat') == 'Baru' ? 'selected' : '' }}>Baru</option>
                     <option value="Dibaca" {{ request('status_surat') == 'Dibaca' ? 'selected' : '' }}>Dibaca</option>
+                </select>
+                <select name="sifat_surat" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <option value="">Semua Sifat</option>
+                    <option value="Biasa" {{ request('sifat_surat') == 'Biasa' ? 'selected' : '' }}>Biasa</option>
+                    <option value="Segera" {{ request('sifat_surat') == 'Segera' ? 'selected' : '' }}>Segera</option>
+                    <option value="Sangat Segera" {{ request('sifat_surat') == 'Sangat Segera' ? 'selected' : '' }}>Sangat Segera</option>
+                    <option value="Rahasia" {{ request('sifat_surat') == 'Rahasia' ? 'selected' : '' }}>Rahasia</option>
+                    <option value="Sangat Rahasia" {{ request('sifat_surat') == 'Sangat Rahasia' ? 'selected' : '' }}>Sangat Rahasia</option>
                 </select>
                 <button type="submit"
                     class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition duration-200">
@@ -96,19 +104,19 @@
                                     No</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Tgl Surat</th>
+                                    Info Surat</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Pengirim</th>
+                                    Penerima</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Perihal</th>
+                                    Tanggal</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Sifat</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Status</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    File</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Aksi</th>
@@ -121,13 +129,24 @@
                                         {{ $suratMasuks->firstItem() + $loop->index }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ optional($suratMasuk->tanggal_surat_pengirim)->format('d-m-Y') }}
+                                        <p class="font-semibold text-gray-800">
+                                            {{ $suratMasuk->nomor_surat_pengirim }}
+                                        </p>
+                                        <p class="text-xs text-gray-600">
+                                            <span class="font-medium">Perihal:</span> {{ Str::limit($suratMasuk->perihal, 40) }}
+                                        </p>
+                                        <p class="text-xs text-gray-600">
+                                            <span class="font-medium">Dari:</span> {{ $suratMasuk->user->name ?? '-' }}
+                                        </p>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ $suratMasuk->pengirim }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $suratMasuk->perihal }}
+                                        {{ optional($suratMasuk->tanggal_surat_pengirim)->format('d-m-Y') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $suratMasuk->sifat_surat }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         @php
@@ -162,22 +181,7 @@
                                             {{ $status }}
                                         </button>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        @if ($suratMasuk->file_surat_path)
-                                            <a href="{{ route('surat_masuk.download', $suratMasuk->id) }}" target="_blank"
-                                                class="text-primary-600 hover:text-primary-900">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                </svg>
-                                            </a>
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
-                                    </td>
+
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-y-2">
                                         @php
                                             $status = $suratMasuk->status_surat;
@@ -444,19 +448,37 @@
                     }
 
                     Swal.fire({
-                        title: `Detail Surat Masuk <br><strong>No. Agenda: ${nomorAgenda}</strong>`,
+                        title: `<div class="text-center">Detail Surat Masuk <br><strong>No. Agenda: ${nomorAgenda}</strong></div>`,
                         html: `
-                        <div class="text-left space-y-1 text-sm">
-                            <p><strong>Nomor Pengirim:</strong> ${nomorPengirim}</p>
-                            <p><strong>Tanggal Surat:</strong> ${tglSurat}</p>
-                            <p><strong>Tanggal Diterima:</strong> ${tglDiterima}</p>
-                            <p><strong>Pengirim:</strong> ${pengirim}</p>
-                            <p><strong>Perihal:</strong> ${perihal}</p>
-                            <p><strong>Sifat:</strong> ${sifat}</p>
-                            <p><strong>Jurusan:</strong> ${jurusan}</p>
-                            <p><strong>Status:</strong> ${status}</p>
+                        <div class="grid grid-cols-2 gap-5 text-sm my-3">
+                            <!-- Kolom Kiri -->
+                            <div class="space-y-3 text-left pl-5">
+                                <p><strong>Nomor Pengirim:</strong><br>${nomorPengirim}</p>
+                                <p><strong>Tanggal Surat:</strong><br>${tglSurat}</p>
+                                <p><strong>Tanggal Diterima:</strong><br>${tglDiterima}</p>
+                                <p><strong>Pengirim:</strong><br>${pengirim}</p>
+                                <p><strong>Perihal:</strong><br>${perihal}</p>
+                            </div>
+                            
+                            <!-- Kolom Kanan -->
+                            <div class="space-y-3 text-left pl-5">
+                                <p><strong>Sifat:</strong><br>${sifat}</p>
+                                <p><strong>Jurusan:</strong><br>${jurusan}</p>
+                                <p><strong>Status:</strong><br>${status}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- File Section -->
+                        <div class="mt-3 pt-3 border-t border-gray-200">
                             ${fileHtml}
-                            <p class="mt-2"><strong>Keterangan:</strong><br>${keterangan}</p>
+                        </div>
+                        
+                        <!-- Keterangan Section -->
+                        <div class="mt-3 pt-3 border-t border-gray-200">
+                            <p><strong>Keterangan:</strong></p>
+                            <div class="mt-1 p-2 bg-gray-50 rounded-lg text-sm max-h-24 overflow-y-auto">
+                                ${keterangan}
+                            </div>
                         </div>
                     `,
                         icon: 'info',
@@ -469,7 +491,7 @@
                             confirmButton: 'text-sm px-3 py-2',
                         },
                         width: '600px',
-                        padding: '1rem'
+                        padding: '0.5rem'
                     });
                 });
             });
