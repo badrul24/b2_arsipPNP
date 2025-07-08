@@ -51,36 +51,34 @@ class DashboardController extends Controller
      */
     private function getStatistics($user): array
     {
-        if ($user->isAdmin() || $user->isSekretaris()) {
-            // Admin dan Sekretaris melihat semua data
+        if ($user->isAdmin() || $user->isSekretaris() || $user->isPimpinan()) {
             $totalSuratMasuk = SuratMasuk::count();
             $totalSuratKeluar = SuratKeluar::count();
             $totalDokumen = Dokumen::count();
             $totalDisposisi = Disposisi::count();
-        } elseif ($user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()) {
-            // Pimpinan & Penerima lain melihat data berdasarkan disposisi yang mereka terima
+        } elseif ($user->isKepalaLembaga() || $user->isKepalaBidang()) {
+            // Kepala Lembaga & Kepala Bidang tetap melihat data berdasarkan disposisi yang mereka terima.
             $disposisiSuratIds = Disposisi::where('user_penerima_id', $user->id)
                 ->orWhere('divisi_penerima_id', $user->divisi_id)
                 ->pluck('surat_masuk_id')
                 ->unique();
 
             $totalSuratMasuk = $disposisiSuratIds->count();
-            $totalSuratKeluar = 0; // Sesuaikan jika ada logika surat keluar untuk pimpinan
-            $totalDokumen = 0; // Sesuaikan jika ada logika dokumen untuk pimpinan
+            $totalSuratKeluar = 0; // Role ini tidak terkait langsung dengan surat keluar
+            $totalDokumen = 0; // Role ini tidak terkait langsung dengan dokumen
             $totalDisposisi = Disposisi::where('user_penerima_id', $user->id)
                 ->orWhere('divisi_penerima_id', $user->divisi_id)
                 ->count();
         } elseif ($user->isOperator() && $user->jurusan_id) {
-            // Operator melihat data yang terkait dengan jurusannya
+            // Operator melihat data yang terkait dengan jurusannya.
             $totalSuratMasuk = SuratMasuk::where('jurusan_id', $user->jurusan_id)->count();
             $totalSuratKeluar = SuratKeluar::where('jurusan_id', $user->jurusan_id)->count();
             $totalDokumen = Dokumen::where('jurusan_id', $user->jurusan_id)->count();
-            $totalDisposisi = 0; // Operator tidak menerima disposisi
+            $totalDisposisi = 0;
         } else {
-            // Default jika role tidak terdefinisi
+            // Default jika role tidak terdefinisi.
             return [0, 0, 0, 0];
         }
-
         return [$totalSuratMasuk, $totalSuratKeluar, $totalDokumen, $totalDisposisi];
     }
 

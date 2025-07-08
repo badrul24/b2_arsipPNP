@@ -12,30 +12,40 @@ class DisposisiController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-
         $query = Disposisi::with(['suratMasuk', 'userPemberi', 'userPenerima', 'divisiPenerima', 'parentDisposisi']);
 
-        // Hanya tampilkan disposisi untuk Admin, Pimpinan, Kepala Lembaga, Kepala Bidang, atau user terkait disposisi
-        if (!($user->isAdmin() || $user->isOperator() || $user->isSekretaris() || $user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang())) {
+        if ($user->isAdmin() || $user->isSekretaris()) {
+            // Admin dan Sekretaris dapat melihat semua disposisi, tidak perlu filter tambahan.
+        } 
+        elseif ($user->isPimpinan() || $user->isKepalaLembaga() || $user->isKepalaBidang()) {
+            // Pimpinan, Kepala Lembaga, dan Kepala Bidang melihat disposisi yang MEREKA KIRIM atau MEREKA TERIMA.
             $query->where(function ($q) use ($user) {
-                $q->where('user_pemberi_id', $user->id)
-                    ->orWhere('user_penerima_id', $user->id);
+                $q->where('user_pemberi_id', $user->id)      // Disposisi yang mereka kirim
+                  ->orWhere('user_penerima_id', $user->id); // Disposisi yang mereka terima secara personal
 
+                // Jika user memiliki divisi, tampilkan juga disposisi yang ditujukan ke divisinya
                 if ($user->divisi_id) {
                     $q->orWhere('divisi_penerima_id', $user->divisi_id);
                 }
             });
+        } 
+        elseif ($user->isOperator()) {
+            // Operator hanya melihat disposisi yang terkait dengan surat masuk yang mereka buat.
+            $query->whereHas('suratMasuk', function ($q_sm) use ($user) {
+                $q_sm->where('user_id', $user->id);
+            });
+        } 
+        else {
+            $query->whereRaw('1 = 0'); // Query yang tidak akan mengembalikan hasil
         }
 
         $query->when($request->search, function ($query, $search) {
             $query->where(function ($q) use ($search) {
                 $q->where('isi_disposisi', 'like', "%{$search}%")
                     ->orWhere('catatan', 'like', "%{$search}%")
-                    ->orWhere('instruksi_kepada', 'like', "%{$search}%")
-                    ->orWhere('petunjuk_disposisi', 'like', "%{$search}%")
                     ->orWhereHas('suratMasuk', function ($q_sm) use ($search) {
                         $q_sm->where('nomor_surat_pengirim', 'like', "%{$search}%")
-                            ->orWhere('perihal', 'like', "%{$search}%");
+                             ->orWhere('perihal', 'like', "%{$search}%");
                     });
             });
         });

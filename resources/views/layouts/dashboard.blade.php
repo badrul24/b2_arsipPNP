@@ -81,7 +81,6 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">Statistik Arsip</h3>
             <div><canvas id="arsipChart" height="300"></canvas></div>
         </div>
-
         <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Distribusi Arsip</h3>
             <div class="flex items-center justify-center h-64"><canvas id="distributionChart"></canvas></div>
@@ -133,10 +132,20 @@
                                 'tanggal_arsip' => $item->created_at, 'status_arsip' => $item->status, 'route' => route('dokumen.index')
                             ]))
                             ->sortByDesc('tanggal_arsip');
+                        
+                        $isOperator = Auth::user()->isOperator();
+                        $isAdmin = Auth::user()->isAdmin();
                     @endphp
 
                     @forelse($allRecentItems as $item)
-                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location.href='{{ $item->route }}'">
+                        @php
+                            $isClickable = !($item->jenis_arsip === 'Dokumen' && !$isOperator && !$isAdmin);
+                        @endphp
+                        <tr class="hover:bg-gray-50 {{ $isClickable ? 'cursor-pointer' : '' }}"
+                            @if($isClickable)
+                                onclick="window.location.href='{{ $item->route }}'"
+                            @endif
+                        >
                             <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">{{ $item->nomor_arsip }}</div></td>
                             <td class="px-6 py-4"><div class="text-sm text-gray-900">{{ $item->judul_arsip }}</div></td>
                             <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">{{ $item->jenis_arsip }}</div></td>
@@ -177,21 +186,22 @@
         // Line Chart
         const arsipCtx = document.getElementById('arsipChart').getContext('2d');
         new Chart(arsipCtx, {
-            type: 'line',
+            type: 'bar', // Menggunakan tipe 'bar' untuk perbandingan yang lebih jelas
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'], // Ganti dengan data dinamis jika perlu
+                // DIUBAH KEMBALI: Menggunakan data statis karena $chartData tidak ada di controller Anda
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
                 datasets: [{
                     label: 'Surat Masuk',
-                    data: [{{ $totalSuratMasuk }}, 0, 0, 0, 0, 0], // Ganti dengan data per bulan jika ada
+                    data: [{{ $totalSuratMasuk }}, 0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(34, 197, 94, 0.5)',
                     borderColor: '#22c55e',
-                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                    tension: 0.3, fill: true
+                    borderWidth: 1
                 }, {
                     label: 'Surat Keluar',
-                    data: [{{ $totalSuratKeluar }}, 0, 0, 0, 0, 0], // Ganti dengan data per bulan jika ada
+                    data: [{{ $totalSuratKeluar }}, 0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(139, 92, 246, 0.5)',
                     borderColor: '#8b5cf6',
-                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                    tension: 0.3, fill: true
+                    borderWidth: 1
                 }]
             },
             options: { responsive: true, maintainAspectRatio: false, /* Opsi lain */ }
