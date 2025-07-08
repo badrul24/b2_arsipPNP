@@ -83,6 +83,11 @@
                             @enderror
                         </div>
 
+
+                    </div>
+                    
+                    <!-- Kolom Kanan -->
+                    <div class="space-y-6">
                         <div>
                             <label for="penerima" class="block font-medium text-gray-700 mb-1">Penerima</label>
                             <select name="penerima" id="penerima"
@@ -99,10 +104,7 @@
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
-                    
-                    <!-- Kolom Kanan -->
-                    <div class="space-y-6">
+
                         <div>
                             <label for="perihal" class="block font-medium text-gray-700 mb-1">Perihal</label>
                             <input type="text" name="perihal" id="perihal"
@@ -134,7 +136,7 @@
                             @enderror
                         </div>
 
-                        <div>
+                                                <div>
                             <label for="sifat_surat" class="block font-medium text-gray-700 mb-1">Sifat Surat</label>
                             <select name="sifat_surat" id="sifat_surat"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary-500 focus:border-primary-500 @error('sifat_surat') border-red-500 @enderror"
@@ -145,55 +147,6 @@
                                 <option value="Biasa" {{ old('sifat_surat') == 'Biasa' ? 'selected' : '' }}>Biasa</option>
                             </select>
                             @error('sifat_surat')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Jurusan --}}
-                        <div>
-                            @php
-                                $currentUser = Auth::user();
-                                $isDisabled = $currentUser && $currentUser->isOperator() && $currentUser->jurusan_id ? 'disabled' : '';
-                            @endphp
-                            <label for="jurusan_id" class="block font-medium text-gray-700 mb-1">Jurusan</label>
-                            <select name="jurusan_id" id="jurusan_id" {{ $isDisabled }}
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary-500 focus:border-primary-500 @error('jurusan_id') border-red-500 @enderror">
-                                <option value="">Pilih Jurusan (Opsional)</option>
-                                @foreach($jurusans as $jurusan)
-                                    <option value="{{ $jurusan->id }}"
-                                        {{ old('jurusan_id', $currentUser->jurusan_id) == $jurusan->id ? 'selected' : '' }}>
-                                        {{ $jurusan->nama_jurusan }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @if($isDisabled)
-                                <input type="hidden" name="jurusan_id" value="{{ old('jurusan_id', $currentUser->jurusan_id) }}">
-                            @endif
-                            @error('jurusan_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Divisi --}}
-                        <div>
-                            @php
-                                $isDivisiDisabled = $currentUser && $currentUser->divisi_id ? 'disabled' : '';
-                            @endphp
-                            <label for="divisi_id" class="block font-medium text-gray-700 mb-1">Divisi</label>
-                            <select name="divisi_id" id="divisi_id" {{ $isDivisiDisabled }}
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary-500 focus:border-primary-500 @error('divisi_id') border-red-500 @enderror">
-                                <option value="">Pilih Divisi (Opsional)</option>
-                                @foreach($divisis as $divisi)
-                                    <option value="{{ $divisi->id }}"
-                                        {{ old('divisi_id', $currentUser->divisi_id) == $divisi->id ? 'selected' : '' }}>
-                                        {{ $divisi->nama_divisi }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @if($isDivisiDisabled)
-                                <input type="hidden" name="divisi_id" value="{{ old('divisi_id', $currentUser->divisi_id) }}">
-                            @endif
-                            @error('divisi_id')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>

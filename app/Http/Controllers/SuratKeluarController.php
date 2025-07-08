@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuratKeluar;
-use App\Models\Jurusan;
-use App\Models\Divisi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -75,10 +73,8 @@ class SuratKeluarController extends Controller
         if (!$this->canAccessSuratKeluar($user, null)) {
             return redirect()->route('surat_keluar.index')->with('error', 'Anda tidak memiliki akses untuk membuat surat keluar.');
         }
-        $jurusans = Jurusan::all();
-        $divisis = Divisi::all();
         $users = User::all();
-        return view('surat_keluar.create', compact('jurusans', 'divisis', 'users'));
+        return view('surat_keluar.create', compact('users'));
     }
 
     /**
@@ -100,8 +96,6 @@ class SuratKeluarController extends Controller
             'penerima' => 'required|string|max:255',
             'isi_surat' => 'nullable|string',
             'keterangan' => 'nullable|string',
-            'jurusan_id' => 'nullable|exists:jurusans,id',
-            'divisi_id' => 'nullable|exists:divisis,id',
             'sifat_surat' => 'required|in:Sangat Penting,Penting,Biasa',
             'jenis_surat' => 'required|in:Surat Undangan,Surat Pemberitahuan,Surat Permohonan,Surat Keputusan,Surat Edaran,Surat Tugas,Surat Pengantar,Surat Keterangan,Surat Lainnya',
             'file_surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
@@ -136,12 +130,6 @@ class SuratKeluarController extends Controller
         }
 
         $validated['user_id'] = $user->id;
-        if ($user->isOperator() && $user->jurusan_id) {
-            $validated['jurusan_id'] = $user->jurusan_id;
-        }
-        if ($user->divisi_id) {
-            $validated['divisi_id'] = $user->divisi_id;
-        }
         SuratKeluar::create($validated);
         return redirect()->route('surat_keluar.index')->with('success', 'Surat keluar berhasil dibuat.');
     }
@@ -163,10 +151,8 @@ class SuratKeluarController extends Controller
         if (!$user->isAdmin() && $suratKeluar->status_surat !== 'Draft') {
             return redirect()->route('surat_keluar.index')->with('error', 'Surat keluar yang sudah dikirim tidak dapat diedit.');
         }
-        $jurusans = Jurusan::all();
-        $divisis = Divisi::all();
         $users = User::all();
-        return view('surat_keluar.edit', compact('suratKeluar', 'jurusans', 'divisis', 'users'));
+        return view('surat_keluar.edit', compact('suratKeluar', 'users'));
     }
 
     /**
@@ -196,8 +182,6 @@ class SuratKeluarController extends Controller
             'penerima' => 'required|string|max:255',
             'isi_surat' => 'nullable|string',
             'keterangan' => 'nullable|string',
-            'jurusan_id' => 'nullable|exists:jurusans,id',
-            'divisi_id' => 'nullable|exists:divisis,id',
             'sifat_surat' => 'required|in:Sangat Penting,Penting,Biasa',
             'jenis_surat' => 'required|in:Surat Undangan,Surat Pemberitahuan,Surat Permohonan,Surat Keputusan,Surat Edaran,Surat Tugas,Surat Pengantar,Surat Keterangan,Surat Lainnya',
             'file_surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',

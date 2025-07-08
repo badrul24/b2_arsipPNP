@@ -133,9 +133,7 @@
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Status</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    File</th>
+
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Aksi</th>
@@ -152,10 +150,10 @@
                                             {{ $suratKeluar->nomor_surat_keluar }}
                                         </p>
                                         <p class="text-xs text-gray-600">
-                                            <span class="font-medium">Perihal:</span> {{ Str::limit($suratKeluar->perihal, 40) }}
+                                            <span class="font-medium">Dari:</span> {{ $suratKeluar->user->name ?? '-' }}
                                         </p>
                                         <p class="text-xs text-gray-600">
-                                            <span class="font-medium">Dari:</span> {{ $suratKeluar->user->name ?? '-' }}
+                                            <span class="font-medium">Perihal:</span> {{ Str::limit($suratKeluar->perihal, 40) }}
                                         </p>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -200,22 +198,7 @@
                                             {{ $suratKeluar->status_surat }}
                                         </button>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        @if ($suratKeluar->file_surat_path)
-                                            <a href="{{ route('surat_keluar.download', $suratKeluar->id) }}"
-                                                target="_blank" class="text-primary-600 hover:text-primary-900">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                </svg>
-                                            </a>
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
-                                    </td>
+
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-y-2">
                                         @php
                                             $status = $suratKeluar->status_surat;
@@ -282,7 +265,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
                                         Data tidak ditemukan.
                                     </td>
                                 </tr>
@@ -339,22 +322,47 @@
                     }
 
                     Swal.fire({
-                        title: `Detail Surat Keluar <br><strong>No. Agenda: ${nomorAgenda}</strong>`,
+                        title: `<div class="text-center">Detail Surat Keluar <br><strong>No. Agenda: ${nomorAgenda}</strong></div>`,
                         html: `
-                        <div class="text-left space-y-1 text-sm">
-                            <p><strong>Nomor Surat:</strong> ${nomorSurat}</p>
-                            <p><strong>Tanggal Surat:</strong> ${tglSurat}</p>
-                            <p><strong>Tujuan:</strong> ${tujuan}</p>
-                            <p><strong>Perihal:</strong> ${perihal}</p>
-                            <p><strong>Pengirim:</strong> ${pengirim}</p>
-                            <p><strong>Penerima:</strong> ${penerima}</p>
-                            <p><strong>Jenis:</strong> ${jenis}</p>
-                            <p><strong>Sifat:</strong> ${sifat}</p>
-                            <p><strong>Jurusan:</strong> ${jurusan}</p>
-                            <p><strong>Divisi:</strong> ${divisi}</p>
+                        <div class="grid grid-cols-2 gap-5 text-sm my-3">
+                            <!-- Kolom Kiri -->
+                            <div class="space-y-2 text-left pl-5">
+                                <p><strong>Nomor Surat:</strong><br>${nomorSurat}</p>
+                                <p><strong>Tanggal Surat:</strong><br>${tglSurat}</p>
+                                <p><strong>Tujuan:</strong><br>${tujuan}</p>
+                                <p><strong>Perihal:</strong><br>${perihal}</p>
+                                <p><strong>Pengirim:</strong><br>${pengirim}</p>
+                            </div>
+                            
+                            <!-- Kolom Kanan -->
+                            <div class="space-y-2 text-left pl-5">
+                                <p><strong>Penerima:</strong><br>${penerima}</p>
+                                <p><strong>Jenis:</strong><br>${jenis}</p>
+                                <p><strong>Sifat:</strong><br>${sifat}</p>
+                                <p><strong>Jurusan:</strong><br>${jurusan}</p>
+                                <p><strong>Divisi:</strong><br>${divisi}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- File Section -->
+                        <div class="mt-3 pt-3 border-t border-gray-200">
                             ${fileHtml}
-                            <p class="mt-2"><strong>Isi Surat:</strong><br>${isi}</p>
-                            <p class="mt-2"><strong>Keterangan:</strong><br>${keterangan}</p>
+                        </div>
+                        
+                        <!-- Isi Surat Section -->
+                        <div class="mt-3 pt-3 border-t border-gray-200">
+                            <p><strong>Isi Surat:</strong></p>
+                            <div class="mt-1 p-2 bg-gray-50 rounded-lg text-sm max-h-24 overflow-y-auto">
+                                ${isi}
+                            </div>
+                        </div>
+                        
+                        <!-- Keterangan Section -->
+                        <div class="mt-3 pt-3 border-t border-gray-200">
+                            <p><strong>Keterangan:</strong></p>
+                            <div class="mt-1 p-2 bg-gray-50 rounded-lg text-sm max-h-24 overflow-y-auto">
+                                ${keterangan}
+                            </div>
                         </div>
                     `,
                         icon: 'info',
@@ -367,7 +375,7 @@
                             confirmButton: 'text-sm px-3 py-2',
                         },
                         width: '600px',
-                        padding: '1rem'
+                        padding: '0.5rem'
                     });
                 });
             });
