@@ -118,26 +118,10 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @php
-                        $allRecentItems = collect($recentItems['suratMasuk'])
-                            ->map(fn($item) => (object)[
-                                'nomor_arsip' => $item->nomor_agenda, 'judul_arsip' => $item->perihal, 'jenis_arsip' => 'Surat Masuk',
-                                'tanggal_arsip' => $item->created_at, 'status_arsip' => $item->status_surat, 'route' => route('surat_masuk.index')
-                            ])
-                            ->merge($recentItems['suratKeluar']->map(fn($item) => (object)[
-                                'nomor_arsip' => $item->nomor_agenda, 'judul_arsip' => $item->perihal, 'jenis_arsip' => 'Surat Keluar',
-                                'tanggal_arsip' => $item->created_at, 'status_arsip' => $item->status_surat, 'route' => route('surat_keluar.index')
-                            ]))
-                            ->merge($recentItems['dokumen']->map(fn($item) => (object)[
-                                'nomor_arsip' => $item->nomor_surat ?? '-', 'judul_arsip' => $item->judul, 'jenis_arsip' => 'Dokumen',
-                                'tanggal_arsip' => $item->created_at, 'status_arsip' => $item->status, 'route' => route('dokumen.index')
-                            ]))
-                            ->sortByDesc('tanggal_arsip');
-                        
                         $isOperator = Auth::user()->isOperator();
                         $isAdmin = Auth::user()->isAdmin();
                     @endphp
-
-                    @forelse($allRecentItems as $item)
+                    @forelse($recentItems as $item)
                         @php
                             $isClickable = !($item->jenis_arsip === 'Dokumen' && !$isOperator && !$isAdmin);
                         @endphp
@@ -149,7 +133,7 @@
                             <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">{{ $item->nomor_arsip }}</div></td>
                             <td class="px-6 py-4"><div class="text-sm text-gray-900">{{ $item->judul_arsip }}</div></td>
                             <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">{{ $item->jenis_arsip }}</div></td>
-                            <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">{{ $item->tanggal_arsip->format('d M Y') }}</div></td>
+                            <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">{{ \Carbon\Carbon::parse($item->tanggal_arsip)->format('d M Y') }}</div></td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $statusClass = [
@@ -178,6 +162,10 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <!-- Pagination di luar tabel -->
+    <div class="mt-6">
+        {{ $recentItems->links() }}
     </div>
 </div>
 

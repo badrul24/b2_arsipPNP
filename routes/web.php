@@ -92,6 +92,7 @@ Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::clas
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/recent-items', [App\Http\Controllers\DashboardController::class, 'getRecentItemsPaginated'])->name('dashboard.recent-items');
 
     // Tabel User
     Route::get('/user', [UserController::class, 'index'])->name('user.index');

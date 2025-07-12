@@ -29,8 +29,8 @@ class DashboardController extends Controller
         // 2. Ambil data untuk notifikasi di header
         $notifications = $this->getNotifications($user);
 
-        // 3. Ambil arsip terbaru untuk tabel di dashboard
-        $recentItems = $this->getRecentItems($user);
+        // 3. Ambil arsip terbaru untuk tabel di dashboard (server-side pagination)
+        $recentItems = $this->getRecentItemsPaginated($user);
 
         // 4. Hitung total arsip
         $totalArsip = $totalSuratMasuk + $totalSuratKeluar + $totalDokumen;
@@ -165,18 +165,15 @@ class DashboardController extends Controller
     }
 
     /**
-     * Mengambil daftar arsip terbaru untuk ditampilkan di tabel dashboard,
-     * disesuaikan dengan role pengguna.
+     * Ambil data arsip terbaru gabungan dan paginasi server-side.
      */
-    private function getRecentItems($user): array
+    private function getRecentItemsPaginated($user)
     {
-        // Default query untuk Admin, Sekretaris, dan Pimpinan
         $suratMasukQuery = SuratMasuk::query();
         $suratKeluarQuery = SuratKeluar::query();
         $dokumenQuery = Dokumen::query();
 
         if ($user->isOperator() && $user->jurusan_id) {
-            // Operator hanya melihat arsip dari jurusannya
             $suratMasukQuery->where('jurusan_id', $user->jurusan_id);
             $suratKeluarQuery->where('jurusan_id', $user->jurusan_id);
             $dokumenQuery->where('jurusan_id', $user->jurusan_id);
@@ -185,18 +182,55 @@ class DashboardController extends Controller
                 ->orWhere('divisi_penerima_id', $user->divisi_id)
                 ->pluck('surat_masuk_id')
                 ->unique();
-
             $suratMasukQuery->whereIn('id', $disposisiSuratIds);
-
-            // Batasi agar tidak ada surat keluar atau dokumen yang tampil untuk role ini
-            $suratKeluarQuery->whereRaw('1 = 0'); // Query yang tidak akan mengembalikan hasil
-            $dokumenQuery->whereRaw('1 = 0'); // Query yang tidak akan mengembalikan hasil
+            $suratKeluarQuery->whereRaw('1 = 0');
+            $dokumenQuery->whereRaw('1 = 0');
         }
 
-        return [
-            'suratMasuk' => $suratMasukQuery->with(['jurusan', 'user'])->latest()->take(5)->get(),
-            'suratKeluar' => $suratKeluarQuery->with(['jurusan', 'user'])->latest()->take(5)->get(),
-            'dokumen' => $dokumenQuery->with(['kategori', 'user'])->latest()->take(5)->get(),
-        ];
+        $suratMasuk = $suratMasukQuery->with(['jurusan', 'user'])->latest()->get()->map(function($item) {
+            return (object) [
+                'nomor_arsip' => $item->nomor_agenda,
+                'judul_arsip' => $item->perihal,
+                'jenis_arsip' => 'Surat Masuk',
+                'tanggal_arsip' => $item->created_at,
+                'status_arsip' => $item->status_surat,
+                'route' => route('surat_masuk.index')
+            ];
+        });
+        $suratKeluar = $suratKeluarQuery->with(['jurusan', 'user'])->latest()->get()->map(function($item) {
+            return (object) [
+                'nomor_arsip' => $item->nomor_agenda,
+                'judul_arsip' => $item->perihal,
+                'jenis_arsip' => 'Surat Keluar',
+                'tanggal_arsip' => $item->created_at,
+                'status_arsip' => $item->status_surat,
+                'route' => route('surat_keluar.index')
+            ];
+        });
+        $dokumen = $dokumenQuery->with(['kategori', 'user'])->latest()->get()->map(function($item) {
+            return (object) [
+                'nomor_arsip' => $item->nomor_surat ?? '-',
+                'judul_arsip' => $item->judul,
+                'jenis_arsip' => 'Dokumen',
+                'tanggal_arsip' => $item->created_at,
+                'status_arsip' => $item->status,
+                'route' => route('dokumen.index')
+            ];
+        });
+
+        $all = $suratMasuk->merge($suratKeluar)->merge($dokumen)->sortByDesc('tanggal_arsip')->values();
+
+        // Paginate manual (server-side)
+        $perPage = 5;
+        $page = request()->get('page', 1);
+        $paged = $all->slice(($page - 1) * $perPage, $perPage)->values();
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $paged,
+            $all->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+        return $paginator;
     }
 }
