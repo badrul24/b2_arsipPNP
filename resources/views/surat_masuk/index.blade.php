@@ -22,15 +22,13 @@
                     Tambah Surat Masuk
                 </a>
             @endif
-            @if ($currentUser->isAdmin() || $currentUser->isOperator())
-                <a href="{{ route('surat_masuk.laporan.pdf', request()->only(['search','status_surat','sifat_surat'])) }}" target="_blank"
-                    class="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-8m0 8l-4-4m4 4l4-4m-8 8h8a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v9a2 2 0 002 2z" />
-                    </svg>
-                    Laporan
-                </a>
-            @endif
+            <a href="{{ route('surat_masuk.laporan.pdf', request()->only(['search','status_surat','sifat_surat'])) }}" target="_blank"
+                class="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg w-fit">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-8m0 8l-4-4m4 4l4-4m-8 8h8a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v9a2 2 0 002 2z" />
+                </svg>
+                Laporan
+            </a>
         </div>
     </div>
 

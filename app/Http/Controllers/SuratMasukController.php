@@ -289,16 +289,8 @@ class SuratMasukController extends Controller
      */
     public function report(Request $request)
     {
-        $user = Auth::user();
         $query = SuratMasuk::with(['user']);
-        if (!$user->isAdmin()) {
-            if ($user->isOperator() && $user->jurusan_id) {
-                $query->where('user_id', $user->id)
-                    ->where('jurusan_id', $user->jurusan_id);
-            } else {
-                $query->whereRaw('1 = 0');
-            }
-        }
+        // Semua user bisa akses, tidak ada filter role
         $query->when($request->search, function ($query, $search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_agenda', 'like', "%{$search}%")
