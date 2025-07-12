@@ -108,7 +108,7 @@
                         Total Arsip
                     </dt>
                     <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        12,500+
+                        {{ number_format($totalArsip) }}
                     </dd>
                 </div>
             </div>
@@ -122,7 +122,7 @@
                         Pengguna Aktif
                     </dt>
                     <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        250+
+                        {{ number_format($totalPengguna) }}
                     </dd>
                 </div>
             </div>
@@ -136,7 +136,7 @@
                         Jurusan & Unit
                     </dt>
                     <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        15
+                        {{ number_format($totalJurusan) }}
                     </dd>
                 </div>
             </div>
@@ -170,50 +170,40 @@
     </div>
     <!-- Kurangi jarak vertikal antar berita -->
     <div class="space-y-4">
-      <!-- Berita 1 -->
+      @php
+        $beritaUtama = $beritas->take(3);
+        $beritaLain = $beritas->slice(3);
+      @endphp
+      @forelse($beritaUtama as $berita)
       <article class="relative h-64 rounded-lg overflow-hidden group">
-        <img src="https://picsum.photos/800/400?random=11" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        <img src="{{ asset($berita->gambar ?? 'images/default-news.jpg') }}" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
         <div class="absolute inset-0 bg-black bg-opacity-50 p-6 flex flex-col justify-end text-white">
           <h3 class="text-xl font-semibold">
-            <a href="#" class="hover:underline">Peluncuran Sistem Arsip Digital di Politeknik Negeri Padang</a>
+            <a href="javascript:void(0);" class="hover:underline berita-modal-btn"
+               data-judul="{{ $berita->judul_berita }}"
+               data-gambar="{{ asset($berita->gambar ?? 'images/default-news.jpg') }}"
+               data-tanggal="{{ $berita->created_at->format('d M Y') }}"
+               data-penulis="{{ $berita->user->name ?? '-' }}"
+               data-isi="{!! e($berita->isi_berita) !!}">
+              {{ $berita->judul_berita }}
+            </a>
           </h3>
-          <p class="text-sm text-gray-300">1 Juni 2025 • Admin</p>
-          <p class="mt-2 text-sm">
-            Sistem baru ini memudahkan pegawai dan mahasiswa dalam mengelola serta mengakses arsip kampus secara digital. Peluncuran ini disambut positif oleh civitas akademika.
-          </p>
-          <a href="#" class="inline-block mt-3 text-sm text-primary-300 hover:underline">Baca selengkapnya →</a>
+          <p class="text-sm text-gray-300">{{ $berita->created_at->format('d M Y') }} • {{ $berita->user->name ?? '-' }}</p>
+          <p class="mt-2 text-sm line-clamp-3">{{ Str::limit(strip_tags($berita->isi_berita), 120) }}</p>
+          <button type="button"
+            class="inline-block mt-3 text-sm text-blue-200 hover:text-blue-100 hover:underline berita-modal-btn font-medium"
+            data-judul="{{ $berita->judul_berita }}"
+            data-gambar="{{ asset($berita->gambar ?? 'images/default-news.jpg') }}"
+            data-tanggal="{{ $berita->created_at->format('d M Y') }}"
+            data-penulis="{{ $berita->user->name ?? '-' }}"
+            data-isi="{!! e($berita->isi_berita) !!}">
+            Baca selengkapnya →
+          </button>
         </div>
       </article>
-
-      <!-- Berita 2 -->
-      <article class="relative h-64 rounded-lg overflow-hidden group">
-        <img src="https://picsum.photos/800/400?random=12" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-        <div class="absolute inset-0 bg-black bg-opacity-50 p-6 flex flex-col justify-end text-white">
-          <h3 class="text-xl font-semibold">
-            <a href="#" class="hover:underline">Workshop Keamanan Arsip Digital Diselenggarakan</a>
-          </h3>
-          <p class="text-sm text-gray-300">28 Mei 2025 • Humas</p>
-          <p class="mt-2 text-sm">
-            Workshop ini membahas pentingnya enkripsi, kontrol akses, dan pemulihan data dalam sistem digital. Peserta berasal dari berbagai jurusan dan unit kerja.
-          </p>
-          <a href="#" class="inline-block mt-3 text-sm text-primary-300 hover:underline">Baca selengkapnya →</a>
-        </div>
-      </article>
-
-      <!-- Berita 3 -->
-      <article class="relative h-64 rounded-lg overflow-hidden group">
-        <img src="https://picsum.photos/800/400?random=13" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-        <div class="absolute inset-0 bg-black bg-opacity-50 p-6 flex flex-col justify-end text-white">
-          <h3 class="text-xl font-semibold">
-            <a href="#" class="hover:underline">Integrasi Sistem Arsip dengan Aplikasi Mobile Kampus</a>
-          </h3>
-          <p class="text-sm text-gray-300">24 Mei 2025 • IT Center</p>
-          <p class="mt-2 text-sm">
-            Kini mahasiswa dapat mengakses arsip pribadi dan akademik langsung dari aplikasi mobile resmi kampus. Integrasi ini mempercepat proses pencarian dokumen.
-          </p>
-          <a href="#" class="inline-block mt-3 text-sm text-primary-300 hover:underline">Baca selengkapnya →</a>
-        </div>
-      </article>
+      @empty
+      <div class="text-gray-500">Belum ada berita.</div>
+      @endforelse
     </div>
 
     <!-- Berita Lainnya -->
@@ -225,41 +215,35 @@
       <p class="text-sm text-gray-500 mt-1">Berita lain yang menarik seputar arsip</p>
       <!-- Kurangi jarak grid gap -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3">
-        <!-- Card 1 -->
+        @forelse($beritaLain as $berita)
         <div class="relative h-52 rounded-lg overflow-hidden group">
-          <img src="https://picsum.photos/400/300?random=21" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <img src="{{ asset($berita->gambar ?? 'images/default-news.jpg') }}" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
           <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4 text-white">
-            <h4 class="font-semibold text-base">Workshop Keamanan Arsip Digital</h4>
-            <p class="text-sm">28 Mei 2025</p>
+            <h4 class="font-semibold text-base">
+              <a href="javascript:void(0);" class="hover:underline berita-modal-btn"
+                 data-judul="{{ $berita->judul_berita }}"
+                 data-gambar="{{ asset($berita->gambar ?? 'images/default-news.jpg') }}"
+                 data-tanggal="{{ $berita->created_at->format('d M Y') }}"
+                 data-penulis="{{ $berita->user->name ?? '-' }}"
+                 data-isi="{!! e($berita->isi_berita) !!}">
+                {{ $berita->judul_berita }}
+              </a>
+            </h4>
+            <p class="text-sm">{{ $berita->created_at->format('d M Y') }}</p>
+            <button type="button"
+              class="mt-2 text-xs text-blue-200 hover:text-blue-100 hover:underline berita-modal-btn font-medium"
+              data-judul="{{ $berita->judul_berita }}"
+              data-gambar="{{ asset($berita->gambar ?? 'images/default-news.jpg') }}"
+              data-tanggal="{{ $berita->created_at->format('d M Y') }}"
+              data-penulis="{{ $berita->user->name ?? '-' }}"
+              data-isi="{!! e($berita->isi_berita) !!}">
+              Baca selengkapnya
+            </button>
           </div>
         </div>
-
-        <!-- Card 2 -->
-        <div class="relative h-52 rounded-lg overflow-hidden group">
-          <img src="https://picsum.photos/400/300?random=22" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4 text-white">
-            <h4 class="font-semibold text-base">Integrasi Arsip dengan Aplikasi Mobile</h4>
-            <p class="text-sm">24 Mei 2025</p>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="relative h-52 rounded-lg overflow-hidden group">
-          <img src="https://picsum.photos/400/300?random=23" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4 text-white">
-            <h4 class="font-semibold text-base">Simulasi Backup Arsip Tahunan</h4>
-            <p class="text-sm">20 Mei 2025</p>
-          </div>
-        </div>
-
-        <!-- Card 4 -->
-        <div class="relative h-52 rounded-lg overflow-hidden group">
-          <img src="https://picsum.photos/400/300?random=24" alt="berita" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4 text-white">
-            <h4 class="font-semibold text-base">Tim IT Luncurkan Fitur Log Aktivitas</h4>
-            <p class="text-sm">18 Mei 2025</p>
-          </div>
-        </div>
+        @empty
+        <div class="text-gray-500 col-span-4">Belum ada berita lainnya.</div>
+        @endforelse
       </div>
     </div>
   </div>
@@ -602,57 +586,35 @@
                 </p>
             </div>
         </div>
-
-        <div class="mt-16 bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-2">
-                <div class="p-6 sm:p-10">
-                    <h3 class="text-2xl font-bold text-gray-900">Kirim Pesan</h3>
-                    <p class="mt-4 text-gray-500">
-                        Isi formulir di bawah ini dan tim kami akan menghubungi Anda sesegera mungkin.
-                    </p>
-                    <form class="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
-                        <div>
-                            <label for="first-name" class="block text-sm font-medium text-gray-700">Nama Depan</label>
-                            <div class="mt-1">
-                                <input type="text" name="first-name" id="first-name" class="py-3 px-4 block w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md">
-                            </div>
-                        </div>
-                        <div>
-                            <label for="last-name" class="block text-sm font-medium text-gray-700">Nama Belakang</label>
-                            <div class="mt-1">
-                                <input type="text" name="last-name" id="last-name" class="py-3 px-4 block w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md">
-                            </div>
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <div class="mt-1">
-                                <input id="email" name="email" type="email" class="py-3 px-4 block w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md">
-                            </div>
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label for="subject" class="block text-sm font-medium text-gray-700">Subjek</label>
-                            <div class="mt-1">
-                                <input type="text" name="subject" id="subject" class="py-3 px-4 block w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md">
-                            </div>
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label for="message" class="block text-sm font-medium text-gray-700">Pesan</label>
-                            <div class="mt-1">
-                                <textarea id="message" name="message" rows="4" class="py-3 px-4 block w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md"></textarea>
-                            </div>
-                        </div>
-                        <div class="sm:col-span-2">
-                            <button type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                                Kirim Pesan
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                    <div class="bg-primary-50 p-6 sm:p-10 flex items-center justify-center">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.3056936183696!2d100.46099661475396!3d-0.9145129993076092!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2fd4b8cf891947c9%3A0x3989067f95c95071!2sPoliteknik%20Negeri%20Padang!5e0!3m2!1sid!2sid!4v1650123456789!5m2!1sid!2sid" width="100%" height="100%" style="border:0; min-height: 400px;" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
-            </div>
-        </div>
     </div>
 </section>
+<!-- Modal Pop Up Berita -->
+<div id="beritaModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+  <div class="bg-white rounded-lg max-w-lg w-full p-6 relative overflow-y-auto" style="max-height:90vh;">
+    <button onclick="closeBeritaModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+    <h2 id="modalJudul" class="text-2xl font-bold mb-2"></h2>
+    <img id="modalGambar" src="" alt="" class="w-full h-64 object-cover rounded mb-4" />
+    <div class="text-sm text-gray-500 mb-2" id="modalTanggal"></div>
+    <div class="text-sm text-gray-500 mb-2" id="modalPenulis"></div>
+    <div id="modalIsi" class="text-gray-700"></div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll('.berita-modal-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('modalJudul').textContent = this.dataset.judul;
+      document.getElementById('modalGambar').src = this.dataset.gambar;
+      document.getElementById('modalTanggal').textContent = this.dataset.tanggal;
+      document.getElementById('modalPenulis').textContent = 'Oleh: ' + this.dataset.penulis;
+      document.getElementById('modalIsi').innerHTML = this.dataset.isi;
+      document.getElementById('beritaModal').classList.remove('hidden');
+    });
+  });
+  function closeBeritaModal() {
+    document.getElementById('beritaModal').classList.add('hidden');
+  }
+  document.getElementById('beritaModal').addEventListener('click', function(e) {
+    if (e.target === this) closeBeritaModal();
+  });
+</script>
 @endsection

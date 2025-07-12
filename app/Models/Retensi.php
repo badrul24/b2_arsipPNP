@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Retensi extends Model
 {
@@ -17,4 +18,9 @@ class Retensi extends Model
         'nasib_akhir',
         'keterangan',
     ];
+
+    public function dokumens(): HasMany
+    {
+        return $this->hasMany(Dokumen::class);
+    }
 }

@@ -34,57 +34,16 @@
         }
     }
 </script>
-<nav class="fixed top-0 left-0 w-full bg-white shadow z-50" x-data="{ open: false }">
-  <!-- Topbar -->
-  <div class="bg-primary-800 text-white text-sm py-1 lg:px-4">
-    <div class="max-w-7xl ml-[25px] mx-auto flex justify-between items-center">
-        <div class="flex items-center space-x-2 text-xs">
-            <a href="#" class="lang-switch hover:opacity-80 transition-opacity">
-                <img src="{{ asset('icons/indonesia.png') }}" alt="Bahasa Indonesia" class="w-5 h-auto" />
-            </a>
-            <span>|</span>
-            <a href="#" class="lang-switch hover:opacity-80 transition-opacity">
-                <img src="{{ asset('icons/united-kingdom.png') }}" alt="English" class="w-5 h-auto" />
-            </a>
-        </div>
-
-      <div class="flex items-center space-x-4 pr-1 sm:pr-5 lg:pr-1">
-        <div class="flex space-x-3 items-center">
-            <a href="https://youtube.com" target="_blank" class="hover:opacity-80 transition-opacity">
-                <img src="{{ asset('icons/youtube.png') }}" alt="youtube" class="w-5 h-auto" />
-            </a>
-            <span>|</span>
-            <a href="https://instagram.com" target="_blank" class="hover:opacity-80 transition-opacity">
-                <img src="{{ asset('icons/instagram.png') }}" alt="instagram" class="w-4 h-4 " />
-            </a>
-            <span>|</span>
-            <a href="https://x.com" target="_blank" class="hover:opacity-80 transition-opacity">
-                <img src="{{ asset('icons/twitter.png') }}" alt="twitter" class="w-4 h-4 " />
-            </a>
-            <span>|</span>
-            <button id="toggleSearch" class="hover:text-gray-300 transition">
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                    <path d="M10 2a8 8 0 105.3 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z" />
-                </svg>
-            </button>
-
-            <div id="searchContainer" class="transition-all duration-300 overflow-hidden w-0 flex items-center">
-                <input type="text" placeholder="Cari..."
-                    class="border border-gray-300 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 w-40 text-xs" />
-            </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
+<nav class="fixed top-0 left-0 w-full bg-primary-800 shadow z-50" x-data="{ open: false }">
+  <!-- Menu utama -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center h-16">
       <!-- Logo -->
       <div class="flex items-center">
-        <img class="h-12 w-auto" src="{{ asset('icons/logo.png') }}" alt="PNP Logo" />
+        <img class="h-12 w-auto" src="{{ asset('icons/logo.svg') }}" alt="PNP Logo" />
         <a href="/home" class="ml-3">
-          <div class="text-primary-700 font-bold text-lg leading-tight">SIARSIP</div>
-          <div class="text-xs text-gray-500">Politeknik Negeri Padang</div>
+          <div class="text-white font-bold text-lg leading-tight">SIARSIP</div>
+          <div class="text-xs text-gray-200">Politeknik Negeri Padang</div>
         </a>
       </div>
 
@@ -93,8 +52,8 @@
         <!-- Home -->
         <div class="relative group inline-block h-16">
             <a href="/"
-                class="nav-link relative inline-flex items-center px-1 h-full text-sm font-medium text-gray-500 hover:text-primary-500 cursor-pointer
-                    after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary-500 after:transition-all after:duration-200
+                class="nav-link relative inline-flex items-center px-1 h-full text-sm font-medium text-white hover:text-secondary-300 cursor-pointer
+                    after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-secondary-300 after:transition-all after:duration-200
                     group-hover:after:w-full">
                 Home
                 <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -105,13 +64,13 @@
             </a>
         <div
             class="absolute left-0 top-full mt-0 w-40 bg-white border border-gray-200 rounded shadow-md opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-auto">
-            <a href="#beranda"
+            <a href="/#beranda"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Beranda</a>
-            <a href="#berita"
+            <a href="/#berita"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Berita</a>
-            <a href="#fitur"
+            <a href="/#fitur"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Fitur</a>
-            <a href="#kontak"
+            <a href="/#kontak"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Kontak</a>
           </div>
         </div>
@@ -119,8 +78,8 @@
         <!-- Profil -->
         <div class="relative group inline-block h-16">
           <a href="/profil"
-            class="nav-link relative inline-flex items-center px-1 h-full text-sm font-medium text-gray-500 hover:text-primary-500 cursor-pointer
-                   after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary-500 after:transition-all after:duration-200
+            class="nav-link relative inline-flex items-center px-1 h-full text-sm font-medium text-white hover:text-secondary-300 cursor-pointer
+                   after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-secondary-300 after:transition-all after:duration-200
                    group-hover:after:w-full">
             Profil
             <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -131,12 +90,12 @@
           </a>
           <div
             class="absolute left-0 top-full mt-0 w-40 bg-white border border-gray-200 rounded shadow-md opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-auto">
-            <a href="#tentang"
+            <a href="/profil#tentang"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Tentang Kami</a>
-            <a href="#visi&misi"
+            <a href="/profil#visi&misi"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Visi &amp;
               Misi</a>
-            <a href="#struktur-organisasi"
+            <a href="/profil#struktur-organisasi"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Struktur
               Organisasi</a>
           </div>
@@ -145,8 +104,8 @@
         <!-- Arsip -->
         <div class="relative group inline-block h-16">
           <a href="#"
-            class="nav-link relative inline-flex items-center px-1 h-full text-sm font-medium text-gray-500 hover:text-primary-500 cursor-pointer
-                   after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary-500 after:transition-all after:duration-200
+            class="nav-link relative inline-flex items-center px-1 h-full text-sm font-medium text-white hover:text-secondary-300 cursor-pointer
+                   after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-secondary-300 after:transition-all after:duration-200
                    group-hover:after:w-full">
             Arsip
             <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -158,7 +117,7 @@
           <div class="absolute left-0 top-full mt-0 w-40 bg-white border border-gray-200 rounded shadow-md opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-auto">
             <a href="/arsipstatic"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Arsip
-              Static</a>
+              Statis</a>
             <a href="/arsipdinamis"
               class="nav-sub-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Arsip
               Dinamis</a>
@@ -169,13 +128,28 @@
         </div>
       </div>
 
-      <div class="hidden sm:flex items-center space-x-4 ml-auto">
-        <a href="{{ route('login') }}"
-          class="px-4 py-2 text-sm font-medium rounded-md text-primary-700 hover:text-white border border-primary bg-white hover:bg-primary-50">Masuk</a>
+      <!-- Search Button (Desktop) -->
+      <div class="hidden sm:flex items-center ml-auto">
+        <button id="toggleSearch" class="text-white hover:text-secondary-300 transition focus:outline-none">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+          </svg>
+        </button>
+        <div id="searchContainer" class="transition-all duration-300 overflow-hidden w-0 flex items-center ml-2">
+          <div class="relative">
+            <input id="searchInput" type="text" placeholder="Cari berita, dokumen, surat..."
+              class="border border-gray-300 px-3 py-2 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-300 w-64 text-sm" />
+            <button id="searchSubmit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Hamburger -->
-      <button @click="open = !open" class="ml-auto sm:hidden text-gray-600 focus:outline-none">
+      <button @click="open = !open" class="ml-2 sm:hidden text-white focus:outline-none">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M4 6h16M4 12h16M4 18h16" />
@@ -185,21 +159,40 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div class="sm:hidden" x-show="open" x-transition>
-    <div class="px-4 pt-2 pb-3 space-y-1 bg-white shadow">
+  <div class="sm:hidden bg-primary-800" x-show="open" x-transition>
+    <div class="px-4 pt-2 pb-3 space-y-1">
+      <!-- Search Button (Mobile) -->
+      <div class="flex items-center mb-2">
+        <button id="toggleSearchMobile" class="text-white hover:text-secondary-300 transition focus:outline-none">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+          </svg>
+        </button>
+        <div id="searchContainerMobile" class="transition-all duration-300 overflow-hidden w-0 flex items-center ml-2">
+          <div class="relative">
+            <input id="searchInputMobile" type="text" placeholder="Cari berita, dokumen, surat..."
+              class="border border-gray-300 px-3 py-2 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-300 w-48 text-sm" />
+            <button id="searchSubmitMobile" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
       <a href="#beranda"
-        class="nav-link-mobile block py-2 text-gray-600 hover:text-primary hover:border-l-4 hover:border-primary cursor-pointer">Beranda</a>
+        class="nav-link-mobile block py-2 text-white hover:text-secondary-300 hover:border-l-4 hover:border-secondary-300 cursor-pointer">Beranda</a>
       <a href="#fitur"
-        class="nav-link-mobile block py-2 text-gray-600 hover:text-primary hover:border-l-4 hover:border-primary cursor-pointer">Fitur</a>
+        class="nav-link-mobile block py-2 text-white hover:text-secondary-300 hover:border-l-4 hover:border-secondary-300 cursor-pointer">Fitur</a>
       <a href="#tentang"
-        class="nav-link-mobile block py-2 text-gray-600 hover:text-primary hover:border-l-4 hover:border-primary cursor-pointer">Tentang</a>
+        class="nav-link-mobile block py-2 text-white hover:text-secondary-300 hover:border-l-4 hover:border-secondary-300 cursor-pointer">Tentang</a>
       <a href="#kontak"
-        class="nav-link-mobile block py-2 text-gray-600 hover:text-primary hover:border-l-4 hover:border-primary cursor-pointer">Kontak</a>
+        class="nav-link-mobile block py-2 text-white hover:text-secondary-300 hover:border-l-4 hover:border-secondary-300 cursor-pointer">Kontak</a>
       <div class="pt-4 border-t border-gray-200">
         <a href="{{ route('login') }}"
-          class="block w-full text-center px-4 py-2 border border-primary-600 text-primary-600 rounded-md hover:bg-primary-600 hover:text-white">Masuk</a>
+          class="block w-full text-center px-4 py-2 border border-secondary-300 text-secondary-300 rounded-md hover:bg-secondary-300 hover:text-primary-800">Masuk</a>
         <a href="{{ route('login') }}"
-          class="mt-2 block w-full text-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">Daftar</a>
+          class="mt-2 block w-full text-center px-4 py-2 bg-secondary-300 text-primary-800 rounded-md hover:bg-secondary-400">Daftar</a>
       </div>
     </div>
   </div>
@@ -245,7 +238,6 @@
             });
         });
 
-
     // Klik submenu dropdown
     navSubLinks.forEach(link => {
       link.addEventListener('click', function (e) {
@@ -278,24 +270,80 @@
         this.classList.add('text-primary', 'font-semibold', 'border-l-4', 'border-primary');
       });
     });
-  });
+
+    // Search Button Desktop
     const button = document.getElementById("toggleSearch");
     const searchContainer = document.getElementById("searchContainer");
-
+    const searchInput = document.getElementById("searchInput");
+    const searchSubmit = document.getElementById("searchSubmit");
     let isOpen = false;
-
-    button.addEventListener("click", () => {
+    if (button && searchContainer) {
+      button.addEventListener("click", () => {
         isOpen = !isOpen;
         if (isOpen) {
-            searchContainer.classList.remove("w-0");
-            searchContainer.classList.add("w-40");
-            // Fokus otomatis ke input setelah terbuka
-            setTimeout(() => {
-                searchContainer.querySelector("input").focus();
-            }, 300);
+          searchContainer.classList.remove("w-0");
+          searchContainer.classList.add("w-64");
+          setTimeout(() => {
+            searchInput && searchInput.focus();
+          }, 300);
         } else {
-            searchContainer.classList.remove("w-40");
-            searchContainer.classList.add("w-0");
+          searchContainer.classList.remove("w-64");
+          searchContainer.classList.add("w-0");
         }
-    });
+      });
+      // Search submit on Enter
+      if (searchInput) {
+        searchInput.addEventListener("keydown", function(e) {
+          if (e.key === "Enter") {
+            const q = searchInput.value.trim();
+            if (q) window.location.href = `{{ route('search') }}?q=${encodeURIComponent(q)}`;
+          }
+        });
+      }
+      // Search submit on button click
+      if (searchSubmit) {
+        searchSubmit.addEventListener("click", function() {
+          const q = searchInput.value.trim();
+          if (q) window.location.href = `{{ route('search') }}?q=${encodeURIComponent(q)}`;
+        });
+      }
+    }
+    // Search Button Mobile
+    const buttonMobile = document.getElementById("toggleSearchMobile");
+    const searchContainerMobile = document.getElementById("searchContainerMobile");
+    const searchInputMobile = document.getElementById("searchInputMobile");
+    const searchSubmitMobile = document.getElementById("searchSubmitMobile");
+    let isOpenMobile = false;
+    if (buttonMobile && searchContainerMobile) {
+      buttonMobile.addEventListener("click", () => {
+        isOpenMobile = !isOpenMobile;
+        if (isOpenMobile) {
+          searchContainerMobile.classList.remove("w-0");
+          searchContainerMobile.classList.add("w-48");
+          setTimeout(() => {
+            searchInputMobile && searchInputMobile.focus();
+          }, 300);
+        } else {
+          searchContainerMobile.classList.remove("w-48");
+          searchContainerMobile.classList.add("w-0");
+        }
+      });
+      // Search submit on Enter (Mobile)
+      if (searchInputMobile) {
+        searchInputMobile.addEventListener("keydown", function(e) {
+          if (e.key === "Enter") {
+            const q = searchInputMobile.value.trim();
+            if (q) window.location.href = `{{ route('search') }}?q=${encodeURIComponent(q)}`;
+          }
+        });
+      }
+      // Search submit on button click (Mobile)
+      if (searchSubmitMobile) {
+        searchSubmitMobile.addEventListener("click", function() {
+          const q = searchInputMobile.value.trim();
+          if (q) window.location.href = `{{ route('search') }}?q=${encodeURIComponent(q)}`;
+        });
+      }
+    }
+  });
 </script>

@@ -66,11 +66,11 @@
             <div class="w-full lg:w-1/3 flex flex-col gap-4">
                 @php
                     $dataArsip = [
-                        ['label' => 'Arsip Statis', 'value' => 190],
-                        ['label' => 'Arsip Aktif', 'value' => 90],
-                        ['label' => 'Arsip Inaktif', 'value' => 45],
+                        ['label' => 'Arsip Aktif', 'value' => $aktif ?? 0],
+                        ['label' => 'Arsip Inaktif', 'value' => $inaktif ?? 0],
+                        ['label' => 'Arsip Musnah', 'value' => $musnah ?? 0],
                     ];
-                    $totalArsip = array_sum(array_column($dataArsip, 'value'));
+                    $totalArsip = $total ?? array_sum(array_column($dataArsip, 'value'));
                 @endphp
 
                 @foreach ($dataArsip as $arsip)
@@ -126,12 +126,15 @@
                 <div class="bg-white border border-gray-200 rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold text-primary-700 mb-4">Berdasarkan Fungsi</h3>
                     <div class="space-y-2">
-                        <div class="flex justify-between"><span>Kepegawaian</span><span class="font-bold text-primary-600">40</span></div>
-                        <div class="flex justify-between"><span>Kemahasiswaan</span><span class="font-bold text-primary-600">60</span></div>
-                        <div class="flex justify-between"><span>Surat Menyurat</span><span class="font-bold text-primary-600">80</span></div>
-                        <div class="flex justify-between"><span>Keuangan</span><span class="font-bold text-primary-600">30</span></div>
-                        <div class="flex justify-between"><span>Kerjasama</span><span class="font-bold text-primary-600">10</span></div>
-                        <div class="flex justify-between"><span>Legalitas & Hukum</span><span class="font-bold text-primary-600">12</span></div>
+                        @foreach($statistikFungsi as $fungsi)
+                            <div class="flex justify-between">
+                                <span>{{ $fungsi['nama'] }}</span>
+                                <span class="font-bold text-primary-600">{{ $fungsi['jumlah'] }}</span>
+                            </div>
+                        @endforeach
+                        @if(empty($statistikFungsi))
+                            <div class="text-gray-500 text-sm">Belum ada data kategori</div>
+                        @endif
                     </div>
                 </div>
 
@@ -139,12 +142,12 @@
                 <div class="bg-white border border-gray-200 rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold text-primary-700 mb-4">Berdasarkan Jenis Arsip</h3>
                     <div class="space-y-2">
-                        <div class="flex justify-between"><span>Surat Keputusan</span><span class="font-bold text-primary-600">25</span></div>
-                        <div class="flex justify-between"><span>Laporan</span><span class="font-bold text-primary-600">30</span></div>
-                        <div class="flex justify-between"><span>Perjanjian (MoU)</span><span class="font-bold text-primary-600">10</span></div>
-                        <div class="flex justify-between"><span>Surat Masuk</span><span class="font-bold text-primary-600">50</span></div>
-                        <div class="flex justify-between"><span>Surat Keluar</span><span class="font-bold text-primary-600">40</span></div>
-                        <div class="flex justify-between"><span>Ijazah & Transkrip</span><span class="font-bold text-primary-600">50</span></div>
+                        @foreach($statistikJenis as $jenis)
+                            <div class="flex justify-between">
+                                <span>{{ $jenis['nama'] }}</span>
+                                <span class="font-bold text-primary-600">{{ $jenis['jumlah'] }}</span>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
@@ -152,9 +155,15 @@
                 <div class="bg-white border border-gray-200 rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold text-primary-700 mb-4">Berdasarkan Masa Simpan (Retensi)</h3>
                     <div class="space-y-2">
-                        <div class="flex justify-between"><span>Jangka Pendek (&lt; 5 Tahun)</span><span class="font-bold text-primary-600">30</span></div>
-                        <div class="flex justify-between"><span>Jangka Panjang (5-10 Tahun)</span><span class="font-bold text-primary-600">50</span></div>
-                        <div class="flex justify-between"><span>Permanen (&gt; 10 Tahun)</span><span class="font-bold text-primary-600">80</span></div>
+                        @foreach($statistikRetensi as $retensi)
+                            <div class="flex justify-between">
+                                <span>{{ $retensi['nama'] }}</span>
+                                <span class="font-bold text-primary-600">{{ $retensi['jumlah'] }}</span>
+                            </div>
+                        @endforeach
+                        @if(empty($statistikRetensi))
+                            <div class="text-gray-500 text-sm">Belum ada data retensi</div>
+                        @endif
                     </div>
                 </div>
 
@@ -162,9 +171,12 @@
                 <div class="bg-white border border-gray-200 rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold text-primary-700 mb-4">Berdasarkan Keamanan Arsip</h3>
                     <div class="space-y-2">
-                        <div class="flex justify-between"><span>Biasa (Publik)</span><span class="font-bold text-primary-600">70</span></div>
-                        <div class="flex justify-between"><span>Rahasia</span><span class="font-bold text-primary-600">40</span></div>
-                        <div class="flex justify-between"><span>Sangat Rahasia</span><span class="font-bold text-primary-600">15</span></div>
+                        @foreach($statistikKeamanan as $keamanan)
+                            <div class="flex justify-between">
+                                <span>{{ $keamanan['nama'] }}</span>
+                                <span class="font-bold text-primary-600">{{ $keamanan['jumlah'] }}</span>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -178,10 +190,10 @@
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Arsip Statis', 'Arsip Aktif', 'Arsip Inaktif'],
+      labels: ['Arsip Aktif', 'Arsip Inaktif', 'Arsip Musnah'],
       datasets: [{
         label: 'Jumlah Arsip',
-        data: [190, 90, 45],
+        data: [{{ $aktif ?? 0 }}, {{ $inaktif ?? 0 }}, {{ $musnah ?? 0 }}],
         backgroundColor: ['#3d6992', '#3d6992', '#3d6992'],
         borderRadius: 6,
         barThickness: 25,
@@ -219,34 +231,54 @@
 
   const ctxGabungan = document.getElementById('arsipGabunganChart').getContext('2d');
 
-const chart = new Chart(ctxGabungan, {
+  const chart = new Chart(ctxGabungan, {
   type: 'bar',
   data: {
     labels: [
-      'Kepegawaian', 'Kemahasiswaan', 'Surat Menyurat', 'Keuangan', 'Kerjasama', 'Legalitas & Hukum',
-      'Surat Keputusan', 'Laporan', 'Perjanjian (MoU)', 'Surat Masuk', 'Surat Keluar', 'Ijazah & Transkrip',
-      'Jangka Pendek', 'Jangka Panjang', 'Permanen',
-      'Biasa (Publik)', 'Rahasia', 'Sangat Rahasia'
+      @foreach($statistikFungsi as $fungsi)'{{ $fungsi['nama'] }}',@endforeach
+      @foreach($statistikJenis as $jenis)'{{ $jenis['nama'] }}',@endforeach
+      @foreach($statistikRetensi as $retensi)'{{ $retensi['nama'] }}',@endforeach
+      @foreach($statistikKeamanan as $keamanan)'{{ $keamanan['nama'] }}',@endforeach
     ],
     datasets: [
       {
         label: 'Fungsi',
-        data: [40, 60, 80, 30, 10, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        data: [
+          @foreach($statistikFungsi as $fungsi){{ $fungsi['jumlah'] }},@endforeach
+          @foreach($statistikJenis as $jenis)0,@endforeach
+          @foreach($statistikRetensi as $retensi)0,@endforeach
+          @foreach($statistikKeamanan as $keamanan)0,@endforeach
+        ],
         backgroundColor: '#3d6992'
       },
       {
         label: 'Jenis Arsip',
-        data: [0, 0, 0, 0, 0, 0, 25, 30, 10, 50, 40, 50, 0, 0, 0, 0, 0, 0],
+        data: [
+          @foreach($statistikFungsi as $fungsi)0,@endforeach
+          @foreach($statistikJenis as $jenis){{ $jenis['jumlah'] }},@endforeach
+          @foreach($statistikRetensi as $retensi)0,@endforeach
+          @foreach($statistikKeamanan as $keamanan)0,@endforeach
+        ],
         backgroundColor: '#5a7fa1'
       },
       {
         label: 'Masa Simpan',
-        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 50, 80, 0, 0, 0],
+        data: [
+          @foreach($statistikFungsi as $fungsi)0,@endforeach
+          @foreach($statistikJenis as $jenis)0,@endforeach
+          @foreach($statistikRetensi as $retensi){{ $retensi['jumlah'] }},@endforeach
+          @foreach($statistikKeamanan as $keamanan)0,@endforeach
+        ],
         backgroundColor: '#7895b1'
       },
       {
         label: 'Keamanan',
-        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 70, 40, 15],
+        data: [
+          @foreach($statistikFungsi as $fungsi)0,@endforeach
+          @foreach($statistikJenis as $jenis)0,@endforeach
+          @foreach($statistikRetensi as $retensi)0,@endforeach
+          @foreach($statistikKeamanan as $keamanan){{ $keamanan['jumlah'] }},@endforeach
+        ],
         backgroundColor: '#96acc1'
       }
     ]
@@ -301,7 +333,7 @@ const chart = new Chart(ctxGabungan, {
       ctx.lineWidth = 2;
 
       // Posisi indeks grup (setelah fungsi, jenis, retensi)
-      const separatorIndexes = [6, 12, 15];
+      const separatorIndexes = [{{ count($statistikFungsi) }}, {{ count($statistikFungsi) + count($statistikJenis) }}, {{ count($statistikFungsi) + count($statistikJenis) + count($statistikRetensi) }}];
 
       separatorIndexes.forEach((index) => {
         const x = xAxis.getPixelForTick(index) - (xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2;

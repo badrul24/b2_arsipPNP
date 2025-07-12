@@ -11,6 +11,7 @@ use App\Http\Controllers\KodeController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RetensiController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\UserController;
@@ -20,17 +21,28 @@ use App\Models\SuratMasuk;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use App\Models\Berita;
+use App\Models\User;
+use App\Models\Jurusan;
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
 Route::get('/home', function () {
-    return view('landing_page.home');
+    $beritas = Berita::with(['user', 'kategori'])->latest()->take(6)->get();
+    $totalArsip = Dokumen::count();
+    $totalPengguna = User::count();
+    $totalJurusan = Jurusan::count();
+    return view('landing_page.home', compact('beritas', 'totalArsip', 'totalPengguna', 'totalJurusan'));
 });
 
 Route::get('/', function () {
-    return view('landing_page.home');
+    $beritas = Berita::with(['user', 'kategori'])->latest()->take(6)->get();
+    $totalArsip = Dokumen::count();
+    $totalPengguna = User::count();
+    $totalJurusan = Jurusan::count();
+    return view('landing_page.home', compact('beritas', 'totalArsip', 'totalPengguna', 'totalJurusan'));
 });
 
 Route::get('/profil', function () {
@@ -45,8 +57,25 @@ Route::get('/arsipdinamis', function () {
     return view('landing_page.arsip_dinamis');
 });
 
-Route::get('/laporanarsip', function () {
-    return view('landing_page.laporan_arsip');
+Route::get('/laporanarsip', [\App\Http\Controllers\LaporanArsipController::class, 'index']);
+
+Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+// Test route to see berita data
+Route::get('/test-berita', function () {
+    $beritas = Berita::with(['user', 'kategori'])->get();
+    return response()->json([
+        'total' => $beritas->count(),
+        'beritas' => $beritas->map(function ($berita) {
+            return [
+                'id' => $berita->id,
+                'judul' => $berita->judul_berita,
+                'isi' => substr($berita->isi_berita, 0, 100) . '...',
+                'kategori' => $berita->kategori->nama_kategori ?? 'Tidak ada kategori',
+                'user' => $berita->user->name ?? 'Tidak diketahui'
+            ];
+        })
+    ]);
 });
 
 // Rute Autentikasi Kustom Anda
