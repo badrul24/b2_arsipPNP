@@ -73,6 +73,8 @@ class DokumenController extends Controller
             $this->handleFileUpload($request, $validated);
         }
 
+        // Untuk operator, jurusan otomatis dari user yang login
+        // Untuk admin, jurusan dari form yang dipilih
         if ($user->isOperator() && $user->jurusan_id) {
             $validated['jurusan_id'] = $user->jurusan_id;
         }
@@ -116,6 +118,8 @@ class DokumenController extends Controller
             $validated['nama_file_asli'] = $dokumen->nama_file_asli;
         }
 
+        // Untuk operator, jurusan otomatis dari user yang login
+        // Untuk admin, jurusan dari form yang dipilih
         if ($user->isOperator() && $user->jurusan_id) {
             $validated['jurusan_id'] = $user->jurusan_id;
         }

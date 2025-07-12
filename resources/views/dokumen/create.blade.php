@@ -78,15 +78,8 @@
 
                         <div>
                             <label for="kode_id" class="block font-medium text-gray-700 mb-1">Kode Klasifikasi</label>
-                            <select name="kode_id" id="kode_id"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('kode_id') border-red-500 @enderror">
-                                <option value="" disabled selected>Pilih Kode</option>
-                                @foreach($kodes as $kode)
-                                    <option value="{{ $kode->id }}" {{ old('kode_id') == $kode->id ? 'selected' : '' }}>
-                                        {{ $kode->kode }} - {{ $kode->nama_kode }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="text" id="kode_nama" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100 text-gray-700" readonly placeholder="Kode akan terisi otomatis" value="">
+                            <input type="hidden" name="kode_id" id="kode_id" value="{{ old('kode_id') }}">
                             @error('kode_id')
                                 <p class="text-red-500 text-sm mt-1">Kode klasifikasi wajib diisi.</p>
                             @enderror
@@ -178,15 +171,12 @@
                         </div>
 
                         {{-- Jurusan Field - Dinamis berdasarkan peran user --}}
+                        @php
+                            $currentUser = Auth::user();
+                            $isDisabled = $currentUser && $currentUser->isOperator() ? 'disabled' : '';
+                        @endphp
                         <div>
                             <label for="jurusan_id" class="block font-medium text-gray-700 mb-1">Jurusan</label>
-                            @php
-                                // Ambil user yang sedang login di Blade.
-                                // Pastikan Auth::user() tersedia (user sudah login).
-                                $currentUser = Auth::user();
-                                $isDisabled = $currentUser && $currentUser->isOperator() ? 'disabled' : '';
-                                // Jika disabled, tambahkan input hidden untuk memastikan nilai terkirim
-                            @endphp
                             <select name="jurusan_id" id="jurusan_id" {{ $isDisabled }}
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('jurusan_id') border-red-500 @enderror">
                                 <option value="" disabled selected>Pilih Jurusan</option>
@@ -196,7 +186,6 @@
                                     </option>
                                 @endforeach
                             </select>
-                            {{-- Jika dropdown disabled, tambahkan input hidden agar nilai tetap terkirim saat submit --}}
                             @if($isDisabled)
                                 <input type="hidden" name="jurusan_id" value="{{ old('jurusan_id', $currentUser->jurusan_id) }}">
                             @endif
@@ -242,3 +231,35 @@
         </div>
     </div>
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const kategoriSelect = document.getElementById('kategori_id');
+        const kodeInput = document.getElementById('kode_nama');
+        const kodeIdInput = document.getElementById('kode_id');
+        // Data kode: id, nama, kategori_id
+        const kodeData = [
+            @foreach($kodes as $kode)
+                {id: '{{ $kode->id }}', nama: '{{ $kode->kode }} - {{ $kode->nama_kode }}', kategori_id: '{{ $kode->kategori_id }}'},
+            @endforeach
+        ];
+
+        function updateKodeField() {
+            const kategoriId = kategoriSelect.value;
+            const kode = kodeData.find(k => k.kategori_id === kategoriId);
+            if (kode) {
+                kodeInput.value = kode.nama;
+                kodeIdInput.value = kode.id;
+            } else {
+                kodeInput.value = '';
+                kodeIdInput.value = '';
+            }
+        }
+
+        kategoriSelect.addEventListener('change', updateKodeField);
+        // Inisialisasi jika sudah ada value
+        if (kategoriSelect.value) {
+            updateKodeField();
+        }
+    });
+</script>
