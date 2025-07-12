@@ -42,7 +42,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
             <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
                 <div class="mt-[27px] ml-0 mr-0">
-                    <img class="h-[450px] w-[500px] shadow-lg rounded-lg" src="{{ asset('images/kudalumping.png') }}" alt="Gedung PNP">
+                    <img class="h-[450px] w-[500px] shadow-lg rounded-lg" src="{{ asset('images/dinamis.png') }}" alt="Gudang Arsip Statis">
                 </div>
                 <div>
                     <p class="mt-5 text-lg text-gray-500">

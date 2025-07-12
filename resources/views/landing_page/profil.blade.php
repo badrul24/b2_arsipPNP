@@ -74,7 +74,7 @@
                             <img class="object-cover w-[250px] h-[150px] shadow-lg rounded-lg" src="{{ asset('images/mahasiswa.png') }}" alt="Mahasiswa PNP">
                         </div>
                         <div class="aspect-w-3 aspect-h-2 pl-2">
-                            <img class="object-cover w-[250px] h-[150px] shadow-lg rounded-lg" src="{{ asset('images/labolatorium.png') }}" alt="Laboratorium PNP">
+                            <img class="object-cover w-[250px] h-[150px] shadow-lg rounded-lg" src="{{ asset('images/laboratorium.png') }}" alt="Laboratorium PNP">
                         </div>
                     </div>
                 </div>
@@ -82,8 +82,8 @@
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
             <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
-                    <div class="m-[40px] ml-0 mr-0 ">
-                        <img class="h-[500px] w-[350px] shadow-lg rounded-lg" src="{{ asset('images/kudalumping.png') }}" alt="Gedung PNP">
+                    <div class="m-[40px] ml-0 mr-0 flex-shrink-0">
+                        <img class="h-[350px] w-[450px] shadow-lg rounded-lg object-contain" src="{{ asset('images/ruang.png') }}" alt="Gedung PNP">
                     </div>
                 <div>
                     <p class="mt-1 text-[5px] font-bold text-gray-900 sm:text-2xl sm:tracking-tight">
