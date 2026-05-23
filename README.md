@@ -367,4 +367,4 @@ Terima kasih kepada semua pihak yang telah berkontribusi dalam pengembangan SIAR
 
 ---
 
-**© 2024 Politeknik Negeri Padang. All rights reserved.**
+**© 2024 Politeknik Negeri Padang. All rights reserved.**# SIARSIP
